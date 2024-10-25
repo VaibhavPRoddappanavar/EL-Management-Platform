@@ -1,0 +1,116 @@
+{
+"Sheet1":[
+ {
+  "name": "Vaibhav",
+  "email": "vaibhavp.cs23@rvce.edu.in",
+  "teamId": 1,
+  "role": "Leader",
+  "branch": "CS"
+ },
+ {
+  "name": "Chethohaar",
+  "email": "chethohaar.cs23@rvce.edu.in",
+  "teamId": 1,
+  "role": "Member",
+  "branch": "CY"
+ },
+ {
+  "name": "Sai",
+  "email": "sai.cs23@rvce.edu.in",
+  "teamId": 1,
+  "role": "Member",
+  "branch": "CS"
+ },
+ {
+  "name": "Nikhil",
+  "email": "nikhil.cs23@rvce.edu.in",
+  "teamId": 1,
+  "role": "Member",
+  "branch": "CD"
+ },
+ {
+  "name": "Yeshas",
+  "email": "yeshas.cs23@rvce.edu.in",
+  "teamId": 2,
+  "role": "Leader",
+  "branch": "CS"
+ },
+ {
+  "name": "Tharun",
+  "email": "tharun.cs23@rvce.edu.in",
+  "teamId": 2,
+  "role": "Member",
+  "branch": "CS"
+ },
+ {
+  "name": "Abhinav",
+  "email": "abhinav.cs23@rvce.edu.in",
+  "teamId": 2,
+  "role": "Member",
+  "branch": "CY"
+ },
+ {
+  "name": "Nuthan",
+  "email": "nuthan.cs23@rvce.edu.in",
+  "teamId": 2,
+  "role": "Member",
+  "branch": "CY"
+ },
+ {
+  "name": "Vishal",
+  "email": "vishal.cs23@rvce.edu.in",
+  "teamId": 3,
+  "role": "Leader",
+  "branch": "CS"
+ },
+ {
+  "name": "Sreenivas",
+  "email": "sreenivas.cs23@rvce.edu.in",
+  "teamId": 3,
+  "role": "Member",
+  "branch": "CY"
+ },
+ {
+  "name": "Sumedh",
+  "email": "sumedh.cs23@rvce.edu.in",
+  "teamId": 3,
+  "role": "Member",
+  "branch": "CD"
+ },
+ {
+  "name": "Surya",
+  "email": "surya.cs23@rvce.edu.in",
+  "teamId": 3,
+  "role": "Member",
+  "branch": "AIML"
+ },
+ {
+  "name": "Ravish",
+  "email": "ravish.cs23@rvce.edu.in",
+  "teamId": 4,
+  "role": "Leader",
+  "branch": "CS"
+ },
+ {
+  "name": "Sky",
+  "email": "sky.cs23@rvce.edu.in",
+  "teamId": 4,
+  "role": "Member",
+  "branch": "CS"
+ },
+ {
+  "name": "Virat",
+  "email": "virat.cs23@rvce.edu.in",
+  "teamId": 4,
+  "role": "Member",
+  "branch": "CS"
+ },
+ {
+  "name": "Anushka",
+  "email": "anushka.cs23@rvce.edu.in",
+  "teamId": 4,
+  "role": "Member",
+  "branch": "CY"
+ }
+]
+}
