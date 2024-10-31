@@ -17,7 +17,7 @@ router.post("/login", async (req, res) => {
   }
 
   // Generate JWT token with fixed secret key
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ password }, process.env.password, {
     expiresIn: "30m",
   });
 
@@ -31,10 +31,15 @@ router.get("/teams", verifyToken, async (req, res) => {
   try {
     // Fetch teams from the database
     const teams = await Team.find(); // Get all teams
-
+    const newTeam = null;
     if (theme) {
       // Filter teams by the specified theme
       const filteredTeams = teams.filter((team) => team.Theme === theme);
+      if (filteredTeams) {
+        teams.filter((team) => team.Theme === theme && null);
+      } else {
+        teams.filter((team) => team.Theme != theme);
+      }
       return res.json(filteredTeams);
     }
 
