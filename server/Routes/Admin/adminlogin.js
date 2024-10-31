@@ -11,10 +11,6 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   // Check admin credentials
-  const admin = await Admin.findOne({ email });
-  if (!admin || admin.password !== password) {
-    return res.status(401).json({ message: "Invalid email or password" });
-  }
 
   // Generate JWT token with fixed secret key
   const token = jwt.sign({ password }, process.env.password, {
@@ -28,25 +24,16 @@ router.post("/login", async (req, res) => {
 router.get("/teams", verifyToken, async (req, res) => {
   const theme = req.query.theme; // Get theme from query parameter
 
-  try {
-    // Fetch teams from the database
-    const teams = await Team.find(); // Get all teams
-    const newTeam = null;
-    if (theme) {
-      // Filter teams by the specified theme
-      const filteredTeams = teams.filter((team) => team.Theme === theme);
-      if (filteredTeams) {
-        teams.filter((team) => team.Theme === theme && null);
-      } else {
-        teams.filter((team) => team.Theme != theme);
-      }
-      return res.json(filteredTeams);
-    }
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-    return res.json(teams); // Return all teams if no theme specified
-  } catch (error) {
-    console.error("Error fetching teams:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(403).json({ message: "Invalid token" });
   }
 });
 
