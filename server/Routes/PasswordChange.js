@@ -64,7 +64,7 @@ router.post('/forgot-password', async (req, res) => {
             },
         });
 
-        const resetUrl = `http://localhost:5000/Password/reset-password/${resetToken}`;
+        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
         const mailOptions = {
             to: email,
             from: 'vaitesticle@gmail.com',

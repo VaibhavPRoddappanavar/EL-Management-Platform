@@ -6,8 +6,13 @@ const app = express();
 const connectDB = require("./db");
 const PasswordChange = require("./Routes/PasswordChange");
 const loginRegisRoutes = require("./Routes/loginRegisRoutes");
-const teamRoutes = require("./Routes/team");
+const teamCreate=require("./Routes/CreateTeam");
+const teamDRoutes = require("./Routes/TeamDisplay");
 const loadEmailList = require("./Models/EmailLoader");
+const cors = require('cors');
+
+// Enable CORS for requests from http://localhost:3000
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 // Import admin routes
 const adminRoutes = require("./Routes/Admin/adminlogin"); // Update the path as necessary
@@ -28,32 +33,85 @@ app.use("/Password", PasswordChange);
 app.use("/student", loginRegisRoutes);
 
 // Middleware for team-related routes
-app.use("/teams", teamRoutes);
+app.use("/teams", teamDRoutes);
+
+//Middleware for team creation
+app.use("/team",teamCreate);
 
 // Middleware for admin routes
 app.use("/admin", adminRoutes); // Connect admin routes
 
 connectDB();
 
-//Test route to add/post a team
-app.post('/api/teams', async (req, res) => {
-    const { name, email, teamId, role, branch } = req.body;
+// Test route to add/post a team
+// app.post('/api/teams', async (req, res) => {
+//     const {
+//         TeamLeaderUSN,
+//         TeamLeaderName,
+//         TeamleaderEmailID,
+//         TeamleaderMobileNumber,
+//         TeamleaderProgram,
+//         Theme,
+//         Teammember1USN,
+//         TeamMember1Name,
+//         TeamMember1EmailID,
+//         TeamMember1MobileNumber,
+//         TeamMember1Program,
+//         Teammember2USN,
+//         TeamMember2Name,
+//         TeamMember2EmailId,
+//         TeamMember2MobileNumber,
+//         TeamMember2Program,
+//         Teammember3USN,
+//         TeamMember3Name,
+//         TeamMember3EmailID,
+//         TeamMember3MobileNumber,
+//         TeamMember3Program,
+//         Teammember4USN,
+//         TeamMember4Name,
+//         TeamMember4EmailID,
+//         TeamMember4MobileNumber,
+//         TeamMember4Program
+//     } = req.body;
 
-    const newTeam = new Team({
-        name,
-        email,
-        teamId,
-        role,
-        branch
-    });
+//     // Creating a new team document using the provided fields
+//     const newTeam = new Team({
+//         TeamLeaderUSN,
+//         TeamLeaderName,
+//         TeamleaderEmailID,
+//         TeamleaderMobileNumber,
+//         TeamleaderProgram,
+//         Theme,
+//         Teammember1USN,
+//         TeamMember1Name,
+//         TeamMember1EmailID,
+//         TeamMember1MobileNumber,
+//         TeamMember1Program,
+//         Teammember2USN,
+//         TeamMember2Name,
+//         TeamMember2EmailId,
+//         TeamMember2MobileNumber,
+//         TeamMember2Program,
+//         Teammember3USN,
+//         TeamMember3Name,
+//         TeamMember3EmailID,
+//         TeamMember3MobileNumber,
+//         TeamMember3Program,
+//         Teammember4USN,
+//         TeamMember4Name,
+//         TeamMember4EmailID,
+//         TeamMember4MobileNumber,
+//         TeamMember4Program
+//     });
 
-    try {
-        const savedTeam = await newTeam.save(); // Save to MongoDB
-        res.status(201).json(savedTeam);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
+//     try {
+//         // Save the new team to MongoDB
+//         const savedTeam = await newTeam.save();
+//         res.status(201).json(savedTeam);
+//     } catch (error) {
+//         res.status(400).json({ message: error.message });
+//     }
+// });
 
 
 // // Route to insert excel to json converted data
