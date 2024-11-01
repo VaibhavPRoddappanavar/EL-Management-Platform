@@ -14,7 +14,7 @@ const authenticateToken = (req, res, next) => {
     try {
         // Verify token
         const verified = jwt.verify(token, JWT_SECRET);
-        req.student = verified;  // Attach the student info to the request
+        req.user = verified;  // Attach the user info to the request
         next();  // Proceed to the next middleware/route handler
     } catch (error) {
         res.status(400).json({ message: 'Invalid token.' });

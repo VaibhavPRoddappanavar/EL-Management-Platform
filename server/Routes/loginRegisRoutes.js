@@ -61,7 +61,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Validate email ends with @rvce.edu.in
+    // Check for the correct email domain
     if (!email.endsWith('@rvce.edu.in')) {
         return res.status(400).json({ message: 'Invalid email ID. Only rvce.edu.in accounts are allowed.' });
     }
@@ -73,13 +73,13 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password.' });
         }
 
-        // Compare the provided password with the stored hashed password
+        // Verify password
         const validPassword = await bcrypt.compare(password, student.password);
         if (!validPassword) {
             return res.status(400).json({ message: 'Invalid email or password.' });
         }
 
-        // Look for the team using the email
+        // Check if the student is part of any team
         const teamMember = await Team.findOne({
             $or: [
                 { TeamleaderEmailID: email.trim() },
@@ -90,56 +90,18 @@ router.post('/login', async (req, res) => {
             ]
         });
 
-        if (!teamMember) {
-            return res.status(404).json({ message: 'Team not found. You are not part of any team.' });
-        }
-
-        // Create a JWT token (for authorization in future requests)
+        // Create a token for the user, including team ID if they are in a team
         const token = jwt.sign(
-            { email, teamId: teamMember._id },  // Use the team _id for further requests
-            'your_jwt_secret', 
+            { email, teamId: teamMember ? teamMember._id : null },
+            'your_jwt_secret_key',
             { expiresIn: '1h' }
         );
 
-        // Structure response to include team details
+        // Send response with token and team status
         res.json({
             message: 'Login successful',
             token,
-            teamDetails: {
-                teamId: teamMember._id,
-                theme:teamMember.Theme,
-                teamLeader: {
-                    name: teamMember.TeamLeaderName,
-                    email: teamMember.TeamleaderEmailID,
-                    mobile: teamMember.TeamleaderMobileNumber,
-                },
-                teamMembers: [
-                    {
-                        name: teamMember.TeamMember1Name,
-                        email: teamMember.TeamMember1EmailID,
-                        mobile: teamMember.TeamMember1MobileNumber,
-                        program: teamMember.TeamMember1Program,
-                    },
-                    {
-                        name: teamMember.TeamMember2Name,
-                        email: teamMember.TeamMember2EmailId,
-                        mobile: teamMember.TeamMember2MobileNumber,
-                        program: teamMember.TeamMember2Program,
-                    },
-                    {
-                        name: teamMember.TeamMember3Name,
-                        email: teamMember.TeamMember3EmailID,
-                        mobile: teamMember.TeamMember3MobileNumber,
-                        program: teamMember.TeamMember3Program,
-                    },
-                    {
-                        name: teamMember.TeamMember4Name,
-                        email: teamMember.TeamMember4EmailID,
-                        mobile: teamMember.TeamMember4MobileNumber,
-                        program: teamMember.TeamMember4Program,
-                    },
-                ].filter(member => member.name)  // Filter out empty members
-            }
+            teamExists: !!teamMember  // true if part of a team, false if not
         });
     } catch (error) {
         console.error('Error occurred during login:', error);
