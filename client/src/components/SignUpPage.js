@@ -1,6 +1,9 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import "../style.css";
+
 
 function SignUpPage() {
   const [name, setName] = useState('');
@@ -21,37 +24,45 @@ function SignUpPage() {
   };
 
   return (
-    <form onSubmit={handleSignUp} className="auth-form sign-up-form">
+    <form onSubmit={handleSignUp} className="sign-up-form">
       <h2 className="title">Sign Up</h2>
+      <div className="input-field">
+      <FaUser className="icon" /> {/* User Icon */}
       <input
         type="text"
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
-      />
+      /></div>
+       <div className="input-field">
+       <FaEnvelope className="icon" /> {/* Envelope Icon */}
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-      />
+      /></div>
+      <div className="input-field">
+      <FaLock className="icon" /> {/* Lock Icon */}
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-      />
+      /></div>
+      <div className="input-field">
+      <FaLock className="icon" /> {/* Lock Icon for Confirm Password */}
       <input
         type="password"
         placeholder="Confirm Password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         required
-      />
-      <button type="submit" className="auth-button">Sign Up</button>
+      /></div>
+      <button type="submit" className="btn">Sign Up</button>
     </form>
   );
 }
