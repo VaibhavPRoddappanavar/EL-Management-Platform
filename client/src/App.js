@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from "react";
-import {
-  Navigate,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-} from "react-router-dom";
-import ForgotPasswordPage from "./components/ForgotPasswordPage";
-import LoginPage from "./components/LoginPage";
-import ResetPasswordPage from "./components/ResetPasswordPage";
-import SignUpPage from "./components/SignUpPage";
-import CreateTeamPage from "./pages/CreateTeamPage";
-import TeamPage from "./pages/TeamPage";
+import { default as React, default as React, useEffect, useState } from 'react';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import ForgotPasswordPage from './components/ForgotPasswordPage';
+import ResetPasswordPage from './components/ResetPasswordPage';
+import SignInSignUp from './components/SignInSignUp'; // Import the new SignInSignUp component
+import CreateTeamPage from './pages/CreateTeamPage';
+import TeamPage from './pages/TeamPage';
 
 /* Admin imports */
 
-import AdminLogin from "./components/admin/AdminLogin";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminLogin from "./components/admin/AdminLogin";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -34,8 +28,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<SignInSignUp />} /> {/* Use SignInSignUp here */}
+        <Route path="/signup" element={<SignInSignUp />} /> {/* Also use SignInSignUp here */}
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route

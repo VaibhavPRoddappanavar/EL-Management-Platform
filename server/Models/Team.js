@@ -25,7 +25,7 @@ const TeamSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Teammember1USN: {
+    TeamMember1USN: {
         type: String,
         required: true
     },
@@ -45,37 +45,47 @@ const TeamSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Teammember2USN: {
-        type: String
+    TeamMember2USN: {
+        type: String,
+        required: true
     },
     TeamMember2Name: {
-        type: String
+        type: String,
+        required: true
     },
     TeamMember2EmailId: {
-        type: String
+        type: String,
+        required: true
     },
     TeamMember2MobileNumber: {
-        type: String
+        type: String,
+        required: true
     },
     TeamMember2Program: {
-        type: String
+        type: String,
+        required: true
     },
-    Teammember3USN: {
-        type: String
+    TeamMember3USN: {
+        type: String,
+        required: true
     },
     TeamMember3Name: {
-        type: String
+        type: String,
+        required: true
     },
     TeamMember3EmailID: {
-        type: String
+        type: String,
+        required: true
     },
     TeamMember3MobileNumber: {
-        type: String
+        type: String,
+        required: true
     },
     TeamMember3Program: {
-        type: String
+        type: String,
+        required: true
     },
-    Teammember4USN: {
+    TeamMember4USN: {
         type: String
     },
     TeamMember4Name: {
