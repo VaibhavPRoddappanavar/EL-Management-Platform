@@ -81,12 +81,13 @@ form.sign-in-form {
   height: 55px;
   border-radius: 55px;
   display: grid;
+  align-items: center;
   grid-template-columns: 15% 85%;
-  padding: 0 0.4rem;
+  padding: 0 0.8rem;
   position: relative;
 }
 
-.input-field i {
+.input-field .icon {
   text-align: center;
   line-height: 55px;
   color: #acacac;
@@ -237,6 +238,64 @@ form.sign-in-form {
 .right-panel .content {
   transform: translateX(800px);
 }
+
+.forgotPass:hover{
+  text-decoration: underline;
+}
+
+
+/* Forgot Password Page Styles */
+.forgot-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f0f0;
+}
+
+.form-box {
+  background-color: #fff;
+  padding: 2rem 3rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  text-align: center;
+}
+
+.fpinput-field input{
+  width: 50vh;
+  height: 8vh;
+  background:#f0f0f0;
+  border-radius: 20px;
+  text-align: center;
+  outline: none;
+  border: none;
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 2vh;
+  padding: 20px;
+}
+
+.form-box h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.form-box p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+
+.form-box .btn:hover {
+  background-color: #4d84e2;
+  color: #020202;
+}
+
 
 /* ANIMATION */
 

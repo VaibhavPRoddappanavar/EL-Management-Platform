@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import "../style.css";
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -26,7 +28,7 @@ function LoginPage() {
     <form onSubmit={handleLogin} className="sign-in-form">
       <h2 className="title">Sign in</h2>
       <div className="input-field">
-      <i className="fas fa-user"></i>
+      <FaEnvelope className="icon" />
       <input
         type="email"
         placeholder="Email"
@@ -35,7 +37,7 @@ function LoginPage() {
         required
       /></div>
       <div className="input-field">
-      <i className="fas fa-lock"></i>
+      <FaLock className="icon" />
       <input
         type="password"
         placeholder="Password"
@@ -44,7 +46,7 @@ function LoginPage() {
         required
       /></div>
       <button type="submit" className="btn solid">Login</button>
-      <button className="btn solid" onClick={() => navigate('/forgot-password')}>Forgot Password</button>
+      <button className="forgotPass" onClick={() => navigate('/forgot-password')}>Forgot Password</button>
       {/* <div className="auth-links">
         <button className="btn solid" onClick={() => navigate('/signup')}>Sign Up</button>
         <button className="btn solid" onClick={() => navigate('/forgot-password')}>Forgot Password</button>
