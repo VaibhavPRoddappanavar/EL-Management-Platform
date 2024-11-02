@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { default as React, default as React, useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
@@ -6,14 +6,22 @@ import SignInSignUp from './components/SignInSignUp'; // Import the new SignInSi
 import CreateTeamPage from './pages/CreateTeamPage';
 import TeamPage from './pages/TeamPage';
 
+/* Admin imports */
+
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminLogin from "./components/admin/AdminLogin";
+
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
 
   useEffect(() => {
-    const handleStorageChange = () => setIsAuthenticated(!!localStorage.getItem('token'));
-    window.addEventListener('storage', handleStorageChange);
+    const handleStorageChange = () =>
+      setIsAuthenticated(!!localStorage.getItem("token"));
+    window.addEventListener("storage", handleStorageChange);
 
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   return (
@@ -24,8 +32,15 @@ function App() {
         <Route path="/signup" element={<SignInSignUp />} /> {/* Also use SignInSignUp here */}
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-        <Route path="/team" element={isAuthenticated ? <TeamPage /> : <Navigate to="/login" />} />
+        <Route
+          path="/team"
+          element={isAuthenticated ? <TeamPage /> : <Navigate to="/login" />}
+        />
         <Route path="/create-team" element={<CreateTeamPage />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
