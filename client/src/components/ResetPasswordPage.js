@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import '../style.css'; // Import the main styles
 
 function ResetPasswordPage() {
   const { token } = useParams();
@@ -26,22 +27,25 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>New Password:</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Reset Password</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+    <div className="forgot-password-container">
+      <div className="form-box">
+        <h2>Reset Password</h2>
+        <p>Please enter your new password to reset it.</p>
+        <form onSubmit={handleSubmit}>
+          <div className="fpinput-field">
+            <input
+              type="password"
+              placeholder="Enter your new password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn">Reset</button>
+        </form>
+        {error && <p className="error-text">{error}</p>}
+        {success && <p className="success-text">{success}</p>}
+      </div>
     </div>
   );
 }

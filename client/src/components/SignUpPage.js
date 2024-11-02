@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import "../style.css";
 
 
 function SignUpPage() {
@@ -25,7 +27,7 @@ function SignUpPage() {
     <form onSubmit={handleSignUp} className="sign-up-form">
       <h2 className="title">Sign Up</h2>
       <div className="input-field">
-              <i className="fas fa-user"></i>
+      <FaUser className="icon" /> {/* User Icon */}
       <input
         type="text"
         placeholder="Name"
@@ -34,7 +36,7 @@ function SignUpPage() {
         required
       /></div>
        <div className="input-field">
-       <i className="fas fa-envelope"></i>
+       <FaEnvelope className="icon" /> {/* Envelope Icon */}
       <input
         type="email"
         placeholder="Email"
@@ -43,7 +45,7 @@ function SignUpPage() {
         required
       /></div>
       <div className="input-field">
-      <i className="fas fa-lock"></i>
+      <FaLock className="icon" /> {/* Lock Icon */}
       <input
         type="password"
         placeholder="Password"
@@ -52,7 +54,7 @@ function SignUpPage() {
         required
       /></div>
       <div className="input-field">
-      <i className="fas fa-lock"></i>
+      <FaLock className="icon" /> {/* Lock Icon for Confirm Password */}
       <input
         type="password"
         placeholder="Confirm Password"

@@ -15,6 +15,7 @@ function SignInSignUp() {
 
   return (
     <div className={`container ${isSignUpActive ? "sign-up-mode" : ""}`}>
+      {/* Add college logo here */}
       <div className="forms-container">
         <div className="signin-signup">
           <LoginPage />
