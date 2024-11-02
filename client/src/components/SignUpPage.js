@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 function SignUpPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,37 +22,45 @@ function SignUpPage() {
   };
 
   return (
-    <form onSubmit={handleSignUp} className="auth-form sign-up-form">
+    <form onSubmit={handleSignUp} className="sign-up-form">
       <h2 className="title">Sign Up</h2>
+      <div className="input-field">
+              <i className="fas fa-user"></i>
       <input
         type="text"
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
-      />
+      /></div>
+       <div className="input-field">
+       <i className="fas fa-envelope"></i>
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-      />
+      /></div>
+      <div className="input-field">
+      <i className="fas fa-lock"></i>
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-      />
+      /></div>
+      <div className="input-field">
+      <i className="fas fa-lock"></i>
       <input
         type="password"
         placeholder="Confirm Password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         required
-      />
-      <button type="submit" className="auth-button">Sign Up</button>
+      /></div>
+      <button type="submit" className="btn">Sign Up</button>
     </form>
   );
 }
