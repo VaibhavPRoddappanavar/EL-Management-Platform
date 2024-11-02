@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { default as React, default as React, useEffect, useState } from "react";
 import {
   Navigate,
   Route,
