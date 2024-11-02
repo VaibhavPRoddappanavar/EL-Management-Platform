@@ -23,27 +23,32 @@ function LoginPage() {
   };
 
   return (
-    <form onSubmit={handleLogin} className="auth-form sign-in-form">
-      <h2 className="title">Login</h2>
+    <form onSubmit={handleLogin} className="sign-in-form">
+      <h2 className="title">Sign in</h2>
+      <div className="input-field">
+      <i className="fas fa-user"></i>
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-      />
+      /></div>
+      <div className="input-field">
+      <i className="fas fa-lock"></i>
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-      />
-      <button type="submit" className="auth-button">Login</button>
-      <div className="auth-links">
-        <button onClick={() => navigate('/signup')}>Sign Up</button>
-        <button onClick={() => navigate('/forgot-password')}>Forgot Password</button>
-      </div>
+      /></div>
+      <button type="submit" className="btn solid">Login</button>
+      <button className="btn solid" onClick={() => navigate('/forgot-password')}>Forgot Password</button>
+      {/* <div className="auth-links">
+        <button className="btn solid" onClick={() => navigate('/signup')}>Sign Up</button>
+        <button className="btn solid" onClick={() => navigate('/forgot-password')}>Forgot Password</button>
+      </div> */}
     </form>
   );
 }

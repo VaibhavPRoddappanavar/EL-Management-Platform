@@ -1,5 +1,7 @@
 // SignInSignUp.js
 import React, { useState } from 'react';
+import logImage from '../images/log.svg';
+import registerImage from '../images/register.svg';
 import '../style.css';
 import LoginPage from './LoginPage';
 import SignUpPage from './SignUpPage';
@@ -29,6 +31,7 @@ function SignInSignUp() {
               Sign Up
             </button>
           </div>
+          <img src={logImage} className="image" alt="Log in illustration" />
         </div>
         <div className={`panel right-panel ${isSignUpActive ? "active-panel" : ""}`}>
           <div className="content">
@@ -38,6 +41,7 @@ function SignInSignUp() {
               Sign In
             </button>
           </div>
+          <img src={registerImage} className="image" alt="Sign up illustration" />
         </div>
       </div>
     </div>
