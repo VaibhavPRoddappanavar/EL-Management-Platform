@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./AdminDashboard.css";
 
 function AdminDashboard() {
   const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState("");
+  const [searchType, setSearchType] = useState("Team Leader Name");
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+
   const themes = [
+    "All Teams",
     "AI for Social Good",
     "AI in Education",
     "AR, VR & MR",
@@ -12,95 +21,162 @@ function AdminDashboard() {
     "Data Science and Analytics",
     "Edge Computing",
     "Ethical AI",
-    "Internet of Things",
+    "Internet of things",
     "Programming Mechanics(coding for App development)",
   ];
 
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      navigate("/admin/login");
+    }
+  }, [navigate]);
+
   const fetchTeams = async (theme) => {
+    setLoading(true);
+    setSelectedTheme(theme);
+    setSearchTerm("");
+
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await axios.get(
-        `http://localhost:5000/admin/teams?theme=${encodeURIComponent(theme)}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const url =
+        theme === "All Teams"
+          ? `http://localhost:5000/admin/teams`
+          : `http://localhost:5000/admin/teams?theme=${encodeURIComponent(
+              theme
+            )}`;
+
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setTeams(response.data);
     } catch (error) {
       console.error("Failed to fetch teams:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-blue-50 text-gray-800 flex flex-col items-center py-10 px-4">
-      <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
-        <h2 className="text-3xl font-semibold text-center text-blue-700 mb-6">
-          Admin Dashboard
-        </h2>
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">
-          Filter by Theme
-        </h3>
+  const filteredTeams = teams.filter((team) => {
+    const term = searchTerm.toLowerCase();
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+    if (searchType === "Team Leader Name") {
+      return team.TeamLeaderName.toLowerCase().includes(term);
+    } else if (searchType === "Team Member Name") {
+      return ["1", "2", "3", "4"].some(
+        (member) =>
+          team[`TeamMember${member}Name`] &&
+          team[`TeamMember${member}Name`].toLowerCase().includes(term)
+      );
+    } else if (searchType === "USN") {
+      return (
+        team.TeamLeaderUSN.toLowerCase().includes(term) ||
+        ["1", "2", "3", "4"].some(
+          (member) =>
+            team[`TeamMember${member}USN`] &&
+            team[`TeamMember${member}USN`].toLowerCase().includes(term)
+        )
+      );
+    }
+    return false;
+  });
+
+  return (
+    <div className="admin-dashboard">
+      <div className="dashboard-container">
+        <h2 className="title">Admin Dashboard</h2>
+        <h3 className="subtitle">Filter by Theme</h3>
+
+        <div className="theme-buttons">
           {themes.map((theme, index) => (
             <button
               key={index}
               onClick={() => fetchTeams(theme)}
-              className="px-4 py-2 rounded-md font-medium bg-blue-100 text-blue-700 hover:bg-blue-300 focus:ring focus:ring-blue-500"
+              className={`theme-button ${
+                selectedTheme === theme ? "active" : ""
+              }`}
             >
               {theme}
             </button>
           ))}
         </div>
 
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold text-gray-700 mb-4">Teams</h3>
-          <ul>
-            {teams.length === 0 ? (
-              <p className="text-center text-gray-600">
-                No teams found for the selected theme.
-              </p>
-            ) : (
-              teams.map((team, index) => (
-                <li
-                  key={index}
-                  className="border border-gray-200 rounded-lg p-4 mb-4 shadow-sm bg-blue-100"
-                >
-                  <h4 className="text-lg font-semibold text-blue-800 mb-2">
-                    {team.TeamLeaderName} (Team-Lead) -{" "}
-                    {team[`TeamleaderProgram`]} -{team[`TeamLeaderUSN`]}
-                  </h4>
+        {selectedTheme && (
+          <div>
+            <h3 className="total-teams">
+              {selectedTheme} - Total Teams: {filteredTeams.length}
+            </h3>
+            <br></br>
 
-                  <p className="text-gray-500">
-                    Email: {team[`TeamleaderEmailID`]} | Mobile:{" "}
-                    {team[`TeamleaderMobileNumber`]}
-                  </p>
+            <label className="search-label">Search by:</label>
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="search-select"
+            >
+              <option>Team Leader Name</option>
+              <option>Team Member Name</option>
+              <option>USN</option>
+            </select>
 
-                  {/* no need theme bcoz its already under that filter <p className="text-gray-600 mb-2">Theme: {team.Theme}</p> */}
-                  {/* Add more team details as needed */}
-                  <div className="text-gray-700 mt-4">
-                    <p className="font-medium text-blue-700">Team Members:</p>
-                    {["1", "2", "3", "4"].map((member) =>
-                      team[`TeamMember${member}Name`] ? (
-                        <div key={member} className="ml-4">
-                          <p>
-                            {team[`TeamMember${member}Name`]} -{" "}
-                            {team[`TeamMember${member}Program`]} -
-                            {team[`TeamMember3USN`]}
-                          </p>
-                          <p className="text-gray-500">
-                            Email: {team[`TeamMember${member}EmailID`]} |
-                            Mobile: {team[`TeamMember${member}MobileNumber`]}
-                          </p>
+            <input
+              type="text"
+              placeholder={`Search by ${searchType.toLowerCase()}...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+
+            <div className="teams-list">
+              <h3 className="subtitle">Teams</h3>
+              {loading ? (
+                <p className="text-center">Loading teams...</p>
+              ) : (
+                <ul>
+                  {filteredTeams.length === 0 ? (
+                    <p className="text-center">
+                      No teams found for the selected theme or search criteria.
+                    </p>
+                  ) : (
+                    filteredTeams.map((team, index) => (
+                      <li key={index} className="team-item">
+                        <h4 className="team-title">
+                          {index + 1}. {team.TeamLeaderName} (Team-Lead) -{" "}
+                          {team.TeamleaderProgram} - {team.TeamLeaderUSN}
+                        </h4>
+
+                        <p className="team-info">
+                          Email: {team.TeamleaderEmailID} | Mobile:{" "}
+                          {team.TeamleaderMobileNumber}
+                        </p>
+
+                        <div className="team-members">
+                          <p>Team Members:</p>
+                          {["1", "2", "3", "4"].map((member) =>
+                            team[`TeamMember${member}Name`] ? (
+                              <div key={member} className="team-member-info">
+                                <p>
+                                  {team[`TeamMember${member}Name`]} -{" "}
+                                  {team[`TeamMember${member}Program`]} -{" "}
+                                  {team[`TeamMember${member}USN`]}
+                                </p>
+                                <p>
+                                  Email: {team[`TeamMember${member}EmailID`]} |
+                                  Mobile:{" "}
+                                  {team[`TeamMember${member}MobileNumber`]}
+                                </p>
+                              </div>
+                            ) : null
+                          )}
                         </div>
-                      ) : null
-                    )}
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
