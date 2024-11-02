@@ -1,10 +1,15 @@
-import { default as React, default as React, useEffect, useState } from 'react';
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import ForgotPasswordPage from './components/ForgotPasswordPage';
-import ResetPasswordPage from './components/ResetPasswordPage';
-import SignInSignUp from './components/SignInSignUp'; // Import the new SignInSignUp component
-import CreateTeamPage from './pages/CreateTeamPage';
-import TeamPage from './pages/TeamPage';
+import { useEffect, useState } from "react";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import ForgotPasswordPage from "./components/ForgotPasswordPage";
+import ResetPasswordPage from "./components/ResetPasswordPage";
+import SignInSignUp from "./components/SignInSignUp"; // Import the new SignInSignUp component
+import CreateTeamPage from "./pages/CreateTeamPage";
+import TeamPage from "./pages/TeamPage";
 
 /* Admin imports */
 
@@ -28,8 +33,10 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<SignInSignUp />} /> {/* Use SignInSignUp here */}
-        <Route path="/signup" element={<SignInSignUp />} /> {/* Also use SignInSignUp here */}
+        <Route path="/login" element={<SignInSignUp />} />{" "}
+        {/* Use SignInSignUp here */}
+        <Route path="/signup" element={<SignInSignUp />} />{" "}
+        {/* Also use SignInSignUp here */}
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route
@@ -37,7 +44,6 @@ function App() {
           element={isAuthenticated ? <TeamPage /> : <Navigate to="/login" />}
         />
         <Route path="/create-team" element={<CreateTeamPage />} />
-
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
