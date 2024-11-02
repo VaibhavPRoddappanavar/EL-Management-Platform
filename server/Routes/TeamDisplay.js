@@ -31,6 +31,7 @@ router.get('/team-details', authMiddleware, async (req, res) => {
                     name: teamMember.TeamLeaderName,
                     email: teamMember.TeamleaderEmailID,
                     mobile: teamMember.TeamleaderMobileNumber,
+                    usn: teamMember.TeamLeaderUSN,  // Add Team Leader USN here
                 },
                 teamMembers: [
                     {
@@ -38,24 +39,28 @@ router.get('/team-details', authMiddleware, async (req, res) => {
                         email: teamMember.TeamMember1EmailID,
                         mobile: teamMember.TeamMember1MobileNumber,
                         program: teamMember.TeamMember1Program,
+                        usn: teamMember.TeamMember1USN,  // Add USN for Team Member 1
                     },
                     {
                         name: teamMember.TeamMember2Name,
                         email: teamMember.TeamMember2EmailId,
                         mobile: teamMember.TeamMember2MobileNumber,
                         program: teamMember.TeamMember2Program,
+                        usn: teamMember.TeamMember2USN,  // Add USN for Team Member 2
                     },
                     {
                         name: teamMember.TeamMember3Name,
                         email: teamMember.TeamMember3EmailID,
                         mobile: teamMember.TeamMember3MobileNumber,
                         program: teamMember.TeamMember3Program,
+                        usn: teamMember.TeamMember3USN,  // Add USN for Team Member 3
                     },
                     {
                         name: teamMember.TeamMember4Name,
                         email: teamMember.TeamMember4EmailID,
                         mobile: teamMember.TeamMember4MobileNumber,
                         program: teamMember.TeamMember4Program,
+                        usn: teamMember.TeamMember4USN,  // Add USN for Team Member 4
                     },
                 ].filter(member => member.name)  // Filter out empty members
             }
