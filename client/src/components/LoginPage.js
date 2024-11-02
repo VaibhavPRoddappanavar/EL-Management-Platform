@@ -12,12 +12,10 @@ function LoginPage() {
     try {
       const response = await axios.post('http://localhost:5000/student/login', { email, password });
       localStorage.setItem('token', response.data.token);
-      
-      // Check if the user is part of a team and navigate accordingly
       if (response.data.teamExists) {
-        navigate('/team');  // Go to team page if part of a team
+        navigate('/team');
       } else {
-        navigate('/create-team');  // Redirect to create team page if not in a team
+        navigate('/create-team');
       }
     } catch (error) {
       alert(error.response?.data?.message || 'Login failed. Please try again.');
@@ -25,28 +23,28 @@ function LoginPage() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      <button onClick={() => navigate('/signup')}>Sign Up</button>
-      <button onClick={() => navigate('/forgot-password')}>Forgot Password</button>
-    </div>
+    <form onSubmit={handleLogin} className="auth-form sign-in-form">
+      <h2 className="title">Login</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit" className="auth-button">Login</button>
+      <div className="auth-links">
+        <button onClick={() => navigate('/signup')}>Sign Up</button>
+        <button onClick={() => navigate('/forgot-password')}>Forgot Password</button>
+      </div>
+    </form>
   );
 }
 

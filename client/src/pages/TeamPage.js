@@ -40,6 +40,7 @@ function TeamPage() {
       <p>Name: {team.teamLeader.name}</p>
       <p>Email: {team.teamLeader.email}</p>
       <p>Mobile: {team.teamLeader.mobile}</p>
+      <p>USN: {team.teamLeader.usn}</p> {/* Display Team Leader USN */}
 
       <h4>Team Members:</h4>
       {team.teamMembers.map((member, index) => (
@@ -49,9 +50,10 @@ function TeamPage() {
           <p>Email: {member.email}</p>
           <p>Mobile: {member.mobile}</p>
           <p>Program: {member.program}</p>
+          <p>USN: {member.usn}</p> {/* Display USN for each team member */}
         </div>
       ))}
-       <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
