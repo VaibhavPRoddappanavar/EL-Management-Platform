@@ -7,60 +7,74 @@ const authMiddleware = require('../middleware/authenticateToken');
 // Team Details Route
 router.get('/team-details', authMiddleware, async (req, res) => {
     try {
-        const { email } = req.user;
+        const inputEmail = req.user.email.trim(); // Trim spaces from the input email
 
-        const teamMember = await Team.findOne({
+        // Retrieve all teams where the email might match in any field
+        const teams = await Team.find({
             $or: [
-                { TeamleaderEmailID: email },
-                { TeamMember1EmailID: email },
-                { TeamMember2EmailId: email },
-                { TeamMember3EmailID: email },
-                { TeamMember4EmailID: email },
+                { TeamleaderEmailID: new RegExp(inputEmail) },
+                { TeamMember1EmailID: new RegExp(inputEmail) },
+                { TeamMember2EmailId: new RegExp(inputEmail) },
+                { TeamMember3EmailID: new RegExp(inputEmail) },
+                { TeamMember4EmailID: new RegExp(inputEmail) },
             ]
         });
 
-        if (!teamMember) {
+        // Now filter for an exact match by trimming spaces
+        const team = teams.find(team =>
+            [
+                team.TeamleaderEmailID.trim(),
+                team.TeamMember1EmailID?.trim(),
+                team.TeamMember2EmailId?.trim(),
+                team.TeamMember3EmailID?.trim(),
+                team.TeamMember4EmailID?.trim()
+            ].includes(inputEmail)
+        );
+
+        // If no matching team found
+        if (!team) {
             return res.status(404).json({ message: 'Team not found. You are not part of any team.' });
         }
 
+        // Send the team details in response
         res.json({
             teamDetails: {
-                teamId: teamMember._id,
-                theme: teamMember.Theme,
+                teamId: team._id,
+                theme: team.Theme,
                 teamLeader: {
-                    name: teamMember.TeamLeaderName,
-                    email: teamMember.TeamleaderEmailID,
-                    mobile: teamMember.TeamleaderMobileNumber,
-                    usn: teamMember.TeamLeaderUSN,  // Add Team Leader USN here
+                    name: team.TeamLeaderName,
+                    email: team.TeamleaderEmailID.trim(),
+                    mobile: team.TeamleaderMobileNumber,
+                    usn: team.TeamLeaderUSN,
                 },
                 teamMembers: [
                     {
-                        name: teamMember.TeamMember1Name,
-                        email: teamMember.TeamMember1EmailID,
-                        mobile: teamMember.TeamMember1MobileNumber,
-                        program: teamMember.TeamMember1Program,
-                        usn: teamMember.TeamMember1USN,  // Add USN for Team Member 1
+                        name: team.TeamMember1Name,
+                        email: team.TeamMember1EmailID?.trim(),
+                        mobile: team.TeamMember1MobileNumber,
+                        program: team.TeamMember1Program,
+                        usn: team.TeamMember1USN,
                     },
                     {
-                        name: teamMember.TeamMember2Name,
-                        email: teamMember.TeamMember2EmailId,
-                        mobile: teamMember.TeamMember2MobileNumber,
-                        program: teamMember.TeamMember2Program,
-                        usn: teamMember.TeamMember2USN,  // Add USN for Team Member 2
+                        name: team.TeamMember2Name,
+                        email: team.TeamMember2EmailId?.trim(),
+                        mobile: team.TeamMember2MobileNumber,
+                        program: team.TeamMember2Program,
+                        usn: team.TeamMember2USN,
                     },
                     {
-                        name: teamMember.TeamMember3Name,
-                        email: teamMember.TeamMember3EmailID,
-                        mobile: teamMember.TeamMember3MobileNumber,
-                        program: teamMember.TeamMember3Program,
-                        usn: teamMember.TeamMember3USN,  // Add USN for Team Member 3
+                        name: team.TeamMember3Name,
+                        email: team.TeamMember3EmailID?.trim(),
+                        mobile: team.TeamMember3MobileNumber,
+                        program: team.TeamMember3Program,
+                        usn: team.TeamMember3USN,
                     },
                     {
-                        name: teamMember.TeamMember4Name,
-                        email: teamMember.TeamMember4EmailID,
-                        mobile: teamMember.TeamMember4MobileNumber,
-                        program: teamMember.TeamMember4Program,
-                        usn: teamMember.TeamMember4USN,  // Add USN for Team Member 4
+                        name: team.TeamMember4Name,
+                        email: team.TeamMember4EmailID?.trim(),
+                        mobile: team.TeamMember4MobileNumber,
+                        program: team.TeamMember4Program,
+                        usn: team.TeamMember4USN,
                     },
                 ].filter(member => member.name)  // Filter out empty members
             }
