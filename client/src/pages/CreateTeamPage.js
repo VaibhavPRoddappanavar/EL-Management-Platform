@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function CreateTeamPage() {
   const [formData, setFormData] = useState({
@@ -31,9 +31,23 @@ function CreateTeamPage() {
     TeamMember4MobileNumber: '',
     TeamMember4Program: ''
   });
-  
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect to login if no token is found
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login'); // redirect to login page
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,7 +59,7 @@ function CreateTeamPage() {
     setSuccess('');
 
     try {
-      const response = await axios.post('/api/create-team', formData, {
+      const response = await axios.post('/team/create-team', formData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -148,6 +162,7 @@ function CreateTeamPage() {
         </div>
 
         <button type="submit">Create Team</button>
+        <button onClick={handleLogout}>Logout</button>
         {error && <p className="error">{error}</p>}
         {success && <p className="success">{success}</p>}
       </form>
