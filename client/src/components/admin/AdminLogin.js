@@ -19,7 +19,7 @@ const AdminLogin = () => {
       });
       localStorage.setItem("adminToken", response.data.token);
       // Redirect to Admin Dashboard after successful login
-      window.location.href = "/admin/dashboard";
+      window.location.href = "/admin/home";
     } catch (err) {
       setError("Invalid email or password");
     } finally {

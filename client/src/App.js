@@ -15,6 +15,7 @@ import TeamPage from "./pages/TeamPage";
 
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminLogin from "./components/admin/AdminLogin";
+import AdminHome from "./pages/admin/AdminHome";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -46,6 +47,7 @@ function App() {
         <Route path="/create-team" element={<CreateTeamPage />} />
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/home/*" element={<AdminHome />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
