@@ -1,0 +1,162 @@
+/* Navbar container */
+.navvv .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+  }
+
+  .navvv .navbar .nav-items{
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+  }
+  .navvv .navbar .nav-items .nav-item{
+    position: relative;
+    display: inline-block;
+    font-size: 3vh;
+    font-weight: 600;
+    margin: 0 5px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+
+    .navvv .navbar .nav-items .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: 3px; /* Position the line slightly below the text */
+      left: 50%; /* Start from the center */
+      width: 0;
+      height: 2px;
+      background-color: rgb(80, 79, 79); /* Set the underline color */
+      transition: width 0.3s ease; /* Adjust duration and easing as needed */
+      transform: translateX(-50%); /* Center align */
+  }
+  
+  .navvv .navbar .nav-items .nav-item:hover::after {
+      width: 60%; /* Expands the line symmetrically from the center */
+  }
+  
+  /* Left container (Menu Icon and Search Bar) */
+  .navvv .left-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .navvv .left-container img{
+    width: 8vh;
+    height: 8vh;
+    margin-right: 10px;
+  }
+  
+  /* Right container (Notification & Profile) */
+  .navvv .right-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  /* Menu icon styling */
+  .navvv .menu-icon {
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+  }
+  
+  /* Search bar styling */
+  .navvv .search-bar {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    outline: none;
+    font-size: 14px;
+    min-width: 150px;
+    flex-grow: 1;
+  }
+  
+  /* Notification icon styling */
+  .navvv .notification-icon {
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 20px;
+  }
+  
+  /* Profile container styling */
+  .navvv .profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  /* Profile image styling */
+  .navvv .profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  /* Profile name styling */
+  .navvv .profile-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .navvv .dropdown {
+    position: absolute;
+    top: 60px; /* Adjust to position below profile */
+    right: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 200px;
+    z-index: 1000;
+  }
+  
+  .navvv .dropdown .user-info {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .navvv .dropdown .user-email {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .navvv .dropdown .logout-button {
+    width: 100%;
+    padding: 8px;
+    background-color: #f44336;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .navvv .dropdown .logout-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .navvv .search-bar {
+      width: 100%;
+    }
+    .navvv .profile-name {
+      display: none;
+    }
+    .navvv .notification-icon {
+      margin-right: 10px;
+    }
+  }
+  
