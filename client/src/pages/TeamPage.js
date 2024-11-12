@@ -1,9 +1,13 @@
+// TeamPage.js
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './TeamPageStyle.css';
 
 function TeamPage() {
   const [team, setTeam] = useState(null);
+  const [displayText, setDisplayText] = useState(""); // State for the animated text
+  const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,35 +29,44 @@ function TeamPage() {
     fetchTeam();
   }, [navigate]);
 
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
 
-  if (!team) return <div>Loading...</div>;
-
   return (
-    <div>
-      <h2>Welcome to Your Team</h2>
-      <h3>Project Theme: {team.theme}</h3>
-      <h4><strong>Team Leader:</strong></h4>
-      <p>Name: {team.teamLeader.name}</p>
-      <p>Email: {team.teamLeader.email}</p>
-      <p>Mobile: {team.teamLeader.mobile}</p>
-      <p>USN: {team.teamLeader.usn}</p> {/* Display Team Leader USN */}
+    <div className='TeamPage'>
+      <div className='content'>
+        
+        <h2>{displayText || finalText}</h2> {/* Display the animated text or final text */}
+        <div className='team-cards'>
+          {/* Team Leader Card */}
+          {team && (
+            <div className='leader-card'>
+              <h3>Team Leader</h3>
+              <p><strong>Name:</strong> {team.teamLeader.name}</p>
+              <p><strong>Email:</strong> {team.teamLeader.email}</p>
+              <p><strong>Mobile:</strong> {team.teamLeader.mobile}</p>
+              <p><strong>Program:</strong> {team.teamLeader.program}</p>
+              <p><strong>USN:</strong> {team.teamLeader.usn}</p>
+            </div>
+          )}
 
-      <h4>Team Members:</h4>
-      {team.teamMembers.map((member, index) => (
-        <div key={index} style={{ marginBottom: '1rem' }}>
-          <p><strong>Member {index + 1}:</strong></p>
-          <p>Name: {member.name}</p>
-          <p>Email: {member.email}</p>
-          <p>Mobile: {member.mobile}</p>
-          <p>Program: {member.program}</p>
-          <p>USN: {member.usn}</p> {/* Display USN for each team member */}
+          {/* Team Members */}
+          {team && team.teamMembers.map((member, index) => (
+            <div key={index} className='member-card'>
+              <h3>Team Member {index + 1}</h3>
+              <p><strong>Name:</strong> {member.name}</p>
+              <p><strong>Email:</strong> {member.email}</p>
+              <p><strong>Mobile:</strong> {member.mobile}</p>
+              <p><strong>Program:</strong> {member.program}</p>
+              <p><strong>USN:</strong> {member.usn}</p>
+            </div>
+          ))}
         </div>
-      ))}
-      <button onClick={handleLogout}>Logout</button>
+      
+      </div>
     </div>
   );
 }

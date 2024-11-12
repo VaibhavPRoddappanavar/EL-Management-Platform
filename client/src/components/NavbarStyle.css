@@ -1,0 +1,234 @@
+/* NavbarStyles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body{
+    overflow: hidden;
+}
+
+.navvv .dash{
+    background-color: #ffffff;
+    
+    display: flex;
+    flex-direction: column; /* Allow stacking of child elements */
+    height: 100vh;
+    flex-direction: row-reverse;
+    overflow: hidden;
+}
+.navvv .dash .navbar {
+    position: sticky; /* Keep sidebar sticky */
+    top: 0;
+    left: 0;
+    width: 83px;
+    height: 100vh;
+    background-color: #457ee0;
+    color: rgb(6, 6, 6);
+    padding: 1rem;
+    overflow: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: width 0.5s;
+
+}
+.navvv .dash .navbar:hover{
+    width:240px;
+    
+}
+
+
+/* Center navigation items */
+.navvv .dash .navbar .sidebar {
+    height: 88%;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+.navvv .dash .navbar .sidebar .nav-item {
+    
+    font-size: 16px;
+    
+    margin: 6px 0;
+    color: rgb(255, 255, 255);
+    font-weight: 600;
+    padding: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+}
+
+.navvv .dash .navbar .sidebar .nav-item :hover {
+    color: rgb(0, 0, 0);
+}
+.navvv .dash .navbar .sidebar .nav-item :hover,.active {
+    color: rgb(0, 0, 0);
+}
+.navvv .dash .navbar .sidebar .nav-items ::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: rgb(0, 0, 0);
+    transition: width 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.sidebar a{
+    color: #ffffff;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 2.2rem;
+}
+.sidebar a span{
+    overflow: hidden;
+}
+.sidebar a i{
+    font-size: 1.2rem;
+}
+.logout{
+    margin-left: 20px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: #fff;
+    
+    
+}
+.navvv .dash .navbar .sidebar .nav-items:hover::after {
+    width: 60%;
+}
+.navvv .dash .navbar .sidebar .nav-item.home.active {
+    color: black; /* Make the 'Home' text black when active */
+  }
+/*main box starts here*/
+.navvv .dash .mainbox {
+    background-color: #e3e1e1;
+    padding-top: 0;
+    flex: 1;
+    flex-direction: column;
+}
+
+ /* Right container (Profile and Dropdown) */
+.navvv .dash .mainbox .top-container {
+    background-color: #ffffff;
+    display: flex;
+    flex: 1;  /* Take up the remaining space in the flex container */
+     /* Align items to the right */
+    align-items: center;
+    padding: 0 10px;  /* Add padding if necessary */
+    position: relative;
+    margin: 7px;
+    border-radius: 15px;
+    justify-content: space-between;
+    gap: 10px
+}
+.college{
+    
+    align-items: center;
+    cursor: pointer;
+    display:flex;
+    margin: 5px 5px;
+}
+
+.navvv .dash .mainbox .top-container .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.navvv .dash .mainbox .top-container .name{
+    font-size: 14px;
+    font-weight: 500;
+    color: rgb(43, 43, 43);
+    
+}
+.navvv .dash .mainbox .top-container .profile {
+    margin: 10px 10px;
+    align-items: center;
+    cursor: pointer;
+    display:flex;
+    
+    
+}
+
+.navvv .dash .mainbox .top-container .profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.navvv .dash .mainbox .top-container .profile-name {
+    
+    font-size: 14px;
+   
+    font-weight: 500;
+    color: rgb(43, 43, 43);
+}
+/* Dropdown */
+.navvv .dash .mainbox .top-container .dropdown {
+    position: absolute;
+    top: 70px;
+    left: 82%;
+    background-color: #fff;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 250px;
+    z-index: 2;
+}
+
+.navvv .dash .dropdown .user-info {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.navvv .dash .dropdown .user-email {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/*middle section starts here*/
+.navvv .dash .swapset{
+    
+    height: 100%;
+    margin-bottom: 100px;
+    
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navvv .dash{
+        flex-direction: row-reverse;
+    }
+    
+    .navvv .dash .mainbox .top-container
+    {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    
+    
+    
+
+    }
+    .middle-section{
+        margin-top: 10px;
+    }
+    
+    .dropdown{
+        width: auto;
+        left: 0;
+        right: 0;
+    }
+    .navvv .profile-name {
+        
+        display: flex;  /* Hide profile name on small screens */
+    }
+
+    .navvv .dash .navbar .nav-items {
+        gap: 0.5rem;
+    }
