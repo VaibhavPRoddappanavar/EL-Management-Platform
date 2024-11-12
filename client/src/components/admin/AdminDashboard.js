@@ -7,7 +7,7 @@ function AdminDashboard() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("");
-  const [searchType, setSearchType] = useState("Team Leader Name");
+  const [searchType, setSearchType] = useState("Name");
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
@@ -60,15 +60,18 @@ function AdminDashboard() {
   const filteredTeams = teams.filter((team) => {
     const term = searchTerm.toLowerCase();
 
-    if (searchType === "Team Leader Name") {
-      return team.TeamLeaderName.toLowerCase().includes(term);
-    } else if (searchType === "Team Member Name") {
-      return ["1", "2", "3", "4"].some(
-        (member) =>
-          team[`TeamMember${member}Name`] &&
-          team[`TeamMember${member}Name`].toLowerCase().includes(term)
+    if (searchType === "Name") {
+      // Search both Team Leader and Team Members by name
+      return (
+        team.TeamLeaderName.toLowerCase().includes(term) ||
+        ["1", "2", "3", "4"].some(
+          (member) =>
+            team[`TeamMember${member}Name`] &&
+            team[`TeamMember${member}Name`].toLowerCase().includes(term)
+        )
       );
     } else if (searchType === "USN") {
+      // Search both Team Leader and Team Members by USN
       return (
         team.TeamLeaderUSN.toLowerCase().includes(term) ||
         ["1", "2", "3", "4"].some(
@@ -114,8 +117,7 @@ function AdminDashboard() {
               onChange={(e) => setSearchType(e.target.value)}
               className="search-select"
             >
-              <option>Team Leader Name</option>
-              <option>Team Member Name</option>
+              <option>Name</option>
               <option>USN</option>
             </select>
 
