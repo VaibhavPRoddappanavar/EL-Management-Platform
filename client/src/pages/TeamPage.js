@@ -1,4 +1,5 @@
 // TeamPage.js
+// TeamPage.js
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +7,8 @@ import './TeamPageStyle.css';
 
 function TeamPage() {
   const [team, setTeam] = useState(null);
+  const [displayText, setDisplayText] = useState(""); // State for the animated text
+  const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const [displayText, setDisplayText] = useState(""); // State for the animated text
   const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const navigate = useNavigate();
@@ -53,6 +56,17 @@ function TeamPage() {
             </div>
           )}
 
+          {/* Team Members */}
+          {team && team.teamMembers.map((member, index) => (
+            <div key={index} className='member-card'>
+              <h3>Team Member {index + 1}</h3>
+              <p><strong>Name:</strong> {member.name}</p>
+              <p><strong>Email:</strong> {member.email}</p>
+              <p><strong>Mobile:</strong> {member.mobile}</p>
+              <p><strong>Program:</strong> {member.program}</p>
+              <p><strong>USN:</strong> {member.usn}</p>
+            </div>
+          ))}
           {/* Team Members */}
           {team && team.teamMembers.map((member, index) => (
             <div key={index} className='member-card'>

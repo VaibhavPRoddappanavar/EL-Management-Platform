@@ -10,6 +10,7 @@ const teamCreate=require("./Routes/CreateTeam");
 const teamDRoutes = require("./Routes/TeamDisplay");
 const loadEmailList = require("./Models/EmailLoader");
 const cors = require('cors');
+const TeamRoutes=require("./Routes/TeamRoutes");
 
 // Enable CORS for requests from http://localhost:3000
 app.use(cors({ origin: 'http://localhost:3000' }));
@@ -40,6 +41,9 @@ app.use("/team",teamCreate);
 
 // Middleware for admin routes
 app.use("/admin", adminRoutes); // Connect admin routes
+
+// TeamRoutes
+app.use("/",TeamRoutes);
 
 connectDB();
 
