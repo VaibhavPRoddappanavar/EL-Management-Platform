@@ -10,6 +10,7 @@ import ResetPasswordPage from "./components/ResetPasswordPage";
 import SignInSignUp from "./components/SignInSignUp"; // Import the new SignInSignUp component
 import CreateTeamPage from "./pages/CreateTeamPage";
 import TeamPage from "./pages/TeamPage";
+import Navbar from "./components/Navbar";
 
 /* Admin imports */
 
@@ -42,7 +43,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route
           path="/team"
-          element={isAuthenticated ? <TeamPage /> : <Navigate to="/login" />}
+          element={isAuthenticated ? <Navbar /> : <Navigate to="/login" />}
         />
         <Route path="/create-team" element={<CreateTeamPage />} />
         {/* Admin Routes */}

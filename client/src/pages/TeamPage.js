@@ -1,12 +1,14 @@
 // TeamPage.js
+// TeamPage.js
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import './TeamPageStyle.css';
 
 function TeamPage() {
   const [team, setTeam] = useState(null);
+  const [displayText, setDisplayText] = useState(""); // State for the animated text
+  const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const [displayText, setDisplayText] = useState(""); // State for the animated text
   const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const navigate = useNavigate();
@@ -30,30 +32,6 @@ function TeamPage() {
     fetchTeam();
   }, [navigate]);
 
-  // Letter-by-letter effect for the welcome message
-  useEffect(() => {
-    const title = "Welcome to Your Team";
-    let index = 0;
-    let typingTimeout; // Declare a variable to hold the timeout ID
-
-    const typeLetter = () => {
-      if (index <= title.length) {
-        // Update displayText with the current progress
-        setDisplayText(title.slice(0, index) + (index > 0 ? "_" : "")); // Add an underscore after the current letter
-        index++;
-        typingTimeout = setTimeout(typeLetter, 100); // Schedule the next letter
-      } else {
-        // After typing is complete, set the final text without underscores
-        setFinalText(title);
-        setDisplayText(""); // Clear the display text
-      }
-    };
-
-    typeLetter(); // Start the typing effect
-
-    // Cleanup function to clear timeout when the component unmounts
-    return () => clearTimeout(typingTimeout);
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -63,7 +41,7 @@ function TeamPage() {
   return (
     <div className='TeamPage'>
       <div className='content'>
-        <Navbar />
+        
         <h2>{displayText || finalText}</h2> {/* Display the animated text or final text */}
         <div className='team-cards'>
           {/* Team Leader Card */}
@@ -89,8 +67,19 @@ function TeamPage() {
               <p><strong>USN:</strong> {member.usn}</p>
             </div>
           ))}
+          {/* Team Members */}
+          {team && team.teamMembers.map((member, index) => (
+            <div key={index} className='member-card'>
+              <h3>Team Member {index + 1}</h3>
+              <p><strong>Name:</strong> {member.name}</p>
+              <p><strong>Email:</strong> {member.email}</p>
+              <p><strong>Mobile:</strong> {member.mobile}</p>
+              <p><strong>Program:</strong> {member.program}</p>
+              <p><strong>USN:</strong> {member.usn}</p>
+            </div>
+          ))}
         </div>
-        <button className='logout-button' onClick={handleLogout}>Logout</button>
+      
       </div>
     </div>
   );
