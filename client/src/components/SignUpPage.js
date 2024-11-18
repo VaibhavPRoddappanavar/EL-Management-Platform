@@ -1,12 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 //import "./style.css";
 
 
 function SignUpPage() {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,7 +14,7 @@ function SignUpPage() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/student/register', { name, email, password, confirmPassword });
+      await axios.post('http://localhost:5000/student/register', { email, password, confirmPassword });
       alert('Registration successful! Please log in.');
       navigate('/login');
     } catch (error) {
@@ -26,15 +25,6 @@ function SignUpPage() {
   return (
     <form onSubmit={handleSignUp} className="sign-up-form">
       <h2 className="title">Sign Up</h2>
-      <div className="input-field">
-      <FaUser className="icon" /> {/* User Icon */}
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      /></div>
        <div className="input-field">
        <FaEnvelope className="icon" /> {/* Envelope Icon */}
       <input

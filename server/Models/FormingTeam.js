@@ -1,6 +1,14 @@
 // Models/FormingTeam.js
 const mongoose = require('mongoose');
 
+// Define cluster programs (same as before)
+const clusterPrograms = {
+    CS: ['AI', 'CD', 'CS', 'CY', 'IS'],
+    EC: ['EC', 'EE', 'EI', 'ET'],
+    ME: ['AE', 'IM', 'ME'],
+    CV: ['CV', 'BT', 'CH']
+};
+
 const formingTeamSchema = new mongoose.Schema({
     TeamLeaderUSN: {
         type: String,
@@ -38,24 +46,19 @@ const formingTeamSchema = new mongoose.Schema({
             default: Date.now
         }
     }],
-    pendingInvites: [{
-        email: String,
-        program: String,
-        position: String,
-        status: {
-            type: String,
-            enum: ['PENDING', 'ACCEPTED', 'REJECTED'],
-            default: 'PENDING'
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now
+    pendingInvites: [
+        {
+            email: String,
+            program: String,
+            position: String,
+            status: { type: String, default: 'PENDING' }, // PENDING, ACCEPTED, REJECTED
+            type: { type: String, enum: ['SENT', 'APPLIED'], required: true } // SENT or APPLIED
         }
-    }],
+    ],
     cluster: {
         type: String,
         required: true,
-        enum: ['CS', 'EC', 'ME', 'CV']
+        enum: Object.keys(clusterPrograms)
     },
     createdAt: {
         type: Date,
@@ -63,17 +66,11 @@ const formingTeamSchema = new mongoose.Schema({
     },
     expiresAt: {
         type: Date,
-        default: () => new Date(+new Date() + 7*24*60*60*1000) // 7 days from creation
+        default: () => new Date(+new Date() + 70*24*60*60*1000) // 7 days from creation
     }
 });
 
-// Define cluster programs (same as before)
-const clusterPrograms = {
-    CS: ['AI', 'CD', 'CS', 'CY', 'IS'],
-    EC: ['EC', 'EE', 'EI', 'ET'],
-    ME: ['AS', 'IM', 'ME'],
-    CV: ['CV', 'BT', 'CH']
-};
+
 
 // Validation method
 formingTeamSchema.methods.validateTeamComposition = async function() {
@@ -187,4 +184,6 @@ formingTeamSchema.methods.convertToFinalTeam = function() {
     return finalTeam;
 };
 
-module.exports = mongoose.model('FormingTeam', formingTeamSchema);
+const FormingTeam = mongoose.model('FormingTeam', formingTeamSchema);
+
+module.exports = { FormingTeam, clusterPrograms };
