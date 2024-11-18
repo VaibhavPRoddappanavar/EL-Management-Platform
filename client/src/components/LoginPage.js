@@ -14,10 +14,11 @@ function LoginPage() {
     try {
       const response = await axios.post('http://localhost:5000/student/login', { email, password });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userEmail', email);
       if (response.data.teamExists) {
         navigate('/team');
       } else {
-        navigate('/create-team');
+        navigate('/TeamManagement');
       }
     } catch (error) {
       alert(error.response?.data?.message || 'Login failed. Please try again.');
