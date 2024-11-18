@@ -1,162 +1,234 @@
-/* Navbar container */
-.navvv .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 20px;
-    border-bottom: 1px solid #e0e0e0;
-    flex-wrap: wrap;
-  }
+/* NavbarStyles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-  .navvv .navbar .nav-items{
-    margin: 0 auto;
+body{
+    overflow: hidden;
+}
+
+.navvv .dash{
+    background-color: #ffffff;
+    
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 20px;
-  }
-  .navvv .navbar .nav-items .nav-item{
+    flex-direction: column; /* Allow stacking of child elements */
+    height: 100vh;
+    flex-direction: row-reverse;
+    overflow: hidden;
+}
+.navvv .dash .navbar {
+    position: sticky; /* Keep sidebar sticky */
+    top: 0;
+    left: 0;
+    width: 83px;
+    height: 100vh;
+    background-color: #457ee0;
+    color: rgb(6, 6, 6);
+    padding: 1rem;
+    overflow: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: width 0.5s;
+
+}
+.navvv .dash .navbar:hover{
+    width:240px;
+    
+}
+
+
+/* Center navigation items */
+.navvv .dash .navbar .sidebar {
+    height: 88%;
     position: relative;
-    display: inline-block;
-    font-size: 3vh;
+    list-style: none;
+    padding: 0;
+}
+
+.navvv .dash .navbar .sidebar .nav-item {
+    
+    font-size: 16px;
+    
+    margin: 6px 0;
+    color: rgb(255, 255, 255);
     font-weight: 600;
-    margin: 0 5px;
-    padding: 10px 20px;
+    padding: 1rem;
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    }
+    transition: all 0.5s ease-in-out;
+}
 
-    .navvv .navbar .nav-items .nav-item::after {
-      content: '';
-      position: absolute;
-      bottom: 3px; /* Position the line slightly below the text */
-      left: 50%; /* Start from the center */
-      width: 0;
-      height: 2px;
-      background-color: rgb(80, 79, 79); /* Set the underline color */
-      transition: width 0.3s ease; /* Adjust duration and easing as needed */
-      transform: translateX(-50%); /* Center align */
-  }
-  
-  .navvv .navbar .nav-items .nav-item:hover::after {
-      width: 60%; /* Expands the line symmetrically from the center */
-  }
-  
-  /* Left container (Menu Icon and Search Bar) */
-  .navvv .left-container {
+.navvv .dash .navbar .sidebar .nav-item :hover {
+    color: rgb(0, 0, 0);
+}
+.navvv .dash .navbar .sidebar .nav-item :hover,.active {
+    color: rgb(0, 0, 0);
+}
+.navvv .dash .navbar .sidebar .nav-items ::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: rgb(0, 0, 0);
+    transition: width 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.sidebar a{
+    color: #ffffff;
+    font-size: 16px;
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    gap: 2.2rem;
+}
+.sidebar a span{
+    overflow: hidden;
+}
+.sidebar a i{
+    font-size: 1.2rem;
+}
+.logout{
+    margin-left: 20px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: #fff;
+    
+    
+}
+.navvv .dash .navbar .sidebar .nav-items:hover::after {
+    width: 60%;
+}
+.navvv .dash .navbar .sidebar .nav-item.home.active {
+    color: black; /* Make the 'Home' text black when active */
   }
+/*main box starts here*/
+.navvv .dash .mainbox {
+    background-color: #e3e1e1;
+    padding-top: 0;
+    flex: 1;
+    flex-direction: column;
+}
 
-  .navvv .left-container img{
-    width: 8vh;
-    height: 8vh;
-    margin-right: 10px;
-  }
-  
-  /* Right container (Notification & Profile) */
-  .navvv .right-container {
+ /* Right container (Profile and Dropdown) */
+.navvv .dash .mainbox .top-container {
+    background-color: #ffffff;
     display: flex;
+    flex: 1;  /* Take up the remaining space in the flex container */
+     /* Align items to the right */
     align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  /* Menu icon styling */
-  .navvv .menu-icon {
-    font-size: 20px;
+    padding: 0 10px;  /* Add padding if necessary */
+    position: relative;
+    margin: 7px;
+    border-radius: 15px;
+    justify-content: space-between;
+    gap: 10px
+}
+.college{
+    
+    align-items: center;
     cursor: pointer;
-    margin-right: 15px;
-  }
-  
-  /* Search bar styling */
-  .navvv .search-bar {
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    outline: none;
+    display:flex;
+    margin: 5px 5px;
+}
+
+.navvv .dash .mainbox .top-container .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.navvv .dash .mainbox .top-container .name{
     font-size: 14px;
-    min-width: 150px;
-    flex-grow: 1;
-  }
-  
-  /* Notification icon styling */
-  .navvv .notification-icon {
-    font-size: 20px;
-    cursor: pointer;
-    margin-right: 20px;
-  }
-  
-  /* Profile container styling */
-  .navvv .profile {
-    display: flex;
+    font-weight: 500;
+    color: rgb(43, 43, 43);
+    
+}
+.navvv .dash .mainbox .top-container .profile {
+    margin: 10px 10px;
     align-items: center;
     cursor: pointer;
-  }
-  
-  /* Profile image styling */
-  .navvv .profile-image {
+    display:flex;
+    
+    
+}
+
+.navvv .dash .mainbox .top-container .profile-image {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     margin-right: 8px;
-  }
-  
-  /* Profile name styling */
-  .navvv .profile-name {
+}
+
+.navvv .dash .mainbox .top-container .profile-name {
+    
     font-size: 14px;
+   
     font-weight: 500;
-  }
-  
-  .navvv .dropdown {
+    color: rgb(43, 43, 43);
+}
+/* Dropdown */
+.navvv .dash .mainbox .top-container .dropdown {
     position: absolute;
-    top: 60px; /* Adjust to position below profile */
-    right: 20px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
+    top: 70px;
+    left: 82%;
+    background-color: #fff;
+    border: 2px solid rgb(255, 255, 255);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
-    width: 200px;
-    z-index: 1000;
-  }
-  
-  .navvv .dropdown .user-info {
+    width: 250px;
+    z-index: 2;
+}
+
+.navvv .dash .dropdown .user-info {
     font-weight: bold;
     margin-bottom: 5px;
-  }
-  
-  .navvv .dropdown .user-email {
+}
+
+.navvv .dash .dropdown .user-email {
     font-size: 14px;
     color: #666;
     margin-bottom: 10px;
-  }
-  
-  .navvv .dropdown .logout-button {
-    width: 100%;
-    padding: 8px;
-    background-color: #f44336;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .navvv .dropdown .logout-button:hover {
-    background-color: #d32f2f;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 600px) {
-    .navvv .search-bar {
-      width: 100%;
+}
+
+/*middle section starts here*/
+.navvv .dash .swapset{
+    
+    height: 100%;
+    margin-bottom: 100px;
+    
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navvv .dash{
+        flex-direction: row-reverse;
+    }
+    
+    .navvv .dash .mainbox .top-container
+    {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    
+    
+    
+
+    }
+    .middle-section{
+        margin-top: 10px;
+    }
+    
+    .dropdown{
+        width: auto;
+        left: 0;
+        right: 0;
     }
     .navvv .profile-name {
-      display: none;
+        
+        display: flex;  /* Hide profile name on small screens */
     }
-    .navvv .notification-icon {
-      margin-right: 10px;
+
+    .navvv .dash .navbar .nav-items {
+        gap: 0.5rem;
     }
-  }
-  
