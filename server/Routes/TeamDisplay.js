@@ -14,7 +14,7 @@ router.get('/team-details', authMiddleware, async (req, res) => {
             $or: [
                 { TeamleaderEmailID: new RegExp(inputEmail) },
                 { TeamMember1EmailID: new RegExp(inputEmail) },
-                { TeamMember2EmailId: new RegExp(inputEmail) },
+                { TeamMember2EmailID: new RegExp(inputEmail) },
                 { TeamMember3EmailID: new RegExp(inputEmail) },
                 { TeamMember4EmailID: new RegExp(inputEmail) },
             ]
@@ -25,7 +25,7 @@ router.get('/team-details', authMiddleware, async (req, res) => {
             [
                 team.TeamleaderEmailID.trim(),
                 team.TeamMember1EmailID?.trim(),
-                team.TeamMember2EmailId?.trim(),
+                team.TeamMember2EmailID?.trim(),
                 team.TeamMember3EmailID?.trim(),
                 team.TeamMember4EmailID?.trim()
             ].includes(inputEmail)
@@ -57,7 +57,7 @@ router.get('/team-details', authMiddleware, async (req, res) => {
                     },
                     {
                         name: team.TeamMember2Name,
-                        email: team.TeamMember2EmailId?.trim(),
+                        email: team.TeamMember2EmailID?.trim(),
                         mobile: team.TeamMember2MobileNumber,
                         program: team.TeamMember2Program,
                         usn: team.TeamMember2USN,
