@@ -19,6 +19,7 @@ import Navbar from "./components/Navbar";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminHome from "./pages/admin/AdminHome";
+import UnassignedStudents from "./components/admin/UnassignedStudents"; // Import the new UnassignedStudents component
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -36,11 +37,10 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* General Routes */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<SignInSignUp />} />{" "}
-        {/* Use SignInSignUp here */}
-        <Route path="/signup" element={<SignInSignUp />} />{" "}
-        {/* Also use SignInSignUp here */}
+        <Route path="/login" element={<SignInSignUp />} />
+        <Route path="/signup" element={<SignInSignUp />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route
@@ -49,11 +49,16 @@ function App() {
         />
         <Route path="/create-team" element={<CreateTeamPage />} />
         <Route path="/TeamManagement" element={<TeamManagement />} />
-        <Route path="/team-management" element={<TeamManagementView/>} />
+        <Route path="/team-management" element={<TeamManagementView />} />
+
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/home/*" element={<AdminHome />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route
+          path="/admin/unassigned"
+          element={<UnassignedStudents></UnassignedStudents>}
+        />
       </Routes>
     </Router>
   );
