@@ -45,6 +45,7 @@ router.get('/team-details', authMiddleware, async (req, res) => {
                     name: team.TeamLeaderName,
                     email: team.TeamleaderEmailID.trim(),
                     mobile: team.TeamleaderMobileNumber,
+                    program: team.TeamleaderProgram,
                     usn: team.TeamLeaderUSN,
                 },
                 teamMembers: [
