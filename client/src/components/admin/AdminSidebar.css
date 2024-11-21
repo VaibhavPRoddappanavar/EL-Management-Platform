@@ -1,28 +1,110 @@
-.sidebar {
-    width: 200px;
-    height: 100vh;
-    background-color: #34495e;
-    color: white;
-    padding-top: 20px;
-    position: fixed;
-  }
+/* Sidebar container */
+.sidebar-container {
+  display: flex; /* Flex to position sidebar and navbar side by side */
+  height: 100vh; /* Full height */
+  transition: all 0.5s ease; /* Smooth transition for entire sidebar and navbar */
+  overflow: hidden; /* Ensure the sidebar doesn't break out */
+  position: sticky;
+  top: 0; 
+}
+
+/* Sidebar wrapper */
+.sidebar-container .sidebar-wrapper {
+ /* Sticks the sidebar to the top of the screen */
+  width: 80px;
+  height: 100vh; /* Ensure sidebar takes the full height of the container */
+  background-color: #457ee0;
+  padding: 1rem;
+  color: #ffffff;
+  transition: width 0.5s ease; /* Smooth expansion of sidebar */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1001;
+}
+
+/* Sidebar hover effect */
+.sidebar-container .sidebar-wrapper:hover {
+  width: 260px; /* Expand the sidebar */
+}
+
+/* Sidebar items container */
+.sidebar-container .sidebar-wrapper .sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Individual nav-item */
+.sidebar-container .sidebar-wrapper .sidebar-menu .menu-item {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: 600;
+  margin: 6px 0;
+  padding: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  width: 100%;
+}
+
+/* Hover effect for menu-item */
+.sidebar-container .sidebar-wrapper .sidebar-menu .menu-item:hover  {
   
-  .sidebar ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
+  /* background-color: black; */
   
-  .sidebar ul li {
-    padding: 10px;
-    text-align: center;
-  }
   
-  .sidebar ul li a {
-    color: white;
-    text-decoration: none;
-  }
+}
+
+.sidebar-container .sidebar-wrapper .sidebar-menu .menu-item:hover span {
   
-  .sidebar ul li a:hover {
-    background-color: #1abc9c;
-  }
+  color: black;
+}
+
+.sidebar-container .sidebar-wrapper .sidebar-menu .menu-item:hover svg {
   
+  color: black;
+}
+
+/* FontAwesome icon size */
+.sidebar-container .sidebar-wrapper .sidebar-menu .menu-item svg {
+  font-size: 20px;
+}
+
+/* Expand text only on hover */
+.sidebar-container .sidebar-wrapper:hover .sidebar-menu .menu-item span {
+  display: inline;
+  margin-left: 1rem;
+}
+
+/* Hide text by default */
+.sidebar-container .sidebar-wrapper .sidebar-menu .menu-item span {
+  display: none;
+}
+
+/* Links inside sidebar */
+.sidebar-container .sidebar-wrapper .sidebar-menu a {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: 16px;
+  gap: 1rem;
+  text-decoration: none;
+  width: 100%;
+}
+
+.sidebar-container .sidebar-wrapper .sidebar-menu .logout {
+  
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+  margin-bottom: 2em;
+}
+
