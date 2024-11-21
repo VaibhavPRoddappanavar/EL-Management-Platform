@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Student = require('../Models/Student');  // Student schema for registration and login
+const Department = require('../Models/StudentInfo'); // Import the Department model
 const Team = require('../Models/Team');  // Team schema to check if a student is part of a team
 
 const loadEmailList = require('../Models/EmailLoader');
@@ -13,23 +14,34 @@ const emailList = loadEmailList();
 
 // Registration Route
 router.post('/register', async (req, res) => {
-    const { name, email, password, confirmPassword } = req.body;
-
-    // Check if the email exists in the email list
-    if (!emailList.includes(email)) {
-        return res.status(400).json({ message: 'Email does not exist in the student list.' });
-    }
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-        return res.status(400).json({ message: 'Passwords do not match.' });
-    }
-
-    // Extract branch from the email (substring between the first dot and two digits before '@')
-    const match = email.match(/\.(\w+)\d{2}@/);
-    const branch = match ? match[1] : null; // Get the matched branch or set to null if no match
+    const { email, password, confirmPassword } = req.body;
 
     try {
+        // Search for the email across all departments
+        const department = await Department.findOne({
+            'students.email': email
+        });
+
+        // If the email is not found in any department, return invalid email message
+        if (!department) {
+            return res.status(400).json({ message: 'Invalid email id.' });
+        }
+
+        // Find the student details by email within the department
+        const studentDetails = department.students.find(student => student.email === email);
+        if (!studentDetails) {
+            return res.status(400).json({ message: 'Invalid email id.' });
+        }
+
+        // Extract name and branch information
+        const name = studentDetails.Name;
+        const branch = department.departmentCode; // Branch is the departmentCode
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: 'Passwords do not match.' });
+        }
+
         // Check if the student already exists
         const existingStudent = await Student.findOne({ email });
         if (existingStudent) {
@@ -39,7 +51,7 @@ router.post('/register', async (req, res) => {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new student
+        // Create a new student with only name, branch, email, and password
         const student = new Student({
             name,
             branch,
@@ -84,7 +96,7 @@ router.post('/login', async (req, res) => {
             $or: [
                 { TeamleaderEmailID: email.trim() },
                 { TeamMember1EmailID: email.trim() },
-                { TeamMember2EmailId: email.trim() },
+                { TeamMember2EmailID: email.trim() },
                 { TeamMember3EmailID: email.trim() },
                 { TeamMember4EmailID: email.trim() },
             ]

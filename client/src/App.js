@@ -8,8 +8,11 @@ import {
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import SignInSignUp from "./components/SignInSignUp"; // Import the new SignInSignUp component
+import TeamManagementView from "./components/Team/TeamManagementView";
 import CreateTeamPage from "./pages/CreateTeamPage";
+import TeamManagement from "./pages/TeamManagement";
 import TeamPage from "./pages/TeamPage";
+import Navbar from "./components/Navbar";
 
 /* Admin imports */
 
@@ -42,9 +45,11 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route
           path="/team"
-          element={isAuthenticated ? <TeamPage /> : <Navigate to="/login" />}
+          element={isAuthenticated ? <Navbar /> : <Navigate to="/login" />}
         />
         <Route path="/create-team" element={<CreateTeamPage />} />
+        <Route path="/TeamManagement" element={<TeamManagement />} />
+        <Route path="/team-management" element={<TeamManagementView />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
