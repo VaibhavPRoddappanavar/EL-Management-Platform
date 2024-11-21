@@ -2,11 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 body{
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .navvv .dash{
-    background-color: #ffffff;
+    background-color: #fff;
     
     display: flex;
     flex-direction: column; /* Allow stacking of child elements */

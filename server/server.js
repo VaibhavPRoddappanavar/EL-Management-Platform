@@ -6,18 +6,20 @@ const app = express();
 const connectDB = require("./db");
 const PasswordChange = require("./Routes/PasswordChange");
 const loginRegisRoutes = require("./Routes/loginRegisRoutes");
-const teamCreate=require("./Routes/CreateTeam");
+const teamCreate = require("./Routes/CreateTeam");
 const teamDRoutes = require("./Routes/TeamDisplay");
 const loadEmailList = require("./Models/EmailLoader");
-const cors = require('cors');
-const TeamRoutes=require("./Routes/TeamRoutes");
-const Student=require("./Models/Student");
+const cors = require("cors");
+const TeamRoutes = require("./Routes/TeamRoutes");
+const Student = require("./Models/Student");
 
 // Enable CORS for requests from http://localhost:3000
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: "http://localhost:3000" }));
 
 // Import admin routes
 const adminRoutes = require("./Routes/Admin/adminlogin"); // Update the path as necessary
+const notInTeamRoutes = require("./Routes/Admin/notinteam"); // Update the path if necessary
+const Teammanagement = require("./Routes/Admin/Teammanagement");
 
 // Example usage
 const emailList = loadEmailList();
@@ -38,43 +40,145 @@ app.use("/student", loginRegisRoutes);
 app.use("/teams", teamDRoutes);
 
 //Middleware for team creation
-app.use("/team",teamCreate);
+app.use("/team", teamCreate);
 
 // Middleware for admin routes
 app.use("/admin", adminRoutes); // Connect admin routes
 
+//had to do this idk y
+app.use("/admin", notInTeamRoutes);
+
+app.use("/admin/teams", Teammanagement);
+
 // TeamRoutes
-app.use("/",TeamRoutes);
+app.use("/", TeamRoutes);
+app.use("/", TeamRoutes);
 
 //to fetch student details...
-app.get('/student-details', async (req, res) => {
+app.get("/student-details", async (req, res) => {
   const email = req.query.email;
   if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
+    return res.status(400).json({ message: "Email is required" });
   }
   try {
     const student = await Student.findOne({ email }); // Replace with your DB logic
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: "Student not found" });
     }
     res.json(student);
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-
 connectDB();
 
+// Test route to add/post a team
+// app.post('/api/teams', async (req, res) => {
+//     const {
+//         TeamLeaderUSN,
+//         TeamLeaderName,
+//         TeamleaderEmailID,
+//         TeamleaderMobileNumber,
+//         TeamleaderProgram,
+//         Theme,
+//         Teammember1USN,
+//         TeamMember1Name,
+//         TeamMember1EmailID,
+//         TeamMember1MobileNumber,
+//         TeamMember1Program,
+//         Teammember2USN,
+//         TeamMember2Name,
+//         TeamMember2EmailId,
+//         TeamMember2MobileNumber,
+//         TeamMember2Program,
+//         Teammember3USN,
+//         TeamMember3Name,
+//         TeamMember3EmailID,
+//         TeamMember3MobileNumber,
+//         TeamMember3Program,
+//         Teammember4USN,
+//         TeamMember4Name,
+//         TeamMember4EmailID,
+//         TeamMember4MobileNumber,
+//         TeamMember4Program
+//     } = req.body;
+
+//     // Creating a new team document using the provided fields
+//     const newTeam = new Team({
+//         TeamLeaderUSN,
+//         TeamLeaderName,
+//         TeamleaderEmailID,
+//         TeamleaderMobileNumber,
+//         TeamleaderProgram,
+//         Theme,
+//         Teammember1USN,
+//         TeamMember1Name,
+//         TeamMember1EmailID,
+//         TeamMember1MobileNumber,
+//         TeamMember1Program,
+//         Teammember2USN,
+//         TeamMember2Name,
+//         TeamMember2EmailId,
+//         TeamMember2MobileNumber,
+//         TeamMember2Program,
+//         Teammember3USN,
+//         TeamMember3Name,
+//         TeamMember3EmailID,
+//         TeamMember3MobileNumber,
+//         TeamMember3Program,
+//         Teammember4USN,
+//         TeamMember4Name,
+//         TeamMember4EmailID,
+//         TeamMember4MobileNumber,
+//         TeamMember4Program
+//     });
+
+//     try {
+//         // Save the new team to MongoDB
+//         const savedTeam = await newTeam.save();
+//         res.status(201).json(savedTeam);
+//     } catch (error) {
+//         res.status(400).json({ message: error.message });
+//     }
+// });
+
+// // Route to insert excel to json converted data
+// app.post('/add-sample-data', async (req, res) => {
+//     try {
+//         const sampleData = req.body; // The sample data will come from the request body
+//         const result = await Team.insertMany(sampleData.Sheet1); // Insert multiple documents
+//         res.status(201).json({ message: 'Data inserted successfully', data: result });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error inserting data', error: error.message });
+//     }
+// });
+
+// test route
+
+app.delete("/test-delete/:teamId", async (req, res) => {
+  const { teamId } = req.params;
+  console.log(`Received request to delete team with ID: ${teamId}`);
+  res.status(200).send(`Deleted team with ID: ${teamId}`);
+});
 
 // Test route to get all teams
-app.get('/api/teams', async (req, res) => {
-    try {
-        const teams = await Team.find(); // Fetch all teams from the database
-        res.json(teams);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+app.get("/api/teams", async (req, res) => {
+  try {
+    const teams = await Team.find(); // Fetch all teams from the database
+    res.json(teams);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/admin/teams", async (req, res) => {
+  try {
+    const teams = await Team.find();
+    res.status(200).json(teams);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 app.get("/", (req, res) => {
