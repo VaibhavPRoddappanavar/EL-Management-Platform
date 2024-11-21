@@ -6,17 +6,19 @@ const app = express();
 const connectDB = require("./db");
 const PasswordChange = require("./Routes/PasswordChange");
 const loginRegisRoutes = require("./Routes/loginRegisRoutes");
-const teamCreate=require("./Routes/CreateTeam");
+const teamCreate = require("./Routes/CreateTeam");
 const teamDRoutes = require("./Routes/TeamDisplay");
 const loadEmailList = require("./Models/EmailLoader");
-const cors = require('cors');
-const TeamRoutes=require("./Routes/TeamRoutes");
+const cors = require("cors");
+const TeamRoutes = require("./Routes/TeamRoutes");
 
 // Enable CORS for requests from http://localhost:3000
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: "http://localhost:3000" }));
 
 // Import admin routes
 const adminRoutes = require("./Routes/Admin/adminlogin"); // Update the path as necessary
+const notInTeamRoutes = require("./Routes/Admin/notinteam"); // Update the path if necessary
+const Teammanagement = require("./Routes/Admin/Teammanagement");
 
 // Example usage
 const emailList = loadEmailList();
@@ -37,13 +39,18 @@ app.use("/student", loginRegisRoutes);
 app.use("/teams", teamDRoutes);
 
 //Middleware for team creation
-app.use("/team",teamCreate);
+app.use("/team", teamCreate);
 
 // Middleware for admin routes
 app.use("/admin", adminRoutes); // Connect admin routes
 
+//had to do this idk y
+app.use("/admin", notInTeamRoutes);
+
+app.use("/admin/teams", Teammanagement);
+
 // TeamRoutes
-app.use("/",TeamRoutes);
+app.use("/", TeamRoutes);
 
 connectDB();
 
@@ -117,7 +124,6 @@ connectDB();
 //     }
 // });
 
-
 // // Route to insert excel to json converted data
 // app.post('/add-sample-data', async (req, res) => {
 //     try {
@@ -129,15 +135,31 @@ connectDB();
 //     }
 // });
 
+// test route
+
+app.delete("/test-delete/:teamId", async (req, res) => {
+  const { teamId } = req.params;
+  console.log(`Received request to delete team with ID: ${teamId}`);
+  res.status(200).send(`Deleted team with ID: ${teamId}`);
+});
 
 // Test route to get all teams
-app.get('/api/teams', async (req, res) => {
-    try {
-        const teams = await Team.find(); // Fetch all teams from the database
-        res.json(teams);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+app.get("/api/teams", async (req, res) => {
+  try {
+    const teams = await Team.find(); // Fetch all teams from the database
+    res.json(teams);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/admin/teams", async (req, res) => {
+  try {
+    const teams = await Team.find();
+    res.status(200).json(teams);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 app.get("/", (req, res) => {

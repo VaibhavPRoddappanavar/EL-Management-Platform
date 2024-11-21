@@ -1,21 +1,26 @@
-.dashboard {
+.adminhome .dashboard {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    
   }
   
-  .content {
+  .adminhome .content {
     display: flex;
   }
   
-  .main-content {
-    margin-left: 200px;
+  .adminhome .main-content {
+    /* margin-left: 200px; */
     padding: 20px;
     width: 100%;
   }
   
-  .component {
+ .adminhome .component {
     font-size: 20px;
     margin-top: 20px;
   }
   
+
+.navv {
+padding-left: 10em;
+}

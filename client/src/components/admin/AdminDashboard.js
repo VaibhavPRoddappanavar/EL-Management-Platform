@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
+import UnassignedStudents from "./UnassignedStudents";
 
 function AdminDashboard() {
   const [teams, setTeams] = useState([]);
@@ -57,11 +58,31 @@ function AdminDashboard() {
     }
   };
 
+  const handleDeleteTeam = async (teamId) => {
+    if (!window.confirm("Are you sure you want to delete this team?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      await axios.delete(`http://localhost:5000/admin/teams/${teamId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Update the UI by removing the deleted team from the state
+      setTeams((prevTeams) => prevTeams.filter((team) => team._id !== teamId));
+
+      alert("Team deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete team:", error);
+      alert("Failed to delete team. Please try again.");
+    }
+  };
+
   const filteredTeams = teams.filter((team) => {
     const term = searchTerm.toLowerCase();
 
     if (searchType === "Name") {
-      // Search both Team Leader and Team Members by name
       return (
         team.TeamLeaderName.toLowerCase().includes(term) ||
         ["1", "2", "3", "4"].some(
@@ -71,7 +92,6 @@ function AdminDashboard() {
         )
       );
     } else if (searchType === "USN") {
-      // Search both Team Leader and Team Members by USN
       return (
         team.TeamLeaderUSN.toLowerCase().includes(term) ||
         ["1", "2", "3", "4"].some(
@@ -86,6 +106,7 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
+      <UnassignedStudents></UnassignedStudents>
       <div className="dashboard-container">
         <h2 className="title">Admin Dashboard</h2>
         <h3 className="subtitle">Filter by Theme</h3>
@@ -151,6 +172,16 @@ function AdminDashboard() {
                           Email: {team.TeamleaderEmailID} | Mobile:{" "}
                           {team.TeamleaderMobileNumber}
                         </p>
+                        <p>Theme: {team.Theme}</p>
+
+                        {/* Team Delete Button */}
+                        <div
+                          className="delete-team-icon"
+                          onClick={() => handleDeleteTeam(team._id)}
+                          title="Delete Team"
+                        >
+                          🗑️
+                        </div>
 
                         <div className="team-members">
                           <p>Team Members:</p>
