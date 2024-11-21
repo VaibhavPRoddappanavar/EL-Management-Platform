@@ -1,7 +1,105 @@
-.navbar {
-    background-color: #2c3e50;
-    color: white;
-    padding: 10px;
-    text-align: center;
+/* Navbar container */
+.navvv {
+    position: fixed;
+    top: 0;
+    left: 84px; /* Sidebar width */
+    width: calc(100% - 84px); /* Ensure navbar takes up the remaining space */
+    z-index: 1000;
+    transition: transform 0.5s ease; /* Smooth transition for navbar movement */
+    transition: padding-left 0.4s ease-out; 
+  }
+  
+  .navvv .dash {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding-left: 5px;
+    
+    
+  }
+  /* Shifted navbar state */
+.navvv.shifted-navbar {
+   /* transform: translateX(156px);  Adjust the value to match the sidebar expansion */
+    
+    padding-left: 11%;
+   
+  }
+ 
+  
+  /* Top Container */
+  .navvv .dash .mainbox .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .navvv .dash .top-container .college {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navvv .dash .top-container .college .logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 8px;
+    border-radius: 50%;
+  }
+  
+  .navvv .dash .top-container .college .name {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgb(43, 43, 43);
+  }
+  
+  .navvv .dash .top-container .profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 10px;
+   
+    
+  }
+  
+  .navvv .dash .top-container .profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  .navvv .dash .top-container .profile-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgb(43, 43, 43);
+  }
+  
+  /* Dropdown */
+  .navvv .dash .top-container .dropdown {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #fff;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 250px;
+    z-index: 1000;
+  }
+  
+  .navvv .dash .dropdown .user-info {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .navvv .dash .dropdown .user-email {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
   }
   
