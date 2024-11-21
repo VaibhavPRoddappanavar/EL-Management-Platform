@@ -11,6 +11,7 @@ const teamDRoutes = require("./Routes/TeamDisplay");
 const loadEmailList = require("./Models/EmailLoader");
 const cors = require("cors");
 const TeamRoutes = require("./Routes/TeamRoutes");
+const Student = require("./Models/Student");
 
 // Enable CORS for requests from http://localhost:3000
 app.use(cors({ origin: "http://localhost:3000" }));
@@ -51,6 +52,24 @@ app.use("/admin/teams", Teammanagement);
 
 // TeamRoutes
 app.use("/", TeamRoutes);
+app.use("/", TeamRoutes);
+
+//to fetch student details...
+app.get("/student-details", async (req, res) => {
+  const email = req.query.email;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+  try {
+    const student = await Student.findOne({ email }); // Replace with your DB logic
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json(student);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 connectDB();
 

@@ -1,3 +1,8 @@
+.adminhome{
+  z-index: 10000;
+}
+
+
 .adminhome .dashboard {
     display: flex;
     flex-direction: column;

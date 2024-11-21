@@ -12,12 +12,12 @@ const Navbar = ({ isSidebarHovered }) => {
 
   return (
     <div
-      className={`navvv ${
+      className={`admin-navv ${
         isSidebarHovered ? "shifted-navbar" : "release-navbar"
       }`}
     >
-      <div className="dash">
-        <div className="mainbox">
+      <div className="admin-dash">
+        <div className="admin-mainbox">
           <div className="top-container">
             <div className="college">
               <img src={collegelogo} alt="College Logo" className="logo" />
