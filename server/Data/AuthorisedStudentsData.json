@@ -749,19 +749,19 @@
      {
       "DEPARTMENT": "AEROSPACE ENGINEERING",
       "USN": "RVCE22BAS001",
-      "Name": "TARUN PRABASH P (readmit)",
+      "Name": "TARUN PRABASH P",
       "email": "tarunp.ae23@rvce.edu.in"
      },
      {
       "DEPARTMENT": "AEROSPACE ENGINEERING",
       "USN": "RVCE22BAS002",
-      "Name": "KAVITA SHARMA (readmit)",
+      "Name": "KAVITA SHARMA",
       "email": "kavitasharma.ae23@rvce.edu.in"
      },
      {
       "DEPARTMENT": "AEROSPACE ENGINEERING",
       "USN": "RVCE22BAS003",
-      "Name": "SONIKA JAIN C S (readmit)",
+      "Name": "SONIKA JAIN C S",
       "email": "sonikas.ae23@rvce.edu.in"
      },
      {
@@ -3555,7 +3555,7 @@
       "email": "anushruthv.cs23@rvce.edu.in"
      }
     ],
-    "CS-CD":[
+    "CD":[
      {
       "DEPARTMENT": "COMPUTER SCIENCE AND ENGINEERING - DATA SCIENCE",
       "USN": "RVCE23BCD001",
@@ -3923,7 +3923,7 @@
       "email": "nitinbhaskar.cd23@rvce.edu.in"
      }
     ],
-    "CS-CY":[
+    "CY":[
      {
       "DEPARTMENT": "COMPUTER SCIENCE AND ENGINEERING - CYBERSECURITY",
       "USN": "RVCE23BCY001",
