@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import "./UnassignedStudents.css";
 
 const UnassignedStudents = () => {
@@ -10,7 +10,7 @@ const UnassignedStudents = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [popupOpen, setPopupOpen] = useState(false);
 
-  const clusterDepartments = ["AI", "CS", "CS-CD", "CS-CY", "IS"];
+  const clusterDepartments = ["AI", "CS", "CD", "CY", "IS"];
 
   useEffect(() => {
     const fetchUnassignedStudents = async () => {

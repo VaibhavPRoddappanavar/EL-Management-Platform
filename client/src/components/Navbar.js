@@ -1,22 +1,51 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { faBullhorn, faHome, faMessage, faSignOut, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import profilePic from '../images/profile.png';
 import collegelogo from '../images/rvlogo.png';
-import './NavbarStyle.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullhorn, faHome, faMessage, faSignOut, faUserFriends } from '@fortawesome/free-solid-svg-icons';
-import Home from './Home';
-import Team from '../pages/TeamPage'; // Import the Team component
 import Announcement from '../pages/Announcement'; // Import Announcement component
 import Messages from '../pages/Messages'; // Import Messages component
-import { useNavigate } from 'react-router-dom';
+import Team from '../pages/TeamPage'; // Import the Team component
+import Home from './Home';
+import './NavbarStyle.css';
 
 const Navbar = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('home'); // Track active page
   const [loading, setLoading] = useState(false); // Loading state to clear the swapset
+  const [studentDetails, setStudentDetails] = useState({
+    name: '',
+    email: '',
+    branch: ''
+  });
   const navigate = useNavigate();
   const navbarRef = useRef(null);
+
+  useEffect(() => {
+    const fetchStudentDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const email = localStorage.getItem('userEmail');
+        const response = await axios.get(`http://localhost:5000/student-details?email=${email}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setStudentDetails({
+          name: response.data.name,
+          email: response.data.email,
+          branch: response.data.branch
+        });
+      } catch (error) {
+        console.error('Error fetching student details:', error);
+      }
+    };
+  
+    fetchStudentDetails();
+  }, []);
 
   useEffect(() => {
     const handleNavbarClick = () => {
@@ -79,10 +108,9 @@ const Navbar = () => {
 
               {dropdownVisible && (
                 <div className="dropdown">
-                  <p className="user-info">Name: Vaibhav</p>
-                  <p className="user-email">Email: johndoe@example.com</p>
-                  <p className="user-email">USN: 1RV23CS278</p>
-                  <p className="user-email">BRANCH: CS</p>
+                <p className="user-info">Name: {studentDetails.name}</p>
+                <p className="user-email">Email: {studentDetails.email}</p>
+                <p className="user-email">Branch: {studentDetails.branch}</p>
                 </div>
               )}
             </div>

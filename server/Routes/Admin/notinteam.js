@@ -5,7 +5,7 @@ const Team = require("../../Models/Team");
 
 router.get("/unassigned", async (req, res) => {
   try {
-    const includedDepartments = ["AI", "CS", "CS-CD", "CS-CY", "IS"];
+    const includedDepartments = ["AI", "CS", "CD", "CY", "IS"];
 
     // Fetch students from departments
     const departments = await Department.find({

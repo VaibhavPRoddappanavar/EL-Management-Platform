@@ -89,28 +89,7 @@ function TeamPage() {
                 </p>
               </div>
             ))}
-          {/* Team Members */}
-          {team &&
-            team.teamMembers.map((member, index) => (
-              <div key={index} className="member-card">
-                <h3>Team Member {index + 1}</h3>
-                <p>
-                  <strong>Name:</strong> {member.name}
-                </p>
-                <p>
-                  <strong>Email:</strong> {member.email}
-                </p>
-                <p>
-                  <strong>Mobile:</strong> {member.mobile}
-                </p>
-                <p>
-                  <strong>Program:</strong> {member.program}
-                </p>
-                <p>
-                  <strong>USN:</strong> {member.usn}
-                </p>
-              </div>
-            ))}
+          
         </div>
       </div>
     </div>
