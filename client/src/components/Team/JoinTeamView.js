@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Input } from '../ui/Input';
 
 const clusterPrograms = {
-  CS: ['AI', 'CS-CD', 'CS', 'CS-CY', 'IS'],
+  CS: ['AI', 'CD', 'CS', 'CY', 'IS'],
   EC: ['EC', 'EE', 'EI', 'ET'],
   ME: ['AE', 'IM', 'ME'],
   CV: ['CV', 'BT', 'CH']
@@ -24,6 +24,10 @@ const JoinTeamView = () => {
     name: '',
     program: ''
   });
+  const [errors, setErrors] = useState({
+    usn: '',
+    phoneNumber: ''
+  });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [appliedTeams, setAppliedTeams] = useState([]);
@@ -33,6 +37,22 @@ const JoinTeamView = () => {
     fetchStudentDetails();
   }, []);
 
+  const validateFields = () => {
+    const newErrors = {};
+    
+    if (!applicationData.usn) {
+      newErrors.usn = 'USN is required';
+    }
+    
+    if (!applicationData.phoneNumber) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (!/^\d{10}$/.test(applicationData.phoneNumber)) {
+      newErrors.phoneNumber = 'Please enter a valid 10-digit phone number';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const fetchStudentDetails = async () => {
     try {
@@ -126,6 +146,14 @@ const JoinTeamView = () => {
   };
 
   const handleInviteResponse = async (teamId, status, teamData) => {
+    if (!validateFields()) {
+      setMessage({
+        type: 'error',
+        text: 'Please fill in all required fields correctly'
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -136,7 +164,7 @@ const JoinTeamView = () => {
           name: applicationData.name,
           usn: applicationData.usn,
           program: applicationData.program,
-          phoneNumber: applicationData.phoneNumber
+          mobileNumber: applicationData.phoneNumber // Changed to match backend
         },
         {
           headers: {
@@ -184,7 +212,7 @@ const JoinTeamView = () => {
           </Alert>
         )}
 
-        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
+<Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
           <CardHeader>
             <CardTitle className="text-blue-800">Your Information</CardTitle>
           </CardHeader>
@@ -209,28 +237,48 @@ const JoinTeamView = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">USN</label>
+                <label className="text-sm font-medium text-gray-700">
+                  USN <span className="text-red-500">*</span>
+                </label>
                 <Input
                   placeholder="Enter your USN"
                   value={applicationData.usn}
-                  onChange={(e) => setApplicationData(prev => ({
-                    ...prev,
-                    usn: e.target.value
-                  }))}
-                  className="border-blue-200 focus:border-blue-400"
+                  onChange={(e) => {
+                    setApplicationData(prev => ({
+                      ...prev,
+                      usn: e.target.value
+                    }));
+                    setErrors(prev => ({ ...prev, usn: '' }));
+                  }}
+                  className={`border-blue-200 focus:border-blue-400 ${
+                    errors.usn ? 'border-red-500' : ''
+                  }`}
                 />
+                {errors.usn && (
+                  <p className="text-red-500 text-sm mt-1">{errors.usn}</p>
+                )}
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
                 <Input
                   placeholder="Enter your phone number"
                   value={applicationData.phoneNumber}
-                  onChange={(e) => setApplicationData(prev => ({
-                    ...prev,
-                    phoneNumber: e.target.value
-                  }))}
-                  className="border-blue-200 focus:border-blue-400"
+                  onChange={(e) => {
+                    setApplicationData(prev => ({
+                      ...prev,
+                      phoneNumber: e.target.value
+                    }));
+                    setErrors(prev => ({ ...prev, phoneNumber: '' }));
+                  }}
+                  className={`border-blue-200 focus:border-blue-400 ${
+                    errors.phoneNumber ? 'border-red-500' : ''
+                  }`}
                 />
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+                )}
               </div>
             </div>
           </CardContent>
