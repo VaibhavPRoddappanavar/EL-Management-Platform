@@ -516,7 +516,7 @@ router.post('/:teamId/finalize', authMiddleware, async (req, res) => {
         await finalTeam.save();
 
         // Remove forming team
-        await formingTeam.delete();
+        await FormingTeam.deleteOne({ _id: formingTeam._id });
 
         res.json({
             message: 'Team finalized successfully',
@@ -580,24 +580,30 @@ router.get('/cluster/:cluster/:program', authMiddleware, async (req, res) => {
 // Apply for a team
 router.post('/:teamId/apply', authMiddleware, async (req, res) => {
     try {
-        const { teamId } = req.params; // Extract the team ID from the route parameter
-        const userId = req.user._id; // User ID from authMiddleware
-        const { position } = req.body; // Position the student is applying for
+        const { teamId } = req.params;
+        const userId = req.user._id;
+        const { usn, mobileNumber, name, program } = req.body; // Position removed from request body
 
-        // Find the team
+        // Validate required fields
+        if (!usn || !mobileNumber) {
+            return res.status(400).json({ 
+                message: 'Missing required fields. USN and mobile number are required.' 
+            });
+        }
+
         const team = await FormingTeam.findById(teamId);
         if (!team) {
             return res.status(404).json({ message: 'Team not found' });
         }
 
         // Check if the user is already a member or the team leader
-        const isAlreadyMember = team.members.some(member => member.userId === userId);
+        const isAlreadyMember = team.members.some(member => member.email === req.user.email);
         const isTeamLeader = team.TeamleaderEmailID === req.user.email;
         if (isAlreadyMember || isTeamLeader) {
             return res.status(400).json({ message: 'You are already part of this team' });
         }
 
-        // Check if there is already a pending invite or application for this user
+        // Check if there is already a pending invite or application
         const hasPendingInvite = team.pendingInvites.some(
             invite => invite.email === req.user.email && invite.status === 'PENDING'
         );
@@ -606,18 +612,15 @@ router.post('/:teamId/apply', authMiddleware, async (req, res) => {
             return res.status(400).json({ message: 'You have already applied or been invited to this team' });
         }
 
-        // Check if the position is already filled
-        if (team.members.some(m => m.position === position)) {
-            return res.status(400).json({ message: 'The position you are applying for is already filled' });
-        }
-
-        // Add the application to the pendingInvites array with type set to 'APPLIED'
+        // Add the application to pendingInvites with all required information except position
         team.pendingInvites.push({
-            email: req.user.email, // From authMiddleware
-            program: req.user.program, // From authMiddleware
-            position,
-            status: 'PENDING', // Default status
-            type: 'APPLIED' // Type for application
+            name,
+            usn,
+            email: req.user.email,
+            mobileNumber,
+            program,
+            status: 'PENDING',
+            type: 'APPLIED'
         });
 
         await team.save();
@@ -628,12 +631,11 @@ router.post('/:teamId/apply', authMiddleware, async (req, res) => {
     }
 });
 
-//For Team Lead To accept or reject the requestToJoinTeam
+// For Team Lead To accept or reject the requestToJoinTeam
 router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
-    const { status, position } = req.body; // Include position in the request body
+    const { status, position } = req.body; // Position is required when accepting
 
     try {
-        // Find the team by ID
         const team = await FormingTeam.findById(req.params.teamId);
         if (!team) {
             return res.status(404).json({ message: 'Team not found' });
@@ -656,9 +658,11 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
         invite.status = status;
 
         if (status === 'ACCEPTED') {
-            // Ensure a valid position is provided
+            // Ensure position is provided when accepting
             if (!position) {
-                return res.status(400).json({ message: 'Position must be specified when accepting an invite' });
+                return res.status(400).json({ 
+                    message: 'Position must be specified when accepting an application' 
+                });
             }
 
             // Check if the position is already filled
@@ -672,11 +676,14 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
                 return res.status(400).json({ message: 'Team already has the maximum number of members' });
             }
 
-            // Add the accepted member to the team
+            // Add the accepted member to the team with all required information
             team.members.push({
-                name: invite.name || 'Unknown', // Handle undefined name
+                name: invite.name,
+                usn: invite.usn,
                 email: invite.email,
-                position, // Assigned position
+                mobileNumber: invite.mobileNumber,
+                program: invite.program,
+                position, // Position assigned by team leader
                 joinedAt: new Date()
             });
 
@@ -688,7 +695,11 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
 
         await team.save();
 
-        res.json({ message: `Invite ${status.toLowerCase()} successfully` });
+        res.json({ 
+            message: status === 'ACCEPTED' 
+                ? `Application accepted and position assigned as ${position}` 
+                : `Application ${status.toLowerCase()}`
+        });
     } catch (error) {
         console.error('Error handling invite:', error.message, error.stack);
         res.status(500).json({ message: 'An error occurred while handling the invite' });
