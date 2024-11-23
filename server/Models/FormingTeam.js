@@ -48,7 +48,10 @@ const formingTeamSchema = new mongoose.Schema({
     }],
     pendingInvites: [
         {
+            name: String,
+            usn: String,
             email: String,
+            mobileNumber: String,
             program: String,
             position: String,
             status: { type: String, default: 'PENDING' }, // PENDING, ACCEPTED, REJECTED
