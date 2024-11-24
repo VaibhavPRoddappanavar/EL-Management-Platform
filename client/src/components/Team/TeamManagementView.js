@@ -201,7 +201,7 @@ const TeamManagementView = ({ team }) => {
         }
       );
       alert(response.data.message);
-      // Navigate("");
+      // Navigate(""); have to do it properly
     } catch (error) {
       if (error.response?.data?.message) {
         alert(error.response.data.message);
