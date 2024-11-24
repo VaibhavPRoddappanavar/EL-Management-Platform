@@ -74,7 +74,9 @@ function TeamPage() {
   return (
     <div>
       {/* Conditionally render Chat component only if team data is available */}
+
       {team && <Chat teamId={team.teamId} userName={studentDetails.name} />}
+      {/* design this page further */}
     </div>
   );
 }
