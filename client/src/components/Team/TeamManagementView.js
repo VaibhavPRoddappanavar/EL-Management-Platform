@@ -9,6 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 const POSITION_OPTIONS = [
   "TeamMember1",
@@ -200,6 +201,7 @@ const TeamManagementView = ({ team }) => {
         }
       );
       alert(response.data.message);
+      // Navigate(""); have to do it properly
     } catch (error) {
       if (error.response?.data?.message) {
         alert(error.response.data.message);
