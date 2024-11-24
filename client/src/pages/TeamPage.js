@@ -1,5 +1,3 @@
-// TeamPage.js
-// TeamPage.js
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +10,7 @@ function TeamPage() {
   const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const navigate = useNavigate();
 
+  // Fetch team details
   useEffect(() => {
     const fetchTeam = async () => {
       try {
@@ -89,7 +88,6 @@ function TeamPage() {
                 </p>
               </div>
             ))}
-          
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { ArrowLeft, BookOpen, Medal, Smartphone, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { ArrowLeft, BookOpen, Medal, Smartphone, Users } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 const themes = {
   CS: [
@@ -13,7 +13,7 @@ const themes = {
     "Programming Mechanics (coding for App development)",
     "AI for Social Good",
     "AI in Education",
-    "Data Science and Analytics"
+    "Data Science and Analytics",
   ],
   EC: [
     "Semi-Conductors Engineering",
@@ -27,7 +27,7 @@ const themes = {
     "Electric Vehicle technology",
     "Embedded systems and IoT",
     "AI in Electronics",
-    "5G and Wireless Communications"
+    "5G and Wireless Communications",
   ],
   ME: [
     "Smart Manufacturing",
@@ -38,7 +38,7 @@ const themes = {
     "Autonomous Vehicles",
     "Thermodynamic Simulations",
     "AI for Mechanical Systems",
-    "Supply Chain Management"
+    "Supply Chain Management",
   ],
   CV: [
     "Environmental Engineering and Sustainability",
@@ -49,24 +49,24 @@ const themes = {
     "Eco-friendly materials and waste reduction strategies",
     "Technologies to mitigate climate change impacts",
     "Bioinformatics",
-    "Biomaterials and Computational Biology"
-  ]
+    "Biomaterials and Computational Biology",
+  ],
 };
 
 const clusterPrograms = {
-  CS: ['AI', 'CD', 'CS', 'CY', 'IS'],
-  EC: ['EC', 'EE', 'EI', 'ET'],
-  ME: ['AE', 'IM', 'ME'],
-  CV: ['CV', 'BT', 'CH']
+  CS: ["AI", "CD", "CS", "CY", "IS"],
+  EC: ["EC", "EE", "EI", "ET"],
+  ME: ["AE", "IM", "ME"],
+  CV: ["CV", "BT", "CH"],
 };
 
 const AlertComponent = ({ variant, title, description }) => {
   return (
     <div
       className={`${
-        variant === 'error'
-          ? 'bg-red-100 border border-red-400 text-red-700'
-          : 'bg-green-100 border border-green-400 text-green-700'
+        variant === "error"
+          ? "bg-red-100 border border-red-400 text-red-700"
+          : "bg-green-100 border border-green-400 text-green-700"
       } px-4 py-3 rounded-lg shadow-sm flex items-start space-x-2`}
       role="alert"
     >
@@ -111,32 +111,34 @@ const SelectField = ({ label, icon: Icon, options, ...props }) => (
 
 export const CreateTeamView = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    usn: '',
-    phoneNumber: '',
-    theme: ''
+    email: "",
+    usn: "",
+    phoneNumber: "",
+    theme: "",
   });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [availableThemes, setAvailableThemes] = useState([]);
-  const [studentBranch, setStudentBranch] = useState('');
+  const [studentBranch, setStudentBranch] = useState("");
 
   useEffect(() => {
     const fetchStudentDetails = async () => {
-      const email = localStorage.getItem('userEmail');
+      const email = localStorage.getItem("userEmail");
       if (!email) {
-        setError('No email found in local storage. Please log in.');
+        setError("No email found in local storage. Please log in.");
         return;
       }
       try {
-        const response = await fetch(`http://localhost:5000/student-details?email=${email}`);
+        const response = await fetch(
+          `http://localhost:5000/student-details?email=${email}`
+        );
         const data = await response.json();
-        
+
         if (response.ok) {
           setFormData((prevData) => ({
             ...prevData,
             email: data.email,
-            usn: data.usn || ''
+            usn: data.usn || "",
           }));
           setStudentBranch(data.branch);
 
@@ -153,64 +155,65 @@ export const CreateTeamView = () => {
           if (userCluster && themes[userCluster]) {
             setAvailableThemes(themes[userCluster]);
           } else {
-            setError('Unable to determine appropriate themes for your branch.');
+            setError("Unable to determine appropriate themes for your branch.");
           }
         } else {
-          setError(data.message || 'Failed to fetch student details.');
+          setError(data.message || "Failed to fetch student details.");
         }
       } catch (err) {
-        setError('An error occurred while fetching student details.');
+        setError("An error occurred while fetching student details.");
       }
     };
-  
+
     fetchStudentDetails();
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const fieldMapping = {
-      'TeamLeaderUSN': 'usn',
-      'TeamleaderMobileNumber': 'phoneNumber',
-      'Theme': 'theme'
+      TeamLeaderUSN: "usn",
+      TeamleaderMobileNumber: "phoneNumber",
+      Theme: "theme",
     };
 
     const backendFieldName = fieldMapping[name] || name;
-    setFormData(prev => ({ ...prev, [backendFieldName]: value }));
+    setFormData((prev) => ({ ...prev, [backendFieldName]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        setError('Please log in to create a team.');
+        setError("Please log in to create a team.");
         return;
       }
 
-      const response = await fetch('http://localhost:5000/create', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
         setSuccess(true);
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          usn: '',
-          phoneNumber: '',
-          theme: ''
+          usn: "",
+          phoneNumber: "",
+          theme: "",
         }));
       } else {
         setError(data.message);
       }
+      window.location.reload();
     } catch (err) {
-      setError('An error occurred. Please try again later.');
+      setError("An error occurred. Please try again later.");
     }
   };
 
@@ -226,12 +229,16 @@ export const CreateTeamView = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </button>
-          
+
           <div className="flex items-center space-x-3 mb-2">
             <Users className="w-8 h-8 text-blue-700" />
-            <h2 className="text-2xl font-semibold text-gray-800">Create a New Team</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Create a New Team
+            </h2>
           </div>
-          <p className="text-gray-600 ml-11">Fill in the details to start your journey</p>
+          <p className="text-gray-600 ml-11">
+            Fill in the details to start your journey
+          </p>
         </div>
 
         <div className="bg-white/90 backdrop-blur-sm border border-t-0 border-blue-200 rounded-b-xl shadow-md p-6 space-y-6">
