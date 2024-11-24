@@ -109,12 +109,22 @@ const JoinTeamView = () => {
   };
 
   const handleApplyToTeam = async (teamId) => {
+    // First validate the required fields
+    if (!validateFields()) {
+      setMessage({
+        type: "error",
+        text: "Please fill in all required fields correctly",
+      });
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       await axios.post(
         `http://localhost:5000/${teamId}/apply`,
         {
           usn: applicationData.usn,
+          mobileNumber: applicationData.phoneNumber, // Added missing mobileNumber
           name: applicationData.name,
           program: applicationData.program,
         },
