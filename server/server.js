@@ -2,7 +2,8 @@ require("dotenv").config();
 
 const Team = require("./Models/Team");
 const express = require("express");
-const app = express();
+const http = require("http"); // Required for Socket.IO
+const { Server } = require("socket.io"); // Import Socket.IO
 const connectDB = require("./db");
 const PasswordChange = require("./Routes/PasswordChange");
 const loginRegisRoutes = require("./Routes/loginRegisRoutes");
@@ -12,18 +13,27 @@ const loadEmailList = require("./Models/EmailLoader");
 const cors = require("cors");
 const TeamRoutes = require("./Routes/TeamRoutes");
 const Student = require("./Models/Student");
+const Chat = require("./Models/Chatmodel");
+
+const app = express();
+const server = http.createServer(app); // Create HTTP server for Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // Adjust to your frontend URL
+    methods: ["GET", "POST"],
+  },
+});
 
 // Enable CORS for requests from http://localhost:3000
 app.use(cors({ origin: "http://localhost:3000" }));
 
 // Import admin routes
-const adminRoutes = require("./Routes/Admin/adminlogin"); // Update the path as necessary
-const notInTeamRoutes = require("./Routes/Admin/notinteam"); // Update the path if necessary
+const adminRoutes = require("./Routes/Admin/adminlogin");
+const notInTeamRoutes = require("./Routes/Admin/notinteam");
 const Teammanagement = require("./Routes/Admin/Teammanagement");
 
 // Example usage
 const emailList = loadEmailList();
-// console.log(emailList); // Display the loaded email list
 
 const PORT = 5000;
 
@@ -39,29 +49,25 @@ app.use("/student", loginRegisRoutes);
 // Middleware for team-related routes
 app.use("/teams", teamDRoutes);
 
-//Middleware for team creation
+// Middleware for team creation
 app.use("/team", teamCreate);
 
 // Middleware for admin routes
-app.use("/admin", adminRoutes); // Connect admin routes
-
-//had to do this idk y
+app.use("/admin", adminRoutes);
 app.use("/admin", notInTeamRoutes);
-
 app.use("/admin/teams", Teammanagement);
 
 // TeamRoutes
 app.use("/", TeamRoutes);
-app.use("/", TeamRoutes);
 
-//to fetch student details...
+// Fetch student details
 app.get("/student-details", async (req, res) => {
   const email = req.query.email;
   if (!email) {
     return res.status(400).json({ message: "Email is required" });
   }
   try {
-    const student = await Student.findOne({ email }); // Replace with your DB logic
+    const student = await Student.findOne({ email });
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
@@ -71,95 +77,58 @@ app.get("/student-details", async (req, res) => {
   }
 });
 
+// Database connection
 connectDB();
 
-// Test route to add/post a team
-// app.post('/api/teams', async (req, res) => {
-//     const {
-//         TeamLeaderUSN,
-//         TeamLeaderName,
-//         TeamleaderEmailID,
-//         TeamleaderMobileNumber,
-//         TeamleaderProgram,
-//         Theme,
-//         Teammember1USN,
-//         TeamMember1Name,
-//         TeamMember1EmailID,
-//         TeamMember1MobileNumber,
-//         TeamMember1Program,
-//         Teammember2USN,
-//         TeamMember2Name,
-//         TeamMember2EmailId,
-//         TeamMember2MobileNumber,
-//         TeamMember2Program,
-//         Teammember3USN,
-//         TeamMember3Name,
-//         TeamMember3EmailID,
-//         TeamMember3MobileNumber,
-//         TeamMember3Program,
-//         Teammember4USN,
-//         TeamMember4Name,
-//         TeamMember4EmailID,
-//         TeamMember4MobileNumber,
-//         TeamMember4Program
-//     } = req.body;
+// Socket.io server
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
 
-//     // Creating a new team document using the provided fields
-//     const newTeam = new Team({
-//         TeamLeaderUSN,
-//         TeamLeaderName,
-//         TeamleaderEmailID,
-//         TeamleaderMobileNumber,
-//         TeamleaderProgram,
-//         Theme,
-//         Teammember1USN,
-//         TeamMember1Name,
-//         TeamMember1EmailID,
-//         TeamMember1MobileNumber,
-//         TeamMember1Program,
-//         Teammember2USN,
-//         TeamMember2Name,
-//         TeamMember2EmailId,
-//         TeamMember2MobileNumber,
-//         TeamMember2Program,
-//         Teammember3USN,
-//         TeamMember3Name,
-//         TeamMember3EmailID,
-//         TeamMember3MobileNumber,
-//         TeamMember3Program,
-//         Teammember4USN,
-//         TeamMember4Name,
-//         TeamMember4EmailID,
-//         TeamMember4MobileNumber,
-//         TeamMember4Program
-//     });
+  // User joins a team chat room
+  socket.on("joinTeam", async (teamId) => {
+    socket.join(teamId);
+    console.log(`User ${socket.id} joined room: ${teamId}`);
 
-//     try {
-//         // Save the new team to MongoDB
-//         const savedTeam = await newTeam.save();
-//         res.status(201).json(savedTeam);
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// });
+    try {
+      // Fetch previous messages from the database
+      const previousMessages = await Chat.find({ teamId }).sort({
+        timestamp: 1,
+      });
+      socket.emit("previousMessages", previousMessages); // Send previous messages to the client
+    } catch (error) {
+      console.error("Error fetching messages:", error.message);
+    }
+  });
 
-// // Route to insert excel to json converted data
-// app.post('/add-sample-data', async (req, res) => {
-//     try {
-//         const sampleData = req.body; // The sample data will come from the request body
-//         const result = await Team.insertMany(sampleData.Sheet1); // Insert multiple documents
-//         res.status(201).json({ message: 'Data inserted successfully', data: result });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error inserting data', error: error.message });
-//     }
-// });
+  // Handle new chat messages
+  socket.on("sendMessage", async (data) => {
+    const { teamId, sender, message } = data;
 
-// test route
+    try {
+      // Save message to the database
+      const chatMessage = new Chat({
+        teamId,
+        sender,
+        message,
+        timestamp: new Date(),
+      });
+      await chatMessage.save();
 
-app.delete("/test-delete/:teamId", async (req, res) => {
-  const { teamId } = req.params;
-  console.log(`Received request to delete team with ID: ${teamId}`);
-  res.status(200).send(`Deleted team with ID: ${teamId}`);
+      // Broadcast the message to everyone in the team
+      io.to(teamId).emit("receiveMessage", {
+        sender,
+        message,
+        timestamp: chatMessage.timestamp,
+      });
+    } catch (error) {
+      console.error("Error saving message:", error.message);
+    }
+  });
+
+  // Handle user disconnect
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
 });
 
 // Test route to get all teams
@@ -172,6 +141,7 @@ app.get("/api/teams", async (req, res) => {
   }
 });
 
+// Admin route to fetch all teams
 app.get("/admin/teams", async (req, res) => {
   try {
     const teams = await Team.find();
@@ -181,10 +151,12 @@ app.get("/admin/teams", async (req, res) => {
   }
 });
 
+// Test server endpoint
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
 
-app.listen(PORT, () => {
+// Start the server
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
