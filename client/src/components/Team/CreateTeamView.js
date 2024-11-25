@@ -1,5 +1,6 @@
 import { ArrowLeft, BookOpen, Medal, Smartphone, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import Nbar from "../ui/Nbar";
 
 const themes = {
   CS: [
@@ -218,9 +219,11 @@ export const CreateTeamView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-blue-100 to-blue-200 p-4">
+    <div>
+      <Nbar/>
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-blue-100 to-blue-200 p-4 ">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white/90 backdrop-blur-sm border border-blue-200 rounded-t-xl shadow-md p-6">
+        <div className="bg-white/90 backdrop-blur-sm border border-blue-200 rounded-t-xl shadow-md p-6 mt-24">
           <button
             type="button"
             className="mb-4 inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none transition-colors duration-200"
@@ -294,6 +297,7 @@ export const CreateTeamView = () => {
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 };

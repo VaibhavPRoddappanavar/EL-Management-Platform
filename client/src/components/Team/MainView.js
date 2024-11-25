@@ -2,8 +2,11 @@
 import React from 'react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import Nbar from '../ui/Nbar';
 
 export const MainView = ({ onCreateTeam, onJoinTeam }) => (
+  <div className="main-view">
+    <Nbar />
   <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
     <Card className="w-full max-w-2xl">
       <div className="text-center bg-blue-50 border-b border-blue-100 p-6">
@@ -38,5 +41,6 @@ export const MainView = ({ onCreateTeam, onJoinTeam }) => (
         </div>
       </div>
     </Card>
+  </div>
   </div>
 );
