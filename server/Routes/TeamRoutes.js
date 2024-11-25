@@ -190,6 +190,7 @@ router.post('/create', authMiddleware, async (req, res) => {
 // Invite member
 router.post('/:teamId/invite', authMiddleware, async (req, res) => {
     const { email, position } = req.body; // Removed program here
+    const validPositions = ['TeamMember1', 'TeamMember2', 'TeamMember3', 'TeamMember4']; // Allowed positions
 
     try {
         // Find the team using the provided teamId
@@ -201,7 +202,14 @@ router.post('/:teamId/invite', authMiddleware, async (req, res) => {
 
         // Check if the user sending the invite is the team leader
         if (team.TeamleaderEmailID !== req.user.email) {
-            return res.status(403).json({ message: 'Only team leader can send invites' });
+            return res.status(403).json({ message: 'Only the team leader can send invites' });
+        }
+
+        // Validate the position
+        if (!validPositions.includes(position)) {
+            return res.status(400).json({ 
+                message: `Invalid position '${position}'. Valid positions are: ${validPositions.join(', ')}` 
+            });
         }
 
         // Check if the position is already filled
@@ -250,8 +258,13 @@ router.post('/:teamId/invite', authMiddleware, async (req, res) => {
         }
 
         // Add the pending invite
-        team.pendingInvites.push({ email, program: team.program, position,status: 'PENDING',
-            type: 'SENT' }); // Directly use team.program here
+        team.pendingInvites.push({ 
+            email, 
+            program: team.program, 
+            position,
+            status: 'PENDING',
+            type: 'SENT' // Directly use team.program here
+        });
         await team.save();
 
         res.json({ message: 'Invite sent successfully' });
@@ -259,6 +272,7 @@ router.post('/:teamId/invite', authMiddleware, async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 // Cancel Invitation
 router.post('/:teamId/cancel-invite', authMiddleware, async (req, res) => {
@@ -634,6 +648,7 @@ router.post('/:teamId/apply', authMiddleware, async (req, res) => {
 // For Team Lead To accept or reject the requestToJoinTeam
 router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
     const { status, position } = req.body; // Position is required when accepting
+    const validPositions = ['TeamMember1', 'TeamMember2', 'TeamMember3', 'TeamMember4']; // Allowed positions
 
     try {
         const team = await FormingTeam.findById(req.params.teamId);
@@ -662,6 +677,13 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
             if (!position) {
                 return res.status(400).json({ 
                     message: 'Position must be specified when accepting an application' 
+                });
+            }
+
+            // Validate the position
+            if (!validPositions.includes(position)) {
+                return res.status(400).json({ 
+                    message: `Invalid position '${position}'. Valid positions are: ${validPositions.join(', ')}` 
                 });
             }
 
@@ -705,6 +727,7 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'An error occurred while handling the invite' });
     }
 });
+
 
 // To cancel the Sent application
 router.delete('/team/:teamId/application/:applicationId/cancel', authMiddleware, async (req, res) => {
