@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "../ui/Alert";
 import { Button } from "../ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { Input } from "../ui/Input";
+import Nbar from "../ui/Nbar";
 
 const clusterPrograms = {
   CS: ["AI", "CD", "CS", "CY", "IS"],
@@ -214,8 +215,10 @@ const JoinTeamView = () => {
   };
 
   return (
+    <div>
+      <Nbar/>
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 mt-24">
         <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">
           Team Discovery & Invitations
         </h1>
@@ -441,6 +444,7 @@ const JoinTeamView = () => {
           </CardContent>
         </Card>
       </div>
+    </div>
     </div>
   );
 };

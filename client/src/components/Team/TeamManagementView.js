@@ -1,5 +1,4 @@
 import axios from "axios";
-import Chat from "./Chat";
 import {
   CheckCircle,
   Crown,
@@ -9,7 +8,8 @@ import {
   XCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import Nbar from "../ui/Nbar";
+import Chat from "./Chat";
 
 const POSITION_OPTIONS = [
   "TeamMember1",
@@ -388,8 +388,10 @@ const TeamManagementView = ({ team }) => {
   };
 
   return (
+    <div>
+      <Nbar/>
     <div className="wrapper bg-blue-50 min-h-screen max-w-screen overflow-x-hidden p-4 md:p-6">
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 mt-24">
         {/* Current Team Members Card */}
         <Card className="h-fit">
           <CardHeader>
@@ -543,6 +545,7 @@ const TeamManagementView = ({ team }) => {
         </div>
       </div>
       <Chat teamId={team._id} userName={studentDetails.name} />
+    </div>
     </div>
   );
 };
