@@ -202,6 +202,7 @@ const TeamManagementView = ({ team }) => {
       );
       alert(response.data.message);
       // Navigate(""); have to do it properly
+      window.location.href = "http://localhost:3000/team";
     } catch (error) {
       if (error.response?.data?.message) {
         alert(error.response.data.message);
