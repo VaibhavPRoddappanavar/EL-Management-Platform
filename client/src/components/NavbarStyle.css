@@ -1,18 +1,15 @@
 /* NavbarStyles */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-body{
-    /* overflow: hidden; */
-}
 
 .navvv .dash{
     background-color: #fff;
-    
+    overflow-x: hidden;
     display: flex;
     flex-direction: column; /* Allow stacking of child elements */
     height: 100vh;
     flex-direction: row-reverse;
-    overflow: hidden;
+
 }
 .navvv .dash .navbar {
     position: sticky; /* Keep sidebar sticky */
@@ -32,6 +29,9 @@ body{
     width:240px;
     
 }
+.navvv .dash .navbar.open {
+    width: 240px; /* Sidebar expanded width */
+}
 
 
 /* Center navigation items */
@@ -40,6 +40,7 @@ body{
     position: relative;
     list-style: none;
     padding: 0;
+    overflow: hidden;
 }
 
 .navvv .dash .navbar .sidebar .nav-item {
@@ -107,6 +108,7 @@ body{
     padding-top: 0;
     flex: 1;
     flex-direction: column;
+    
 }
 
  /* Right container (Profile and Dropdown) */
@@ -121,7 +123,7 @@ body{
     margin: 7px;
     border-radius: 15px;
     justify-content: space-between;
-    gap: 10px
+    gap: 10px;
 }
 .college{
     
@@ -149,7 +151,7 @@ body{
     cursor: pointer;
     display:flex;
     
-    
+    z-index: 2000;
 }
 
 .navvv .dash .mainbox .top-container .profile-image {
@@ -170,14 +172,17 @@ body{
 .navvv .dash .mainbox .top-container .dropdown {
     position: absolute;
     top: 70px;
-    left: 82%;
+    right: 10px;
     background-color: #fff;
     border: 2px solid rgb(255, 255, 255);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
-    width: 250px;
+    
     z-index: 2;
+}
+.navvv.dash.mainbox.top-container.dot3{
+    display: block;
 }
 
 .navvv .dash .dropdown .user-info {
@@ -193,42 +198,96 @@ body{
 
 /*middle section starts here*/
 .navvv .dash .swapset{
+    overflow: hidden;
+    height: 90%;
     
-    height: 100%;
-    margin-bottom: 100px;
+    background-color: rgb(219, 219, 219);
+   
+    align-items: center;
     
+    position: relative;
+
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .navvv .dash{
-        flex-direction: row-reverse;
-    }
-    
-    .navvv .dash .mainbox .top-container
-    {
-        flex-direction: row;
-        align-items: flex-start;
-    }
-    
-    
-    
+/* 3-dot button styling */
+.dot3 {
+    display: block;
+    font-size: 1.8em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #333;
+    padding: 10px;
+}
 
+.dot3:hover {
+    color: #000000;
+}
+@media (min-width: 501px) {
+    .dot3 {
+        display: none;
     }
-    .middle-section{
-        margin-top: 10px;
-    }
-    
-    .dropdown{
-        width: auto;
-        left: 0;
-        right: 0;
-    }
-    .navvv .profile-name {
-        
-        display: flex;  /* Hide profile name on small screens */
+}
+
+.dot3:hover {
+    color: #000000;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 500px) {
+    .navvv .dash {
+        background-color: #fff;
+        position: sticky;
+        display: flex;
+        flex-direction: column; /* Allow stacking of child elements */
+        height: 100vh;
     }
 
-    .navvv .dash .navbar .nav-items {
-        gap: 0.5rem;
+   .navvv .dash .navbar {
+    position: fixed; /* Keeps it in a fixed position */
+    top: 0;
+    left: -30px;
+    width: 0px;
+    height: 100vh;
+    background-color: #457ee0;
+    color: rgb(6, 6, 6);
+    padding: 1rem;
+    overflow: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: width 0.5s;
+    z-index: 100; /* Added z-index to bring it to the front */
+}
+.navvv .dash .swapset {
+    z-index: 10; /* Lower z-index for content */
+}
+.navvv .dash .navbar.open {
+    left: 0px;
+    width: 240px; /* Sidebar expanded width */
+    z-index: 100; /* Ensure it's still in front when expanded */
+}
+
+    /* Update the dot3 button size */
+    .dot3 {
+        font-size: 1.8em;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: #333;
+        padding: 10px;
+        z-index: 1000;
     }
+
+    .dot3:hover {
+        color: #000000;
+    }
+
+    /* Ensure the main box behaves well in mobile layout */
+    .navvv .dash .mainbox {
+        position: relative;
+        background-color: #e3e1e1;
+        padding-top: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+}
