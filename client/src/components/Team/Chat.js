@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import "./chat.css";
 
 const Chat = ({ teamId, userName }) => {
   const [socket, setSocket] = useState(null);
@@ -7,19 +8,15 @@ const Chat = ({ teamId, userName }) => {
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    // Connect to the Socket.IO server
-    const newSocket = io("http://localhost:5000"); // Update with your backend URL if needed
+    const newSocket = io("http://localhost:5000");
     setSocket(newSocket);
 
-    // Join the specific team room
     newSocket.emit("joinTeam", teamId);
 
-    // Listen for previous messages
     newSocket.on("previousMessages", (previousMessages) => {
       setMessages(previousMessages);
     });
 
-    // Listen for incoming messages
     newSocket.on("receiveMessage", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
@@ -42,22 +39,18 @@ const Chat = ({ teamId, userName }) => {
   };
 
   return (
-    <div>
-      <div
-        style={{
-          border: "1px solid #ccc",
-          padding: "10px",
-          height: "300px",
-          overflowY: "scroll",
-        }}
-      >
+    <div className="chat-container">
+      <div className="chat-messages">
         {messages.map((msg, index) => (
-          <div key={index}>
+          <div
+            key={index}
+            className={`chat-message ${msg.sender === userName ? "sender" : ""}`}
+          >
             <strong>{msg.sender}:</strong> {msg.message}
           </div>
         ))}
       </div>
-      <div>
+      <div className="chat-input-area">
         <input
           type="text"
           value={newMessage}

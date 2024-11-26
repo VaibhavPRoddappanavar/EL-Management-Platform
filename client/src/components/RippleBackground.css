@@ -1,5 +1,7 @@
+
+
 .back.ripple-background {
-    position: absolute;
+    position: relative;
     top: 0;
     left: 50%; /* Start from the middle of the screen */
     width: 50vw; /* Cover only the right half of the screen */
@@ -19,35 +21,35 @@
   .small {
     width: 200px;
     height: 200px;
-    left: 800px; /* Start from center */
+    left: 90em; /* Start from center */
     bottom: -100px;
   }
   
   .medium {
     width: 400px;
     height: 400px;
-    left: 800px; /* Slightly offset to the left of the right side */
+    left: 70em; /* Slightly offset to the left of the right side */
     bottom: -200px;
   }
   
   .large {
     width: 600px;
     height: 600px;
-    left: 800px;
+    left: 60em;
     bottom: -300px;
   }
   
   .xlarge {
     width: 800px;
     height: 800px;
-    left: 800px;
+    left: 50em;
     bottom: -400px;
   }
   
   .xxlarge {
     width: 1000px;
     height: 1000px;
-    left: 800px;
+    left: 40em;
     bottom: -500px;
   }
   

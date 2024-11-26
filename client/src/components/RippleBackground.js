@@ -3,7 +3,7 @@ import './RippleBackground.css';
 
 const RippleBackground = () => {
   return (
-    <div className='back'>
+    <div className="back">
     <div className="ripple-background">
       <div className="circle xxlarge shade1"></div>
       <div className="circle xlarge shade2"></div>

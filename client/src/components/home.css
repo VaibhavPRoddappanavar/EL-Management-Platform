@@ -1,13 +1,14 @@
 /* AnnouncementSection.css */
 .middle-section {
     background-color: #ffffff;
-    padding: 100px;
+    padding-top: 10%;
     border-radius: 15px;
     margin: 10px;
-    height: 90%;
+    height: 100%;
     margin-bottom: 5px;
     display: flex;
     justify-content: space-around;
+    overflow: hidden;
     
 }
 
@@ -23,7 +24,7 @@
     letter-spacing: 0;
     line-height: 3.25rem;
     color: var(--gm3-sys-color-on-surface, #1f1f1f);
-    
+    flex:0%
 }
 .typing-animation h1{    
     font-style: 'Verdana';
@@ -52,25 +53,69 @@
     
 }
 .partition1 {
-    flex: 1;
-    margin-right: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
   
   .video-block {
     flex: 1;
-    max-width: 500px;
+    position:sticky;
     margin-right: 1%;
     z-index: 1;
     /* Adjust width as needed */
+    flex: unset;
+    
   }
   
   .video-block video {
     width: 500px;
     height: 500px;
     
-    margin-right: 1%;
     border-width: 5px;
     border-radius: 50%;
-    border-color: black;
+    border-color: #000000;
   }
+  
+ 
+  @media (max-width: 550px) {
+    .middle-section {
+      flex-direction: column; /* Stack elements vertically */
+      align-items: center; /* Center-align items */
+      height: auto; /* Let height adjust dynamically */
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      padding: 30px;/* Ensure content is visible */
+    }
+
+    
+    .partition1 {
+      margin-right: 0; /* Remove margin for stacked layout */
+      flex: unset; /* Allow natural width */
+    }
+  
+    .video-block {
+      
+      height: -100px;
+      margin-top: -10em;
+    }
+    .video-block video {
+      width: 500px;
+      height: 500px;
+      
+      border-width: 5px;
+      border-radius: 50%;
+      border-color: transparent;
+    }
+  
+    /*.video-block video {
+       
+      border-width: 3px; 
+      border-radius: 20px; 
+      border-color: rgb(0, 0, 0);
+    }*/
+  }
+  
+  
+
   

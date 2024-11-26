@@ -51,10 +51,10 @@ const Home = () => {
 
   return (
 
-    
- 
+
+
     <div className='middle-section'>
-      
+
       <div className='partition1'>
 
 
@@ -64,7 +64,7 @@ const Home = () => {
         </div>
         <span className="announce">Recent Announcement</span>
         <span className="announce1">Date of First round of evaluation: 23 Nov 2024</span>
-       
+
       </div>
 
       {/* Video Block */}
@@ -75,9 +75,9 @@ const Home = () => {
         </video>
       </div>
       <div>
-    <RippleBackground />
+        <RippleBackground></RippleBackground>
       </div>
-      
+
     </div>
 
   );
