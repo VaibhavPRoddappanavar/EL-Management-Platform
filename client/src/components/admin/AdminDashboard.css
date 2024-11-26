@@ -142,3 +142,64 @@ body, html {
 .delete-team-icon:hover {
   color: red;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) { /* For tablets and smaller devices */
+  .dashboard-container {
+    max-width: 90vw;
+    padding: 1.5rem;
+  }
+
+  .theme-buttons {
+    grid-template-columns: repeat(2, 1fr); /* Adjust grid for smaller screens */
+    gap: 1rem;
+  }
+
+  .delete-team-icon {
+    position: static; /* Position it naturally for smaller screens */
+    margin: 0; /* Reset margins */
+    display: block;
+    text-align: right; /* Align to the right */
+    font-size: 20px; /* Slightly smaller font size */
+  }
+
+  .team-item {
+    padding: 0.8rem; /* Slightly reduce padding */
+  }
+
+  .team-title {
+    font-size: 1rem;
+  }
+
+  .team-info,
+  .team-members {
+    font-size: 0.875rem; /* Adjust font size for readability */
+  }
+}
+
+@media (max-width: 480px) { /* For mobile devices */
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .theme-buttons {
+    grid-template-columns: 1fr; /* Stack buttons in a single column */
+    gap: 0.5rem;
+  }
+
+  .delete-team-icon {
+    font-size: 18px; /* Reduce size further */
+    right: 0; /* Reset position */
+    margin: 0; /* Center align icon below text */
+    text-align: center;
+  }
+
+  .team-item {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+
+  .team-title {
+    font-size: 0.9rem;
+  }
+}
