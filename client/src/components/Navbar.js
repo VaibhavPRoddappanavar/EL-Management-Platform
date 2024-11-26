@@ -1,4 +1,4 @@
-import { faBullhorn, faHome, faMessage, faSignOut, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBullhorn, faHome, faMessage, faSignOut, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,7 +13,7 @@ import './NavbarStyle.css';
 
 const Navbar = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // State to toggle sidebar visibility
   const [activePage, setActivePage] = useState('home'); // Track active page
   const [loading, setLoading] = useState(false); // Loading state to clear the swapset
   const [studentDetails, setStudentDetails] = useState({
@@ -47,25 +47,6 @@ const Navbar = () => {
     fetchStudentDetails();
   }, []);
 
-  useEffect(() => {
-    const handleNavbarClick = () => {
-      if (navbarRef.current) {
-        navbarRef.current.classList.toggle("expanded");
-      }
-    };
-
-    if (window.innerWidth <= 767 && navbarRef.current) {
-      navbarRef.current.addEventListener("click", handleNavbarClick);
-    }
-
-    return () => {
-      if (navbarRef.current) {
-        navbarRef.current.removeEventListener("click", handleNavbarClick);
-      }
-    };
-  }, []);
-  
-
   const handleMouseEnter = () => setDropdownVisible(true);
   const handleMouseLeave = () => setDropdownVisible(false);
   const toggleDropdown = () => {
@@ -73,7 +54,7 @@ const Navbar = () => {
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    setSidebarOpen(!sidebarOpen); // Toggle sidebar state
   };
 
   const setPage = (page) => {
@@ -83,6 +64,7 @@ const Navbar = () => {
       setLoading(false); // Reset loading state
     }, 300); // Wait for 300ms to simulate a page transition effect
   };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
@@ -93,6 +75,10 @@ const Navbar = () => {
       <div className="dash">
         <div className="mainbox">
           <div className="top-container">
+            {/* 3-dot button to toggle sidebar */}
+            <button className="dot3" onClick={toggleSidebar}>
+              <FontAwesomeIcon icon={faBars} />
+            </button>
             <div className="college">
               <img src={collegelogo} alt="College Logo" className="logo" />
               <span className="name">RV College of Engineering</span>
@@ -108,9 +94,9 @@ const Navbar = () => {
 
               {dropdownVisible && (
                 <div className="dropdown">
-                <p className="user-info">Name: {studentDetails.name}</p>
-                <p className="user-email">Email: {studentDetails.email}</p>
-                <p className="user-email">Branch: {studentDetails.branch}</p>
+                  <p className="user-info">Name: {studentDetails.name}</p>
+                  <p className="user-email">Email: {studentDetails.email}</p>
+                  <p className="user-email">Branch: {studentDetails.branch}</p>
                 </div>
               )}
             </div>
@@ -126,7 +112,8 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="navbar" ref={navbarRef}>
+        {/* Sidebar with conditional class */}
+        <div className={`navbar ${sidebarOpen ? "open" : ""}`} ref={navbarRef}>
           <div className="sidebar">
             <div className="nav-item">
               <a href="#" onClick={() => setPage('home')}>
