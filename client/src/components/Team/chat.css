@@ -1,0 +1,119 @@
+/* ChatStyle.css */
+
+/* Container for the Chat Component */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    max-width: 100%; /* Adjust as needed for your layout */
+    margin-left: 1em; /* Centers the chat box */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height:90vh;
+    margin-right: 1em;
+  }
+  
+  /* Message Display Area */
+  .chat-messages {
+    flex: 1;
+    padding: 10px;
+    height: 300px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ccc;
+    
+  }
+  
+  /* Individual Message */
+  .chat-message {
+    margin-bottom: 8px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #e7f3ff;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .chat-message strong {
+    color: #457ee0;
+  }
+  
+  /* Sender's Message Styling */
+  .chat-message.sender {
+    text-align: right;
+    background-color: #d1ecf1;
+    color: #0056b3;
+  }
+  
+  /* Chat Input Area */
+  .chat-input-area {
+    
+    display: flex;
+    padding: 10px;
+    background-color: #fff;
+  }
+  
+  /* Input Box */
+  .chat-input-area input {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+  .chat-input-area input:focus {
+    border-color: #457ee0;
+  }
+  
+  /* Send Button */
+  .chat-input-area button {
+    padding: 8px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #457ee0;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .chat-input-area button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Scrollbar Styling */
+  .chat-messages::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .chat-messages::-webkit-scrollbar-track {
+    background: #f9f9f9;
+  }
+  
+  .chat-messages::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
+  .chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .chat-container {
+      max-width: 100%;
+      margin: 0 10px;
+    }
+  
+    .chat-messages {
+      height: 250px;
+    }
+  }
+  
