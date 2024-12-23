@@ -1,0 +1,201 @@
+{
+    "CSE faculty": [
+      {
+        "name": "Dr. Ramakanth Kumar P",
+        "designation": "Professor & Head",
+        "email": "ramakanthkp@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Krishnappa H K",
+        "designation": "Associate Professor",
+        "email": "krishnappahk@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Deepamala N",
+        "designation": "Associate Professor",
+        "email": "deepamalan@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Sowmyarani C N",
+        "designation": "Associate Professor",
+        "email": "sowmyaranicn@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Hemavathy R",
+        "designation": "Associate Professor",
+        "email": "hemavathyr@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Badari Nath K",
+        "designation": "Associate Professor",
+        "email": "badarinath.kb@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Chethana R Murthy",
+        "designation": "Associate Professor",
+        "email": "chethanamurthy@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Pratiba D",
+        "designation": "Assistant Professor",
+        "email": "pratibad@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Jyoti Shetty",
+        "designation": "Assistant Professor",
+        "email": "jyothis@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Praveena T",
+        "designation": "Assistant Professor",
+        "email": "praveenat@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Vishalakshi Prabhu H",
+        "designation": "Assistant Professor",
+        "email": "vishalaprabhu@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Ganashree K C",
+        "designation": "Assistant Professor",
+        "email": "ganashree@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Suma B",
+        "designation": "Assistant Professor",
+        "email": "sumab_rao@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Pavithra H",
+        "designation": "Assistant Professor",
+        "email": "pavithrah@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Prapulla S B",
+        "designation": "Assistant Professor",
+        "email": "prapullasb@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Sneha M",
+        "designation": "Assistant Professor",
+        "email": "sneham@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Manonmani S",
+        "designation": "Assistant Professor",
+        "email": "manonmanis@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Deepika Dash",
+        "designation": "Assistant Professor",
+        "email": "deepikadash@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Smriti Srivastava",
+        "designation": "Assistant Professor",
+        "email": "smritis@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Manas M N",
+        "designation": "Assistant Professor",
+        "email": "manasmn@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Veena Gadad",
+        "designation": "Assistant Professor",
+        "email": "veenagadad@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Anitha Sandeep",
+        "designation": "Assistant Professor",
+        "email": "anithasandeep@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Apoorva Udaya Kumar Chate",
+        "designation": "Assistant Professor",
+        "email": "apoorvaukc@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Rajatha",
+        "designation": "Assistant Professor",
+        "email": "rajatha@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Savitri Kulkarni",
+        "designation": "Assistant Professor",
+        "email": "savitrikulkarni@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Shanta Rangaswamy",
+        "designation": "Professor",
+        "email": "shantharangaswamy@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Soumya A",
+        "designation": "Associate Professor",
+        "email": "soumyaa@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Sindhu D V",
+        "designation": "Assistant Professor",
+        "email": "sindhudv@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Minal Moharir",
+        "designation": "Professor",
+        "email": "minalmoharir@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Ashok Kumar A R",
+        "designation": "Associate Professor",
+        "email": "ashokkumarar@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Mohana",
+        "designation": "Assistant Professor",
+        "email": "mohana@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Neethu S",
+        "designation": "Assistant Professor",
+        "email": "neethus@rvce.edu.in"
+      },
+      {
+        "name": "Prof. Shweta Babu Prasad",
+        "designation": "Assistant Professor",
+        "email": "shwetababup@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Rajashree Shettar",
+        "designation": "Professor and Dean (PG Circuit Branches)",
+        "email": "rajashreeshettar@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Azra Nasreen",
+        "designation": "Associate Professor",
+        "email": "azranasreen@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Srividya M S",
+        "designation": "Assistant Professor",
+        "email": "srividyams@rvce.edu.in"
+      },
+      {
+        "name": "Dr. G S Nagaraja",
+        "designation": "Professor and Associate Dean (PG CSE / PG CNE)",
+        "email": "nagarajags@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Vinay Hegde",
+        "designation": "Associate Professor",
+        "email": "vinayvhegde@rvce.edu.in"
+      },
+      {
+        "name": "Dr. Sandhya S",
+        "designation": "Assistant Professor",
+        "email": "sandhya.sampangi@rvce.edu.in"
+      }
+    ]
+  }
+  
+  
