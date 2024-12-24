@@ -13,6 +13,8 @@ import CreateTeamPage from "./pages/CreateTeamPage";
 import TeamManagement from "./pages/TeamManagement";
 import TeamPage from "./pages/TeamPage";
 import Navbar from "./components/Navbar";
+import TeacherLogin from "./pages/Teachers/TeacherLogin";
+import TeacherHome from "./pages/Teachers/TeacherHome";
 
 /* Admin imports */
 
@@ -25,13 +27,23 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem("token")
   );
+  const [isTeacherAuthenticated, setIsTeacherAuthenticated] = useState(
+    !!localStorage.getItem("teacherToken")
+  );
 
   useEffect(() => {
     const handleStorageChange = () =>
       setIsAuthenticated(!!localStorage.getItem("token"));
     window.addEventListener("storage", handleStorageChange);
 
-    return () => window.removeEventListener("storage", handleStorageChange);
+    const handleTeacherStorageChange = () =>
+      setIsTeacherAuthenticated(!!localStorage.getItem("teacherToken"));
+    window.addEventListener("storage", handleTeacherStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("storage", handleTeacherStorageChange);
+    };
   }, []);
 
   return (
@@ -50,6 +62,19 @@ function App() {
         <Route path="/create-team" element={<CreateTeamPage />} />
         <Route path="/TeamManagement" element={<TeamManagement />} />
         <Route path="/team-management" element={<TeamManagementView />} />
+
+        {/* Teacher Routes */}
+        <Route path="/teacher/login" element={<TeacherLogin />} />
+        <Route
+          path="/teacher/home"
+          element={
+            isTeacherAuthenticated ? (
+              <TeacherHome />
+            ) : (
+              <Navigate to="/teacher/login" />
+            )
+          }
+        />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
