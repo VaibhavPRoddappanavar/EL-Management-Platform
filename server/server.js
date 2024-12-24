@@ -14,6 +14,7 @@ const cors = require("cors");
 const TeamRoutes = require("./Routes/TeamRoutes");
 const Student = require("./Models/Student");
 const Chat = require("./Models/Chatmodel");
+const teacherAuth = require("./Routes/Teachers/teacherAuth");
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server for Socket.IO
@@ -45,6 +46,9 @@ app.use("/Password", PasswordChange);
 
 // Middleware for student login/registration
 app.use("/student", loginRegisRoutes);
+
+// Middleware for teacher authentication
+app.use("/teacher", teacherAuth);
 
 // Middleware for team-related routes
 app.use("/teams", teamDRoutes);
