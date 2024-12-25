@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { CreateTeamView } from '../components/Team/CreateTeamView';
-import JoinTeamView from '../components/Team/JoinTeamView';
-import { MainView } from '../components/Team/MainView';
-import TeamManagementView from '../components/Team/TeamManagementView';
+import { CreateTeamView } from '../../components/Team/CreateTeamView';
+import JoinTeamView from '../../components/Team/JoinTeamView';
+import { MainView } from '../../components/Team/MainView';
+import TeamManagementView from '../../components/Team/TeamManagementView';
 
 const TeamManagement = () => {
   const [view, setView] = useState('main');

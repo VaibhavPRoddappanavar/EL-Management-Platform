@@ -49,10 +49,28 @@ const TeacherHome = () => {
           <Typography variant="body1" gutterBottom>
             Email: {teacherData.email}
           </Typography>
-          <Box sx={{ mt: 4 }}>
+          <div className="button-container">
             <Button
               variant="contained"
               color="primary"
+              onClick={() => navigate('/teacher/dashboard')}
+              className="nav-button"
+            >
+              View Teams
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => navigate('/teacher/unassigned')}
+              className="nav-button"
+            >
+              View Unassigned Students
+            </Button>
+          </div>
+          <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+            <Button
+              variant="outlined"
+              color="error"
               onClick={handleLogout}
             >
               Logout
