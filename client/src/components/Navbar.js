@@ -5,9 +5,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import profilePic from '../images/profile.png';
 import collegelogo from '../images/rvlogo.png';
-import Announcement from '../pages/Announcement'; // Import Announcement component
-import Messages from '../pages/Messages'; // Import Messages component
-import Team from '../pages/TeamPage'; // Import the Team component
+import Announcement from '../pages/Students/Announcement'; // Import Announcement component
+import Messages from '../pages/Students/Messages'; // Import Messages component
+import Team from '../pages/Students/TeamPage'; // Import the Team component
 import Home from './Home';
 import './NavbarStyle.css';
 
