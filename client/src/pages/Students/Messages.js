@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Chat from "../components/Team/Chat";
+import Chat from "../../components/Team/Chat";
 
 function TeamPage() {
   const [team, setTeam] = useState(null);

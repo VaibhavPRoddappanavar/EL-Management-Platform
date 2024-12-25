@@ -1,0 +1,281 @@
+/* AdminDashboard.css */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .admin-dashboard {
+    min-height: 100vh;
+    background-color: #ebf8ff;
+    color: #1f2937;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 1rem;
+  }
+  
+  .dashboard-container {
+    padding: 2rem;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .filters-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .table-container {
+    margin-top: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+  }
+  
+  .table-container table {
+    min-width: 1200px;
+  }
+  
+  .table-row:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  
+  .member-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+  
+  .member-cell strong {
+    color: #1976d2;
+  }
+  
+  .member-cell > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+  }
+  
+  .title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: #1d4ed8;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+  }
+  
+  .theme-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .theme-button {
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    border: 1px solid #1976d2;
+    border-radius: 4px;
+    background-color: white;
+    color: #1976d2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .theme-button.active {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  .theme-button:hover {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  .total-teams {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .search-label {
+    display: block;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    
+  }
+  
+  .search-select,
+  .search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    outline: none;
+    margin-bottom: 1em;
+  }
+  
+  .search-select:focus,
+  .search-input:focus {
+    border-color: #1d4ed8;
+  }
+  
+  .teams-list {
+    margin-top: 1.5rem;
+  }
+  
+  .team-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #bfdbfe;
+  }
+  
+  .team-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1d4ed8;
+    margin-bottom: 0.5rem;
+  }
+  
+  .team-info {
+    color: #6b7280;
+  }
+  
+  .team-members {
+    margin-top: 1rem;
+    color: #1d4ed8;
+  }
+  
+  .team-member-info {
+    margin-left: 1rem;
+    color: #374151;
+  }
+  
+  .delete-team-icon {
+    position: absolute;
+    margin-top: -4em;
+    right: 9em;
+    cursor: pointer;
+    font-size: 24px;
+  }
+  
+  .delete-team-icon:hover {
+    color: red;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 1400px) {
+    .member-cell > div {
+      max-width: 150px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 1rem;
+    }
+  
+    .filters-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .filters-container > * {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  
+    .table-container {
+      margin-top: 1rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    .member-cell > div {
+      max-width: 120px;
+    }
+  }
+  
+  @media (max-width: 480px) { /* For mobile devices */
+    .dashboard-container {
+      padding: 1rem;
+    }
+  
+    .theme-buttons {
+      grid-template-columns: 1fr; /* Stack buttons in a single column */
+      gap: 0.5rem;
+    }
+  
+    .delete-team-icon {
+      font-size: 18px; /* Reduce size further */
+      right: 0; /* Reset position */
+      margin: 0; /* Center align icon below text */
+      text-align: center;
+    }
+  
+    .team-item {
+      font-size: 0.875rem;
+      padding: 0.5rem;
+    }
+  
+    .team-title {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .table-container {
+      overflow-x: auto;
+    }
+  
+    .member-cell {
+      min-width: 150px;
+    }
+  }
+  
+  /* Custom scrollbar for better UX */
+  .table-container::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }

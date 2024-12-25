@@ -12,7 +12,7 @@ const teamDRoutes = require("./Routes/TeamDisplay");
 const loadEmailList = require("./Models/EmailLoader");
 const cors = require("cors");
 const TeamRoutes = require("./Routes/TeamRoutes");
-const Student = require("./Models/Student");
+const StudentInfo = require("./Models/StudentInfo");
 const Chat = require("./Models/Chatmodel");
 const teacherAuth = require("./Routes/Teachers/teacherAuth");
 
@@ -71,7 +71,7 @@ app.get("/student-details", async (req, res) => {
     return res.status(400).json({ message: "Email is required" });
   }
   try {
-    const student = await Student.findOne({ email });
+    const student = await StudentInfo.findOne({ email });
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
@@ -135,12 +135,90 @@ io.on("connection", (socket) => {
   });
 });
 
-// Test route to get all teams
+// Test route to get all teams - open endpoint
 app.get("/api/teams", async (req, res) => {
   try {
-    const teams = await Team.find(); // Fetch all teams from the database
+    const teams = await Team.find();
     res.json(teams);
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Protected teacher route to fetch teams
+app.get("/teacher/teams", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const { theme } = req.query;
+    let query = {};
+    if (theme && theme !== "All Teams") {
+      query.Theme = theme;
+    }
+
+    const teams = await Team.find(query);
+    console.log('Fetched teams for teacher:', teams.length, 'Theme:', theme);
+    res.json(teams);
+  } catch (error) {
+    console.error('Error in /teacher/teams:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Protected teacher route to fetch unassigned students
+app.get("/teacher/unassigned", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const includedDepartments = ["AI", "CS", "CD", "CY", "IS"];
+
+    // Fetch students from departments
+    const departments = await StudentInfo.find({
+      departmentCode: { $in: includedDepartments },
+    });
+
+    const allStudents = departments.flatMap((dept) =>
+      dept.students.map((student) => ({
+        ...student.toObject(),
+        departmentCode: dept.departmentCode,
+      }))
+    );
+
+    // Debug: Check if students are fetched correctly
+    console.log("All Students:", allStudents.length);
+
+    // Fetch all emails of students already in teams
+    const teams = await Team.find({});
+    const teamEmails = new Set(
+      teams.flatMap((team) => [
+        team.TeamleaderEmailID,
+        team.TeamMember1EmailID,
+        team.TeamMember2EmailID,
+        team.TeamMember3EmailID,
+        team.TeamMember4EmailID,
+      ]).filter(Boolean) // Remove null/undefined values
+    );
+
+    // Debug: Check the set of emails
+    console.log("Team Emails:", teamEmails.size);
+
+    // Filter out students whose email is already in a team
+    const unassignedStudents = allStudents.filter(
+      (student) => !teamEmails.has(student.email)
+    );
+
+    // Debug: Check the unassigned students
+    console.log("Unassigned Students:", unassignedStudents.length);
+
+    res.json(unassignedStudents);
+  } catch (error) {
+    console.error('Error in /teacher/unassigned:', error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -163,4 +241,8 @@ app.get("/", (req, res) => {
 // Start the server
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log('Available routes:');
+  console.log('- GET /teacher/unassigned');
+  console.log('- GET /teacher/teams');
+  console.log('- GET /api/teams');
 });
