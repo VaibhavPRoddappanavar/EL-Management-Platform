@@ -279,3 +279,58 @@ body, html {
   .table-container::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+  
+  .teacher-dashboard {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px 0;
+  }
+  
+  .logout-button {
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  .logout-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .team-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .team-card h3 {
+    margin: 0 0 8px 0;
+    color: #1976d2;
+  }
+  
+  .team-members {
+    margin-top: 16px;
+  }
+  
+  .team-members h4 {
+    margin: 0 0 8px 0;
+    color: #424242;
+  }
+  
+  .team-members ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .team-members li {
+    padding: 4px 0;
+    color: #616161;
+  }
