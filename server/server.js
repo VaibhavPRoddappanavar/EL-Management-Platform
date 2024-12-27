@@ -15,6 +15,8 @@ const TeamRoutes = require("./Routes/TeamRoutes");
 const StudentInfo = require("./Models/StudentInfo");
 const Chat = require("./Models/Chatmodel");
 const teacherAuth = require("./Routes/Teachers/teacherAuth");
+const marksManagement = require('./Routes/Teachers/marksManagement');
+const teacherManagement = require('./Routes/Admin/teacherManagement');
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server for Socket.IO
@@ -63,6 +65,15 @@ app.use("/admin/teams", Teammanagement);
 
 // TeamRoutes
 app.use("/", TeamRoutes);
+
+// Teacher routes
+app.use('/api/teachers', teacherAuth);
+
+// Teacher marks management routes
+app.use('/api/teachers/marks', marksManagement);
+
+// Admin teacher management routes
+app.use('/api/admin/teachers', teacherManagement);
 
 // Fetch student details
 app.get("/student-details", async (req, res) => {
