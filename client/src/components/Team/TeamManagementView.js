@@ -8,6 +8,7 @@ import {
   XCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Nbar from "../ui/Nbar";
 import Chat from "./Chat";
 
@@ -98,6 +99,22 @@ const TeamManagementView = ({ team }) => {
     fetchData();
   }, [team._id]);
 
+  const fetchInvites = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:5000/${team._id}/invites`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setInvites(response.data);
+    } catch (error) {
+      console.error("Error fetching invites:", error);
+      toast.error("Failed to refresh invites");
+    }
+  };
+
   const handleInviteMember = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -158,7 +175,6 @@ const TeamManagementView = ({ team }) => {
           }
         );
       } else {
-        // For rejection, simply send the status
         response = await axios.put(
           `http://localhost:5000/handle/${team._id}/${invite._id}`,
           {
@@ -168,6 +184,13 @@ const TeamManagementView = ({ team }) => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+      }
+
+      // Handle case where user has already joined another team
+      if (response.data.alreadyInTeam) {
+        toast.info("This user has already joined another team. Invite removed.");
+        await fetchInvites();
+        return;
       }
 
       // Refresh both invites and members after response
@@ -185,8 +208,12 @@ const TeamManagementView = ({ team }) => {
 
       alert(response.data.message);
     } catch (error) {
-      console.error("Error responding to invite:", error);
-      alert(error.response?.data?.message || "Failed to respond to invite");
+      if (error.response?.data?.alreadyInTeam) {
+        toast.info("This user has already joined another team. Invite removed.");
+        await fetchInvites();
+        return;
+      }
+      toast.error(error.response?.data?.message || "Failed to respond to invite");
     }
   };
 
