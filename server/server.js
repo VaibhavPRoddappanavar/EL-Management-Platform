@@ -67,13 +67,16 @@ app.use("/admin/teams", Teammanagement);
 // TeamRoutes
 app.use("/", TeamRoutes);
 
+// Middleware for marks management
+app.use("/api/marks", marksRoutes);
+
 // Teacher routes
 app.use('/api/teachers', teacherAuth);
 
-// Teacher marks management routes
-app.use('/api/teachers/marks', marksManagement);
+// Middleware for teacher marks management
+app.use("/api/teachers/marks", marksManagement);
 
-// Admin teacher management routes
+// Middleware for admin teacher management
 app.use('/api/admin/teachers', teacherManagement);
 
 // Add this route to handle student details fetch

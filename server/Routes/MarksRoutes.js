@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Marks = require('../Models/Marks');
 const teacherAuth = require('../middleware/teacherAuth');
+const verifyToken = require('../middleware/Admin/authMiddleware');
 
 // Add or update marks
 router.post('/submit', teacherAuth, async (req, res) => {
@@ -110,4 +111,86 @@ router.put('/update/:markId', teacherAuth, async (req, res) => {
     }
 });
 
-module.exports = router; 
+// Get cumulative marks for all students (Admin only)
+router.get('/cumulative', verifyToken, async (req, res) => {
+    try {
+        // Get all marks grouped by team and student
+        const marks = await Marks.find({})
+            .populate('teamId', 'TeamLeaderName TeamleaderEmailID TeamLeaderUSN TeamMember1Name TeamMember1EmailID TeamMember1USN TeamMember2Name TeamMember2EmailID TeamMember2USN TeamMember3Name TeamMember3EmailID TeamMember3USN TeamMember4Name TeamMember4EmailID TeamMember4USN Theme')
+            .lean();
+
+        // Process marks to calculate cumulative scores
+        const studentMarks = {};
+
+        marks.forEach(mark => {
+            if (!mark.teamId) {
+                console.log('Warning: Mark record without team:', mark);
+                return;
+            }
+
+            mark.studentMarks.forEach(student => {
+                const key = student.studentEmail;
+                if (!studentMarks[key]) {
+                    studentMarks[key] = {
+                        email: student.studentEmail,
+                        name: student.studentName,
+                        usn: student.studentUSN,
+                        team: mark.teamId.Theme,
+                        phases: {
+                            Phase1: 0,
+                            Phase2: 0,
+                            Phase3: 0
+                        },
+                        cumulative: {
+                            Phase1: 0,
+                            Phase2: 0,
+                            Phase3: 0
+                        }
+                    };
+                }
+                
+                // Store individual phase marks
+                studentMarks[key].phases[mark.phase] = student.marks;
+                
+                // Calculate cumulative marks
+                if (mark.phase === 'Phase1') {
+                    studentMarks[key].cumulative.Phase1 = student.marks;
+                } else if (mark.phase === 'Phase2') {
+                    // Phase 2 marks = Phase 2 actual marks - Phase 1 marks
+                    studentMarks[key].cumulative.Phase2 = student.marks;
+                } else if (mark.phase === 'Phase3') {
+                    // Phase 3 marks = Phase 3 actual marks - Phase 2 marks
+                    studentMarks[key].cumulative.Phase3 = student.marks;
+                }
+            });
+        });
+
+        // Convert to array and calculate actual phase-wise marks
+        const finalMarks = Object.values(studentMarks).map(student => {
+            const phase1Marks = student.phases.Phase1 || 0;
+            const phase2Total = student.phases.Phase2 || 0;
+            const phase3Total = student.phases.Phase3 || 0;
+
+            // Calculate individual phase marks, ensuring no negative values
+            const phase2Individual = Math.max(0, phase2Total - phase1Marks);
+            const phase3Individual = Math.max(0, phase3Total - phase2Total);
+
+            return {
+                ...student,
+                phaseWise: {
+                    Phase1: phase1Marks,
+                    Phase2: phase2Individual,
+                    Phase3: phase3Individual
+                },
+                total: phase3Total || phase2Total || phase1Marks || 0
+            };
+        });
+
+        res.json(finalMarks);
+    } catch (error) {
+        console.error('Error fetching cumulative marks:', error);
+        res.status(500).json({ message: 'Error fetching marks', error: error.message });
+    }
+});
+
+module.exports = router;
