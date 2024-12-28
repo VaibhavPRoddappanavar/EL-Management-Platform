@@ -35,9 +35,9 @@ const Navbar = () => {
           }
         });
         setStudentDetails({
-          name: response.data.name,
+          name: response.data.Name,
           email: response.data.email,
-          branch: response.data.branch
+          branch: response.data.deartmentCode
         });
       } catch (error) {
         console.error('Error fetching student details:', error);

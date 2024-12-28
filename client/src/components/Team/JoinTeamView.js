@@ -70,8 +70,8 @@ const JoinTeamView = () => {
 
       setApplicationData((prev) => ({
         ...prev,
-        name: response.data.name,
-        program: response.data.branch,
+        name: response.data.Name,
+        program: response.data.departmentCode,
         usn: prev.usn, // Preserve any USN already entered
       }));
     } catch (error) {
@@ -158,9 +158,27 @@ const JoinTeamView = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // Check if user has already joined a team
+      if (response.data.message === 'You have already joined a team') {
+        setMessage({
+          type: "info",
+          text: "You have already joined a team. Your pending invitations have been removed."
+        });
+        // Optionally redirect to team management page
+        setTimeout(() => {
+          navigate("/TeamManagement");
+        }, 2000);
+        return;
+      }
+
       setInvitedTeams(response.data.invitedTeams);
     } catch (error) {
       console.error("Error fetching invited teams:", error);
+      setMessage({
+        type: "error",
+        text: "Error fetching team invitations"
+      });
     }
   };
 

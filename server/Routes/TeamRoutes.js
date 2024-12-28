@@ -547,16 +547,56 @@ router.post('/:teamId/finalize', authMiddleware, async (req, res) => {
 //To get invitations from different teams
 router.get('/invited', authMiddleware, async (req, res) => {
     try {
-        const userId = req.user._id; // Assuming user's ID is available via auth middleware
+        const userEmail = req.user.email;
 
-        // Fetch all forming teams where the user is in the pendingInvites array
+        // First check if the user is already part of any team
+        const existingTeam = await FormingTeam.findOne({
+            $or: [
+                { TeamleaderEmailID: userEmail },
+                { 'members.email': userEmail }
+            ]
+        });
+
+        if (existingTeam) {
+            // If user is already in a team, remove them from all pending invites
+            await FormingTeam.updateMany(
+                { 'pendingInvites.email': userEmail },
+                { 
+                    $pull: { 
+                        pendingInvites: { 
+                            email: userEmail 
+                        } 
+                    } 
+                }
+            );
+
+            return res.status(200).json({ 
+                message: 'You have already joined a team',
+                existingTeam,
+                invitedTeams: []
+            });
+        }
+
+        // If user is not in any team, proceed with fetching invites
         const teams = await FormingTeam.find({ 
-            'pendingInvites.userId': userId ,
-            'pendingInvites.status': 'PENDING',
-            'pendingInvites.type': 'SENT'
+            'pendingInvites': {
+                $elemMatch: {
+                    email: userEmail,
+                    status: 'PENDING'
+                }
+            }
         }).lean();
 
-        res.json({ invitedTeams: teams });
+        // Filter to only include teams where the invite type is SENT
+        const invitedTeams = teams.filter(team => 
+            team.pendingInvites.some(invite => 
+                invite.email === userEmail && 
+                invite.status === 'PENDING' && 
+                invite.type === 'SENT'
+            )
+        );
+
+        res.json({ invitedTeams });
     } catch (error) {
         console.error('Error fetching invited teams:', error);
         res.status(500).json({ message: 'An error occurred while fetching invited teams' });
@@ -669,6 +709,27 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: 'Invite not found' });
         }
 
+        // Check if the user has already joined another team
+        const userExistingTeam = await FormingTeam.findOne({
+            $or: [
+                { TeamleaderEmailID: invite.email },
+                { 'members.email': invite.email }
+            ]
+        });
+
+        if (userExistingTeam) {
+            // Remove the invite since user is already in another team
+            team.pendingInvites = team.pendingInvites.filter(
+                inv => inv._id.toString() !== req.params.inviteId
+            );
+            await team.save();
+
+            return res.status(400).json({ 
+                message: 'This user has already joined another team',
+                alreadyInTeam: true
+            });
+        }
+
         // Update invite status
         invite.status = status;
 
@@ -698,20 +759,20 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
                 return res.status(400).json({ message: 'Team already has the maximum number of members' });
             }
 
-            // Add the accepted member to the team with all required information
+            // Add the accepted member to the team
             team.members.push({
                 name: invite.name,
                 usn: invite.usn,
                 email: invite.email,
                 mobileNumber: invite.mobileNumber,
                 program: invite.program,
-                position, // Position assigned by team leader
+                position,
                 joinedAt: new Date()
             });
 
             // Remove the invite from pendingInvites
             team.pendingInvites = team.pendingInvites.filter(
-                invite => invite._id.toString() !== req.params.inviteId
+                inv => inv._id.toString() !== req.params.inviteId
             );
         }
 
