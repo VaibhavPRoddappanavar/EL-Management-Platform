@@ -9,7 +9,9 @@ const studentMarkSchema = new mongoose.Schema({
     studentUSN: String,
     marks: {
         type: Number,
-        required: true
+        required: true,
+        min: 0,
+        max: 100
     },
     individualFeedback: String
 });
@@ -36,6 +38,12 @@ const marksSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+}, {
+    timestamps: true
 });
 
-module.exports = mongoose.model('Marks', marksSchema); 
+// Add index for faster queries
+marksSchema.index({ teamId: 1, phase: 1, submittedBy: 1 });
+
+const Marks = mongoose.model('Marks', marksSchema);
+module.exports = Marks;

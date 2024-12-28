@@ -1,18 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const teacherAuth = require('../../middleware/teacherAuth');
-const ProjectMarks = require('../../Models/TeachersModels/ProjectMarks');
+const Marks = require('../../Models/Marks');
 const Team = require('../../Models/Team');
 
 // Submit marks for a team
 router.post('/submit-marks', teacherAuth, async (req, res) => {
   try {
+    console.log("Received marks submission:", req.body);
+
     const { teamId, phase, studentMarks, generalFeedback } = req.body;
 
-    // Validate if teacher is assigned to this team
+    // Add these debug logs
     const teacher = req.teacher;
-    if (!teacher.assignedTeams.includes(teamId)) {
-      return res.status(403).json({ message: 'Not authorized to grade this team' });
+    console.log("Teacher:", {
+      id: teacher._id,
+      assignedTeams: teacher.assignedTeams,
+      teamToGrade: teamId
+    });
+
+    // Check if teamId is in assignedTeams (convert both to strings for comparison)
+    const isTeamAssigned = teacher.assignedTeams.some(
+      assignedTeam => assignedTeam.toString() === teamId.toString()
+    );
+    console.log("Is team assigned:", isTeamAssigned);
+
+    if (!isTeamAssigned) {
+      return res.status(403).json({ 
+        message: 'Not authorized to grade this team',
+        details: {
+          teacherId: teacher._id,
+          assignedTeams: teacher.assignedTeams,
+          requestedTeam: teamId
+        }
+      });
     }
 
     // Get team details to verify student emails
@@ -30,22 +51,46 @@ router.post('/submit-marks', teacherAuth, async (req, res) => {
       team.TeamMember4EmailID
     ].filter(Boolean);
 
-    // Validate student marks
-    const validatedStudentMarks = studentMarks.filter(mark => 
-      teamEmails.includes(mark.studentEmail) && 
-      mark.marks >= 0 && 
-      mark.marks <= 100
-    );
+    console.log('Team emails:', teamEmails);
+    console.log('Received student marks:', studentMarks);
 
-    if (validatedStudentMarks.length !== studentMarks.length) {
-      return res.status(400).json({ message: 'Invalid student marks data' });
+    // Validate student marks
+    const validatedStudentMarks = studentMarks
+      .filter(student => student.email) // Only include students with emails
+      .map(student => ({
+        studentEmail: student.email,
+        studentName: student.name,
+        studentUSN: student.usn,
+        marks: parseFloat(student.marks),
+        individualFeedback: student.feedback
+      }))
+      .filter(mark => 
+        teamEmails.includes(mark.studentEmail) && 
+        !isNaN(mark.marks) && 
+        mark.marks >= 0 && 
+        mark.marks <= 100
+      );
+
+    console.log('Validated marks:', validatedStudentMarks);
+
+    if (validatedStudentMarks.length === 0) {
+      return res.status(400).json({ 
+        message: 'No valid student marks provided',
+        details: {
+          validEmails: teamEmails,
+          receivedMarks: studentMarks.map(m => ({
+            email: m.email,
+            marks: m.marks
+          }))
+        }
+      });
     }
 
     // Create or update marks
-    const marksRecord = await ProjectMarks.findOneAndUpdate(
+    const marksRecord = await Marks.findOneAndUpdate(
       { 
         teamId, 
-        teacherId: teacher._id, 
+        submittedBy: teacher._id, 
         phase 
       },
       {
@@ -59,10 +104,19 @@ router.post('/submit-marks', teacherAuth, async (req, res) => {
       }
     );
 
-    res.json({ message: 'Marks submitted successfully', data: marksRecord });
+    console.log('Marks saved successfully:', marksRecord);
+
+    res.json({ 
+      message: 'Marks submitted successfully', 
+      data: marksRecord 
+    });
   } catch (error) {
     console.error('Error submitting marks:', error);
-    res.status(500).json({ message: 'Error submitting marks' });
+    res.status(500).json({ 
+      message: 'Error submitting marks', 
+      error: error.message,
+      details: 'An error occurred while saving the marks'
+    });
   }
 });
 
@@ -70,43 +124,24 @@ router.post('/submit-marks', teacherAuth, async (req, res) => {
 router.get('/team-marks/:teamId', teacherAuth, async (req, res) => {
   try {
     const { teamId } = req.params;
-    const marks = await ProjectMarks.find({
-      teamId,
-      teacherId: req.teacher._id
-    }).sort({ phase: 1 });
+    
+    // Verify teacher's authorization
+    const isTeamAssigned = req.teacher.assignedTeams.some(
+      assignedTeam => assignedTeam.toString() === teamId
+    );
+    
+    if (!isTeamAssigned) {
+      return res.status(403).json({ message: 'Not authorized to view this team\'s marks' });
+    }
+
+    const marks = await Marks.find({ teamId })
+      .sort({ phase: 1, submittedAt: -1 });
 
     res.json(marks);
   } catch (error) {
-    console.error('Error fetching marks:', error);
-    res.status(500).json({ message: 'Error fetching marks' });
+    console.error('Error fetching team marks:', error);
+    res.status(500).json({ message: 'Error fetching team marks' });
   }
 });
 
-// Update marks for a team
-router.put('/update-marks/:markId', teacherAuth, async (req, res) => {
-  try {
-    const { markId } = req.params;
-    const { studentMarks, generalFeedback } = req.body;
-
-    const mark = await ProjectMarks.findById(markId);
-    if (!mark) {
-      return res.status(404).json({ message: 'Marks record not found' });
-    }
-
-    if (mark.teacherId.toString() !== req.teacher._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to update these marks' });
-    }
-
-    mark.studentMarks = studentMarks;
-    mark.generalFeedback = generalFeedback;
-    mark.submittedAt = new Date();
-
-    await mark.save();
-    res.json({ message: 'Marks updated successfully', data: mark });
-  } catch (error) {
-    console.error('Error updating marks:', error);
-    res.status(500).json({ message: 'Error updating marks' });
-  }
-});
-
-module.exports = router; 
+module.exports = router;
