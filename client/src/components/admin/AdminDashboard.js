@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
 import TeacherManagement from "./TeacherManagement/TeacherManagement";
 import UnassignedStudents from './UnassignedStudents';
+import StudentMarks from './StudentMarks';
 
 function AdminDashboard() {
   // Existing state
@@ -210,15 +211,17 @@ function AdminDashboard() {
         <Paper elevation={3} sx={{ mt: 3, p: 3 }}>
           <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
             <Tabs value={activeTab} onChange={handleTabChange}>
-              <Tab label="Team Management" />
-              <Tab label="Not In Team" />
+              <Tab label="Teams Overview" />
               <Tab label="Teacher Management" />
+              <Tab label="Unassigned Students" />
+              <Tab label="Student Marks" />
             </Tabs>
           </Box>
 
           {activeTab === 0 && renderTeamManagement()}
-          {activeTab === 1 && <UnassignedStudents />}
-          {activeTab === 2 && <TeacherManagement />}
+          {activeTab === 1 && <TeacherManagement />}
+          {activeTab === 2 && <UnassignedStudents />}
+          {activeTab === 3 && <StudentMarks />}
         </Paper>
       </Container>
     </div>
