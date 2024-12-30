@@ -1,9 +1,9 @@
-import { Box, Container, Paper, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
+import { Box, Container, Paper, Tab, Tabs } from "@mui/material";
 import TeacherManagement from "./TeacherManagement/TeacherManagement";
-// Import your existing admin components
 import StudentManagement from "./StudentManagement";
 import TeamManagement from "./TeamManagement";
+import AnnouncementManagement from "./AnnouncementManagement/AnnouncementManagement";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -20,12 +20,14 @@ const AdminDashboard = () => {
             <Tab label="Team Management" />
             <Tab label="Student Management" />
             <Tab label="Teacher Management" />
+            <Tab label="Announcements" />
           </Tabs>
         </Box>
 
         {activeTab === 0 && <TeamManagement />}
         {activeTab === 1 && <StudentManagement />}
         {activeTab === 2 && <TeacherManagement />}
+        {activeTab === 3 && <AnnouncementManagement />}
       </Paper>
     </Container>
   );
