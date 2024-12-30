@@ -18,6 +18,7 @@ const teacherAuth = require("./Routes/Teachers/teacherAuth");
 const marksManagement = require("./Routes/Teachers/marksManagement");
 const teacherManagement = require("./Routes/Admin/teacherManagement");
 const announcementRoutes = require("./Routes/Admin/announcementRoutes");
+const marksRoutes = require('./Routes/MarksRoutes');
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server for Socket.IO
@@ -67,6 +68,9 @@ app.use("/admin/teams", Teammanagement);
 // TeamRoutes
 app.use("/", TeamRoutes);
 
+// Middleware for marks management
+app.use("/api/marks", marksRoutes);
+
 // Teacher routes
 app.use("/api/teachers", teacherAuth);
 
@@ -80,20 +84,39 @@ app.use("/api/admin/teachers", teacherManagement);
 app.use("/api/admin", announcementRoutes);
 app.use("/api/student/announcements", announcementRoutes); // For student access
 
-// Fetch student details
+// Add this route to handle student details fetch
 app.get("/student-details", async (req, res) => {
-  const email = req.query.email;
-  if (!email) {
-    return res.status(400).json({ message: "Email is required" });
-  }
   try {
-    const student = await StudentInfo.findOne({ email });
-    if (!student) {
+    const { email } = req.query;
+    
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    // First, try to find the student in any department
+    const departments = await StudentInfo.find();
+    let foundStudent = null;
+
+    // Search through all departments
+    for (const dept of departments) {
+      const student = dept.students.find(s => s.email === email);
+      if (student) {
+        foundStudent = {
+          ...student.toObject(),
+          departmentCode: dept.departmentCode
+        };
+        break;
+      }
+    }
+
+    if (!foundStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
-    res.json(student);
+
+    res.json(foundStudent);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching student details:", error);
+    res.status(500).json({ message: "Server error while fetching student details" });
   }
 });
 
@@ -264,3 +287,6 @@ server.listen(PORT, () => {
   console.log("- GET /teacher/teams");
   console.log("- GET /api/teams");
 });
+
+// Marks routes
+app.use('/marks', marksRoutes);
