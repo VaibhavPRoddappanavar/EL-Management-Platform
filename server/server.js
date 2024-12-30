@@ -15,8 +15,9 @@ const TeamRoutes = require("./Routes/TeamRoutes");
 const StudentInfo = require("./Models/StudentInfo");
 const Chat = require("./Models/Chatmodel");
 const teacherAuth = require("./Routes/Teachers/teacherAuth");
-const marksManagement = require('./Routes/Teachers/marksManagement');
-const teacherManagement = require('./Routes/Admin/teacherManagement');
+const marksManagement = require("./Routes/Teachers/marksManagement");
+const teacherManagement = require("./Routes/Admin/teacherManagement");
+const announcementRoutes = require("./Routes/Admin/announcementRoutes");
 const marksRoutes = require('./Routes/MarksRoutes');
 
 const app = express();
@@ -71,13 +72,17 @@ app.use("/", TeamRoutes);
 app.use("/api/marks", marksRoutes);
 
 // Teacher routes
-app.use('/api/teachers', teacherAuth);
+app.use("/api/teachers", teacherAuth);
 
-// Middleware for teacher marks management
+// Teacher marks management routes
 app.use("/api/teachers/marks", marksManagement);
 
-// Middleware for admin teacher management
-app.use('/api/admin/teachers', teacherManagement);
+// Admin teacher management routes
+app.use("/api/admin/teachers", teacherManagement);
+
+// Add this with other app.use statements
+app.use("/api/admin", announcementRoutes);
+app.use("/api/student/announcements", announcementRoutes); // For student access
 
 // Add this route to handle student details fetch
 app.get("/student-details", async (req, res) => {
@@ -182,7 +187,7 @@ app.get("/api/teams", async (req, res) => {
 // Protected teacher route to fetch teams
 app.get("/teacher/teams", async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
@@ -194,10 +199,10 @@ app.get("/teacher/teams", async (req, res) => {
     }
 
     const teams = await Team.find(query);
-    console.log('Fetched teams for teacher:', teams.length, 'Theme:', theme);
+    console.log("Fetched teams for teacher:", teams.length, "Theme:", theme);
     res.json(teams);
   } catch (error) {
-    console.error('Error in /teacher/teams:', error);
+    console.error("Error in /teacher/teams:", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -205,7 +210,7 @@ app.get("/teacher/teams", async (req, res) => {
 // Protected teacher route to fetch unassigned students
 app.get("/teacher/unassigned", async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
@@ -230,13 +235,15 @@ app.get("/teacher/unassigned", async (req, res) => {
     // Fetch all emails of students already in teams
     const teams = await Team.find({});
     const teamEmails = new Set(
-      teams.flatMap((team) => [
-        team.TeamleaderEmailID,
-        team.TeamMember1EmailID,
-        team.TeamMember2EmailID,
-        team.TeamMember3EmailID,
-        team.TeamMember4EmailID,
-      ]).filter(Boolean) // Remove null/undefined values
+      teams
+        .flatMap((team) => [
+          team.TeamleaderEmailID,
+          team.TeamMember1EmailID,
+          team.TeamMember2EmailID,
+          team.TeamMember3EmailID,
+          team.TeamMember4EmailID,
+        ])
+        .filter(Boolean) // Remove null/undefined values
     );
 
     // Debug: Check the set of emails
@@ -252,7 +259,7 @@ app.get("/teacher/unassigned", async (req, res) => {
 
     res.json(unassignedStudents);
   } catch (error) {
-    console.error('Error in /teacher/unassigned:', error);
+    console.error("Error in /teacher/unassigned:", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -275,10 +282,10 @@ app.get("/", (req, res) => {
 // Start the server
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log('Available routes:');
-  console.log('- GET /teacher/unassigned');
-  console.log('- GET /teacher/teams');
-  console.log('- GET /api/teams');
+  console.log("Available routes:");
+  console.log("- GET /teacher/unassigned");
+  console.log("- GET /teacher/teams");
+  console.log("- GET /api/teams");
 });
 
 // Marks routes

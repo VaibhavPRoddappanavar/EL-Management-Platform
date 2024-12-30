@@ -32,9 +32,9 @@ const Sidebar = ({ onMouseEnter, onMouseLeave }) => {
             </Link>
           </div>
           <div className="menu-item">
-            <Link to="/announcement">
+            <Link to="announcements">
               <FontAwesomeIcon icon={faBullhorn} />
-              <span>Announcement</span>
+              <span>Announcements</span>
             </Link>
           </div>
           <div className="menu-item">
