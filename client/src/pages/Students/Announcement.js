@@ -1,8 +1,9 @@
 // Announcement.js
 import React from 'react';
+import StudentAnnouncements from '../../components/student/StudentAnnouncements';
 
 const Announcement = () => {
-  return <h1>Announcement Page</h1>;
+  return <StudentAnnouncements />;
 };
 
 export default Announcement;

@@ -3,8 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "../../components/admin/AdminNavbar";
 import Sidebar from "../../components/admin/AdminSidebar";
 import WelcomeSection from "../../components/admin/WelcomeSection";
-import AdminData from "../../components/admin/AdminDashboard"; // Assuming AdminDashboard is used as AdminData
+import AdminData from "../../components/admin/AdminDashboard";
 import AdminLogout from "../../components/admin/AdminLogout";
+import Announcements from "../../components/admin/Announcements";
 import "./AdminHome.css";
 
 const Dashboard = () => {
@@ -26,6 +27,7 @@ const Dashboard = () => {
             <Routes>
               <Route path="" element={<WelcomeSection />} />
               <Route path="board" element={<AdminData />} />
+              <Route path="announcements" element={<Announcements />} />
               <Route path="logout" element={<AdminLogout />} />
             </Routes>
           </div>
