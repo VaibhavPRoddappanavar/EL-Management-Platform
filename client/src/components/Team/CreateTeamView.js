@@ -141,12 +141,12 @@ export const CreateTeamView = () => {
             email: data.email,
             usn: data.usn || "",
           }));
-          setStudentBranch(data.branch);
+          setStudentBranch(data.departmentCode);
 
           // Find the cluster based on the branch
           let userCluster = null;
           for (const [cluster, programs] of Object.entries(clusterPrograms)) {
-            if (programs.includes(data.branch)) {
+            if (programs.includes(data.departmentCode)) {
               userCluster = cluster;
               break;
             }
