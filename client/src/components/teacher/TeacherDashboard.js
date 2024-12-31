@@ -119,31 +119,36 @@ const TeacherDashboard = () => {
         email: team.TeamleaderEmailID,
         name: team.TeamLeaderName,
         usn: team.TeamLeaderUSN,
-        marks: 0
+        marks: 0,
+        feedback: ""
       },
       {
         email: team.TeamMember1EmailID,
         name: team.TeamMember1Name,
         usn: team.TeamMember1USN,
-        marks: 0
+        marks: 0,
+        feedback: ""
       },
       {
         email: team.TeamMember2EmailID,
         name: team.TeamMember2Name,
         usn: team.TeamMember2USN,
-        marks: 0
+        marks: 0,
+        feedback: ""
       },
       {
         email: team.TeamMember3EmailID,
         name: team.TeamMember3Name,
         usn: team.TeamMember3USN,
-        marks: 0
+        marks: 0,
+        feedback: ""
       },
       {
         email: team.TeamMember4EmailID,
         name: team.TeamMember4Name,
         usn: team.TeamMember4USN,
-        marks: 0
+        marks: 0,
+        feedback: ""
       }
     ].filter(s => s.email);
     
@@ -224,6 +229,17 @@ const TeacherDashboard = () => {
       newMarks[studentIndex] = {
         ...newMarks[studentIndex],
         marks: newValue
+      };
+      return newMarks;
+    });
+  };
+
+  const handleIndividualFeedbackChange = (studentIndex, value) => {
+    setStudentMarks(prev => {
+      const newMarks = [...prev];
+      newMarks[studentIndex] = {
+        ...newMarks[studentIndex],
+        feedback: value
       };
       return newMarks;
     });
@@ -482,19 +498,34 @@ const TeacherDashboard = () => {
                                         <Typography variant="subtitle2" gutterBottom>
                                           {student.name} ({student.usn})
                                         </Typography>
-                                        <TextField
-                                          label="Marks"
-                                          type="number"
-                                          value={student.marks}
-                                          onChange={(e) => handleIndividualMarksChange(index, e.target.value)}
-                                          fullWidth
-                                          InputProps={{
-                                            inputProps: {
-                                              min: 0,
-                                              max: MARKING_CRITERIA[phase].totalMarks
-                                            }
-                                          }}
-                                        />
+                                        <Grid container spacing={2}>
+                                          <Grid item xs={12} md={6}>
+                                            <TextField
+                                              label="Marks"
+                                              type="number"
+                                              value={student.marks}
+                                              onChange={(e) => handleIndividualMarksChange(index, e.target.value)}
+                                              fullWidth
+                                              InputProps={{
+                                                inputProps: {
+                                                  min: 0,
+                                                  max: MARKING_CRITERIA[phase].totalMarks
+                                                }
+                                              }}
+                                            />
+                                          </Grid>
+                                          <Grid item xs={12}>
+                                            <TextField
+                                              label="Individual Feedback"
+                                              multiline
+                                              rows={3}
+                                              value={student.feedback}
+                                              onChange={(e) => handleIndividualFeedbackChange(index, e.target.value)}
+                                              fullWidth
+                                              placeholder="Enter feedback for this student..."
+                                            />
+                                          </Grid>
+                                        </Grid>
                                       </Paper>
                                     </Grid>
                                   ))}
@@ -502,15 +533,19 @@ const TeacherDashboard = () => {
                               </Box>
                             )}
 
-                            {/* Feedback Section */}
+                            {/* Team Feedback Section */}
                             <Box mt={4}>
+                              <Typography variant="subtitle1" gutterBottom color="primary">
+                                Team Feedback
+                              </Typography>
                               <TextField
-                                label="Team Feedback"
+                                label="General Team Feedback"
                                 multiline
                                 rows={4}
                                 value={generalFeedback}
                                 onChange={(e) => setGeneralFeedback(e.target.value)}
                                 fullWidth
+                                placeholder="Enter general feedback for the entire team..."
                               />
                             </Box>
                           </CardContent>
