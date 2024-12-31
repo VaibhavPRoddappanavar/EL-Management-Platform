@@ -65,6 +65,7 @@ const TeacherDashboard = () => {
   const [generalFeedback, setGeneralFeedback] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [teamCriteria, setTeamCriteria] = useState({});
+  const [existingMarks, setExistingMarks] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -160,19 +161,73 @@ const TeacherDashboard = () => {
           phase,
           studentMarks,
           generalFeedback,
+          isUpdate: !!existingMarks
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      toast.success("Marks submitted successfully");
+      
+      const message = existingMarks 
+        ? "Marks updated successfully" 
+        : "Marks submitted successfully";
+      toast.success(message);
+      
       setSelectedTeam(null);
       setPhase("");
       setGeneralFeedback("");
+      setExistingMarks(null);
     } catch (error) {
       toast.error(error.response?.data?.message || "Error submitting marks");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handlePhaseChange = async (event) => {
+    const selectedPhase = event.target.value;
+    setPhase(selectedPhase);
+    
+    if (selectedTeam) {
+      try {
+        const token = localStorage.getItem("teacherToken");
+        const response = await axios.get(
+          `http://localhost:5000/api/teachers/marks/team-marks/${selectedTeam._id}/${selectedPhase}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        
+        if (response.data) {
+          const confirmEdit = window.confirm(
+            "Marks already exist for this phase. Would you like to edit them?"
+          );
+          
+          if (confirmEdit) {
+            // Transform the marks data to match the expected format
+            const transformedMarks = response.data.studentMarks.map(mark => ({
+              email: mark.studentEmail,
+              name: mark.studentName,
+              usn: mark.studentUSN,
+              marks: mark.marks.toString(),
+              feedback: mark.individualFeedback || ""
+            }));
+            setStudentMarks(transformedMarks);
+            setGeneralFeedback(response.data.generalFeedback || "");
+            setExistingMarks(response.data);
+          } else {
+            // Reset phase if user doesn't want to edit
+            setPhase("");
+          }
+        } else {
+          setExistingMarks(null);
+          // Initialize empty marks for the team
+          handleAssignMarks(selectedTeam);
+        }
+      } catch (error) {
+        console.error("Error fetching existing marks:", error);
+        toast.error("Error checking existing marks");
+      }
     }
   };
 
@@ -188,7 +243,7 @@ const TeacherDashboard = () => {
               <Typography variant="subtitle2" color="textSecondary">
                 Theme: {team.Theme}
               </Typography>
-              
+　　 　　　　　
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                   Team Lead:
@@ -325,7 +380,7 @@ const TeacherDashboard = () => {
                     fullWidth
                     label="Phase"
                     value={phase}
-                    onChange={(e) => setPhase(e.target.value)}
+                    onChange={handlePhaseChange}
                   >
                     <MenuItem value="Phase1">Phase 1</MenuItem>
                     <MenuItem value="Phase2">Phase 2</MenuItem>
