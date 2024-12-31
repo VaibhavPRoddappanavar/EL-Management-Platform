@@ -83,6 +83,18 @@ router.get('/phase/:phase', teacherAuth, async (req, res) => {
     }
 });
 
+// Get marks by phase for admin
+router.get('/admin/phase/:phase', verifyToken, async (req, res) => {
+    try {
+        const marks = await Marks.find({
+            phase: req.params.phase
+        }).populate('teamId').sort({ submittedAt: -1 });
+        res.status(200).json(marks);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Update marks for a specific submission
 router.put('/update/:markId', teacherAuth, async (req, res) => {
     try {

@@ -6,11 +6,13 @@ import {
   UserPlus,
   Users,
   XCircle,
+  Trash2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Nbar from "../ui/Nbar";
 import Chat from "./Chat";
+import { useNavigate } from "react-router-dom";
 
 const POSITION_OPTIONS = [
   "TeamMember1",
@@ -37,6 +39,7 @@ const CardContent = ({ children, className = "" }) => (
 );
 
 const TeamManagementView = ({ team }) => {
+  const navigate = useNavigate();
   const [invites, setInvites] = useState({
     sentInvites: { pending: [], accepted: [], rejected: [] },
     appliedInvites: { pending: [], accepted: [], rejected: [] },
@@ -44,8 +47,12 @@ const TeamManagementView = ({ team }) => {
   const [teamData, setTeamData] = useState({ teamLeader: null, members: [] });
   const [newInviteEmail, setNewInviteEmail] = useState("");
   const [newInvitePosition, setNewInvitePosition] = useState("");
+  const [unassignedStudents, setUnassignedStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [sentActiveTab, setSentActiveTab] = useState("pending");
   const [receivedActiveTab, setReceivedActiveTab] = useState("pending");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const [studentDetails, setStudentDetails] = useState({
     name: "",
@@ -98,6 +105,23 @@ const TeamManagementView = ({ team }) => {
     };
     fetchData();
   }, [team._id]);
+
+  useEffect(() => {
+    const fetchUnassignedStudents = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:5000/admin/unassigned", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUnassignedStudents(response.data);
+        setFilteredStudents(response.data);
+      } catch (error) {
+        console.error("Error fetching unassigned students:", error);
+      }
+    };
+
+    fetchUnassignedStudents();
+  }, []);
 
   const fetchInvites = async () => {
     try {
@@ -285,6 +309,36 @@ const TeamManagementView = ({ team }) => {
     }
   };
 
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    const filtered = unassignedStudents.filter((student) =>
+      student.Name.toLowerCase().includes(query.toLowerCase()) ||
+      student.email.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredStudents(filtered);
+  };
+
+  const handleStudentSelect = (email) => {
+    setNewInviteEmail(email);
+  };
+
+  const handleDiscardTeam = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/team/${team._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Team discarded successfully");
+      navigate("/"); // Navigate back to main view
+    } catch (error) {
+      console.error("Error discarding team:", error);
+      const errorMessage = error.response?.data?.message || "Failed to discard team. Please try again.";
+      toast.error(errorMessage);
+    }
+  };
+
   const TabButton = ({ active, onClick, children }) => (
     <button
       onClick={onClick}
@@ -415,165 +469,246 @@ const TeamManagementView = ({ team }) => {
     );
   };
 
+  const ConfirmDialog = ({ onConfirm, onCancel }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Discard Team</h3>
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to discard this team? This action cannot be undone.
+        </p>
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Discard Team
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div>
-      <Nbar/>
-    <div className="wrapper bg-blue-50 min-h-screen max-w-screen overflow-x-hidden p-4 md:p-6">
-      <div className="grid md:grid-cols-2 gap-6 mt-24">
-        {/* Current Team Members Card */}
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-6 h-6 text-blue-500" />
-              Current Team Members
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TeamMembersList
-              teamLeader={teamData.teamLeader}
-              members={teamData.members}
-              onDeleteMember={handleDeleteMember}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Team Management Card */}
-        <div className="space-y-6">
-          {/* Invite New Member */}
-          <Card>
+      <Nbar />
+      <div className="wrapper bg-blue-50 min-h-screen max-w-screen overflow-x-hidden p-4 md:p-6">
+        {showConfirmDialog && (
+          <ConfirmDialog
+            onConfirm={() => {
+              handleDiscardTeam();
+              setShowConfirmDialog(false);
+            }}
+            onCancel={() => setShowConfirmDialog(false)}
+          />
+        )}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
+          <button
+            onClick={() => setShowConfirmDialog(true)}
+            className="flex items-center px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <Trash2 className="w-5 h-5 mr-2" />
+            Discard Team
+          </button>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 mt-24">
+          {/* Current Team Members Card */}
+          <Card className="h-fit">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <UserPlus className="w-6 h-6 text-blue-500" />
-                Invite New Member
+                <Users className="w-6 h-6 text-blue-500" />
+                Current Team Members
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col md:flex-row gap-4 flex-wrap">
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                  value={newInviteEmail}
-                  onChange={(e) => setNewInviteEmail(e.target.value)}
-                />
-                <select
-                  value={newInvitePosition}
-                  onChange={(e) => setNewInvitePosition(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 bg-white"
-                >
-                  <option value="" disabled>
-                    Select Position
-                  </option>
-                  {POSITION_OPTIONS.map((position) => (
-                    <option key={position} value={position}>
-                      {position}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleInviteMember}
-                  className="flex items-center justify-center gap-2 px-6 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition duration-200"
-                >
-                  <PlusCircle className="w-5 h-5" />
-                  Send Invite
-                </button>
-              </div>
+              <TeamMembersList
+                teamLeader={teamData.teamLeader}
+                members={teamData.members}
+                onDeleteMember={handleDeleteMember}
+              />
             </CardContent>
           </Card>
 
-          {/* Invitations Grid */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Sent Invitations Card */}
+          {/* Team Management Card */}
+          <div className="space-y-6">
+            {/* Invite New Member */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="w-6 h-6 text-blue-500" />
-                  Sent
+                  <UserPlus className="w-6 h-6 text-blue-500" />
+                  Invite New Member
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col space-x-2 mb-4">
-                  <TabButton
-                    active={sentActiveTab === "pending"}
-                    onClick={() => setSentActiveTab("pending")}
+                <div className="space-y-4">
+                  {/* Search and Select Member */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Search Members
+                    </label>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      placeholder="Search by name or email"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                    />
+                    
+                    <div className="mt-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+                      {filteredStudents.map((student) => (
+                        <div
+                          key={student.email}
+                          onClick={() => handleStudentSelect(student.email)}
+                          className={`p-3 cursor-pointer hover:bg-gray-50 ${
+                            newInviteEmail === student.email ? 'bg-blue-50' : ''
+                          }`}
+                        >
+                          <div className="font-medium">{student.Name}</div>
+                          <div className="text-sm text-gray-500">{student.email}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Position Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Position
+                    </label>
+                    <select
+                      value={newInvitePosition}
+                      onChange={(e) => setNewInvitePosition(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select position</option>
+                      {POSITION_OPTIONS.map((pos) => (
+                        <option key={pos} value={pos}>
+                          {pos}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    onClick={handleInviteMember}
+                    disabled={!newInviteEmail || !newInvitePosition}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Pending
-                  </TabButton>
-                  <TabButton
-                    active={sentActiveTab === "accepted"}
-                    onClick={() => setSentActiveTab("accepted")}
-                  >
-                    Accepted
-                  </TabButton>
-                  <TabButton
-                    active={sentActiveTab === "rejected"}
-                    onClick={() => setSentActiveTab("rejected")}
-                  >
-                    Rejected
-                  </TabButton>
+                    <PlusCircle className="w-5 h-5" />
+                    Send Invite
+                  </button>
                 </div>
-                <InviteList
-                  inviteList={invites.sentInvites[sentActiveTab] || []}
-                  type="sent"
-                  status={sentActiveTab}
-                />
               </CardContent>
             </Card>
 
-            {/* Received Invitations Card */}
+            {/* Invitations Grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Sent Invitations Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-6 h-6 text-blue-500" />
+                    Sent
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col space-x-2 mb-4">
+                    <TabButton
+                      active={sentActiveTab === "pending"}
+                      onClick={() => setSentActiveTab("pending")}
+                    >
+                      Pending
+                    </TabButton>
+                    <TabButton
+                      active={sentActiveTab === "accepted"}
+                      onClick={() => setSentActiveTab("accepted")}
+                    >
+                      Accepted
+                    </TabButton>
+                    <TabButton
+                      active={sentActiveTab === "rejected"}
+                      onClick={() => setSentActiveTab("rejected")}
+                    >
+                      Rejected
+                    </TabButton>
+                  </div>
+                  <InviteList
+                    inviteList={invites.sentInvites[sentActiveTab] || []}
+                    type="sent"
+                    status={sentActiveTab}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Received Invitations Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-6 h-6 text-blue-500" />
+                    Received
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col space-x-2 mb-4">
+                    <TabButton
+                      active={receivedActiveTab === "pending"}
+                      onClick={() => setReceivedActiveTab("pending")}
+                    >
+                      Pending
+                    </TabButton>
+                    <TabButton
+                      active={receivedActiveTab === "accepted"}
+                      onClick={() => setReceivedActiveTab("accepted")}
+                    >
+                      Accepted
+                    </TabButton>
+                    <TabButton
+                      active={receivedActiveTab === "rejected"}
+                      onClick={() => setReceivedActiveTab("rejected")}
+                    >
+                      Rejected
+                    </TabButton>
+                  </div>
+                  <InviteList
+                    inviteList={invites.appliedInvites[receivedActiveTab] || []}
+                    type="received"
+                    status={receivedActiveTab}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Finalize Team Button */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-6 h-6 text-blue-500" />
-                  Received
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col space-x-2 mb-4">
-                  <TabButton
-                    active={receivedActiveTab === "pending"}
-                    onClick={() => setReceivedActiveTab("pending")}
+              <CardContent className="pt-6">
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={handleFinalizeTeam}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-2 text-white bg-green-500 rounded-md hover:bg-green-600 transition duration-200"
                   >
-                    Pending
-                  </TabButton>
-                  <TabButton
-                    active={receivedActiveTab === "accepted"}
-                    onClick={() => setReceivedActiveTab("accepted")}
+                    <CheckCircle className="w-5 h-5" />
+                    Finalize Team
+                  </button>
+                  <button
+                    onClick={() => setShowConfirmDialog(true)}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 transition duration-200"
                   >
-                    Accepted
-                  </TabButton>
-                  <TabButton
-                    active={receivedActiveTab === "rejected"}
-                    onClick={() => setReceivedActiveTab("rejected")}
-                  >
-                    Rejected
-                  </TabButton>
+                    <Trash2 className="w-5 h-5" />
+                    Discard Team
+                  </button>
                 </div>
-                <InviteList
-                  inviteList={invites.appliedInvites[receivedActiveTab] || []}
-                  type="received"
-                  status={receivedActiveTab}
-                />
               </CardContent>
             </Card>
           </div>
-
-          {/* Finalize Team Button */}
-          <Card>
-            <CardContent className="pt-6">
-              <button
-                onClick={handleFinalizeTeam}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 text-white bg-green-500 rounded-md hover:bg-green-600 transition duration-200"
-              >
-                <CheckCircle className="w-5 h-5" />
-                Finalize Team
-              </button>
-            </CardContent>
-          </Card>
         </div>
+        <Chat teamId={team._id} userName={studentDetails.name} />
       </div>
-      <Chat teamId={team._id} userName={studentDetails.name} />
-    </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { faBars, faBullhorn, faHome, faMessage, faSignOut, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBullhorn, faHome, faMessage, faSignOut, faUserFriends, faCommentAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
@@ -9,6 +9,7 @@ import Announcement from '../pages/Students/Announcement'; // Import Announcemen
 import Messages from '../pages/Students/Messages'; // Import Messages component
 import Team from '../pages/Students/TeamPage'; // Import the Team component
 import Home from './Home';
+import FeedbackSection from './student/FeedbackSection';
 import './NavbarStyle.css';
 
 const Navbar = () => {
@@ -37,7 +38,7 @@ const Navbar = () => {
         setStudentDetails({
           name: response.data.Name,
           email: response.data.email,
-          branch: response.data.deartmentCode
+          branch: response.data.departmentCode
         });
       } catch (error) {
         console.error('Error fetching student details:', error);
@@ -109,6 +110,7 @@ const Navbar = () => {
             {!loading && activePage === 'team' && <Team />}
             {!loading && activePage === 'announcement' && <Announcement />}
             {!loading && activePage === 'messages' && <Messages />}
+            {!loading && activePage === 'feedback' && <FeedbackSection />}
           </div>
         </div>
 
@@ -137,6 +139,12 @@ const Navbar = () => {
               <a href="#" onClick={() => setPage('messages')}>
                 <FontAwesomeIcon icon={faMessage} />
                 <span>Messages</span>
+              </a>
+            </div>
+            <div className="nav-item">
+              <a href="#" onClick={() => setPage('feedback')}>
+                <FontAwesomeIcon icon={faCommentAlt} />
+                <span>Feedback</span>
               </a>
             </div>
             <div className="nav-item">
