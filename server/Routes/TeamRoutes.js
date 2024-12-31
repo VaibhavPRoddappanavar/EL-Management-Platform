@@ -273,7 +273,6 @@ router.post('/:teamId/invite', authMiddleware, async (req, res) => {
     }
 });
 
-
 // Cancel Invitation
 router.post('/:teamId/cancel-invite', authMiddleware, async (req, res) => {
     const { email } = req.body; // The email of the person whose invite you want to cancel
@@ -310,7 +309,6 @@ router.post('/:teamId/cancel-invite', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'An error occurred while canceling the invitation' });
     }
 });
-
 
 // Get team information (leader and/or members) based on query parameter
 router.get('/:teamId/members', authMiddleware, async (req, res) => {
@@ -368,7 +366,6 @@ router.get('/:teamId/members', authMiddleware, async (req, res) => {
     }
 });
 
-
 // Get members of the forming team
 router.get('/:teamId/members', authMiddleware, async (req, res) => {
     try {
@@ -387,8 +384,6 @@ router.get('/:teamId/members', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'An error occurred while fetching team members' });
     }
 });
-
-
 
 // Accept/Reject invite
 router.put('/invite/:teamId/respond', authMiddleware, async (req, res) => {
@@ -495,8 +490,33 @@ router.put('/team/:teamId/member/:memberId/leave', authMiddleware, async (req, r
     }
 });
 
+// Delete a forming team
+router.delete('/team/:teamId', authMiddleware, async (req, res) => {
+    try {
+        const { teamId } = req.params;
+        const userEmail = req.user.email;
 
+        // Find the team
+        const team = await FormingTeam.findById(teamId);
 
+        if (!team) {
+            return res.status(404).json({ message: 'Team not found' });
+        }
+
+        // Check if the user is the team leader
+        if (team.TeamleaderEmailID !== userEmail) {
+            return res.status(403).json({ message: 'Only team leader can discard the team' });
+        }
+
+        // Delete the team
+        await FormingTeam.findByIdAndDelete(teamId);
+
+        res.status(200).json({ message: 'Team discarded successfully' });
+    } catch (error) {
+        console.error('Error discarding team:', error);
+        res.status(500).json({ message: 'An error occurred while discarding the team' });
+    }
+});
 
 // Finalize team
 router.post('/:teamId/finalize', authMiddleware, async (req, res) => {
@@ -540,8 +560,6 @@ router.post('/:teamId/finalize', authMiddleware, async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
-
 
 /////// For Join a Team!!!!!!!  ////////////
 //To get invitations from different teams
@@ -629,7 +647,6 @@ router.get('/cluster/:cluster/:program', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'An error occurred while fetching eligible teams' });
     }
 });
-
 
 // Apply for a team
 router.post('/:teamId/apply', authMiddleware, async (req, res) => {
@@ -789,7 +806,6 @@ router.put('/handle/:teamId/:inviteId', authMiddleware, async (req, res) => {
     }
 });
 
-
 // To cancel the Sent application
 router.delete('/team/:teamId/application/:applicationId/cancel', authMiddleware, async (req, res) => {
     try {
@@ -816,7 +832,5 @@ router.delete('/team/:teamId/application/:applicationId/cancel', authMiddleware,
         res.status(500).json({ message: 'An error occurred while canceling the application' });
     }
 });
-
-
 
 module.exports = router;

@@ -19,6 +19,8 @@ const marksManagement = require("./Routes/Teachers/marksManagement");
 const teacherManagement = require("./Routes/Admin/teacherManagement");
 const announcementRoutes = require("./Routes/Admin/announcementRoutes");
 const marksRoutes = require('./Routes/MarksRoutes');
+const studentFeedback = require('./Routes/StudentFeedback');
+const statisticsRoutes = require('./Routes/statisticsRoutes');
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server for Socket.IO
@@ -50,6 +52,7 @@ app.use("/Password", PasswordChange);
 
 // Middleware for student login/registration
 app.use("/student", loginRegisRoutes);
+app.use("/student", studentFeedback);
 
 // Middleware for teacher authentication
 app.use("/teacher", teacherAuth);
@@ -119,6 +122,9 @@ app.get("/student-details", async (req, res) => {
     res.status(500).json({ message: "Server error while fetching student details" });
   }
 });
+
+// Add statistics routes
+app.use("/team-stats", statisticsRoutes);
 
 // Database connection
 connectDB();

@@ -11,6 +11,18 @@ router.post('/submit-marks', teacherAuth, async (req, res) => {
 
     const { teamId, phase, studentMarks, generalFeedback } = req.body;
 
+    // Define maximum marks for each phase
+    const PHASE_MAX_MARKS = {
+      'Phase1': 20,
+      'Phase2': 30,
+      'Phase3': 50
+    };
+
+    const maxMarks = PHASE_MAX_MARKS[phase];
+    if (!maxMarks) {
+      return res.status(400).json({ message: 'Invalid phase specified' });
+    }
+
     // Add these debug logs
     const teacher = req.teacher;
     console.log("Teacher:", {
@@ -68,7 +80,7 @@ router.post('/submit-marks', teacherAuth, async (req, res) => {
         teamEmails.includes(mark.studentEmail) && 
         !isNaN(mark.marks) && 
         mark.marks >= 0 && 
-        mark.marks <= 100
+        mark.marks <= maxMarks
       );
 
     console.log('Validated marks:', validatedStudentMarks);
@@ -81,7 +93,8 @@ router.post('/submit-marks', teacherAuth, async (req, res) => {
           receivedMarks: studentMarks.map(m => ({
             email: m.email,
             marks: m.marks
-          }))
+          })),
+          maxMarks: maxMarks
         }
       });
     }
@@ -141,6 +154,33 @@ router.get('/team-marks/:teamId', teacherAuth, async (req, res) => {
   } catch (error) {
     console.error('Error fetching team marks:', error);
     res.status(500).json({ message: 'Error fetching team marks' });
+  }
+});
+
+// Get marks for a specific phase
+router.get('/team-marks/:teamId/:phase', teacherAuth, async (req, res) => {
+  try {
+    const { teamId, phase } = req.params;
+    
+    // Verify teacher's authorization
+    const isTeamAssigned = req.teacher.assignedTeams.some(
+      assignedTeam => assignedTeam.toString() === teamId
+    );
+    
+    if (!isTeamAssigned) {
+      return res.status(403).json({ message: 'Not authorized to view this team\'s marks' });
+    }
+
+    const marks = await Marks.findOne({ 
+      teamId,
+      phase,
+      submittedBy: req.teacher._id 
+    });
+
+    res.json(marks);
+  } catch (error) {
+    console.error('Error fetching phase marks:', error);
+    res.status(500).json({ message: 'Error fetching phase marks' });
   }
 });
 
