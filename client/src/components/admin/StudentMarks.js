@@ -40,20 +40,54 @@ function StudentMarks() {
         return;
       }
 
-      const response = await axios.get('http://localhost:5000/api/marks/cumulative', {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.data) {
-        // Sort by USN by default
-        const sortedMarks = response.data.sort((a, b) => 
-          (a.usn || '').localeCompare(b.usn || '')
-        );
-        setMarks(sortedMarks);
-      }
+      // Fetch marks for each phase
+      const [phase1Res, phase2Res, phase3Res] = await Promise.all([
+        axios.get('http://localhost:5000/api/marks/admin/phase/Phase1', {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get('http://localhost:5000/api/marks/admin/phase/Phase2', {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get('http://localhost:5000/api/marks/admin/phase/Phase3', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+
+      // Process and combine the marks
+      const processedMarks = [];
+      const processedStudents = new Map(); // Use Map to track unique students
+
+      // Helper function to process marks from a phase
+      const processPhaseMarks = (phaseMarks, phase) => {
+        phaseMarks.forEach(mark => {
+          mark.studentMarks.forEach(student => {
+            const key = student.studentEmail;
+            if (!processedStudents.has(key)) {
+              processedStudents.set(key, {
+                name: student.studentName,
+                usn: student.studentUSN,
+                email: student.studentEmail,
+                theme: mark.teamId.Theme,
+                phaseWise: {
+                  Phase1: 0,
+                  Phase2: 0,
+                  Phase3: 0
+                }
+              });
+            }
+            processedStudents.get(key).phaseWise[phase] = student.marks;
+          });
+        });
+      };
+
+      // Process marks from each phase
+      processPhaseMarks(phase1Res.data, 'Phase1');
+      processPhaseMarks(phase2Res.data, 'Phase2');
+      processPhaseMarks(phase3Res.data, 'Phase3');
+
+      // Convert Map to array and calculate totals
+      const marksArray = Array.from(processedStudents.values());
+      setMarks(marksArray);
     } catch (error) {
       console.error('Error fetching marks:', error);
       if (error.response?.status === 401) {
@@ -87,21 +121,28 @@ function StudentMarks() {
     const tableData = marks.filter(student =>
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.usn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.team.toLowerCase().includes(searchTerm.toLowerCase())
-    ).map(student => [
-      student.name,
-      student.usn,
-      student.team,
-      Math.max(0, student.phaseWise.Phase1 || 0),
-      Math.max(0, student.phaseWise.Phase2 || 0),
-      Math.max(0, student.phaseWise.Phase3 || 0),
-      Math.max(0, student.total || 0)
-    ]);
+      student.theme.toLowerCase().includes(searchTerm.toLowerCase())
+    ).map(student => {
+      const phase1 = Math.max(0, student.phaseWise.Phase1 || 0);
+      const phase2 = Math.max(0, student.phaseWise.Phase2 || 0);
+      const phase3 = Math.max(0, student.phaseWise.Phase3 || 0);
+      const total = phase1 + phase2 + phase3;
+      
+      return [
+        student.name,
+        student.usn,
+        student.theme,
+        phase1,
+        phase2,
+        phase3,
+        total
+      ];
+    });
 
     // Add table
     doc.autoTable({
       startY: 30,
-      head: [['Name', 'USN', 'Team', 'Phase 1', 'Phase 2', 'Phase 3', 'Total']],
+      head: [['Name', 'USN', 'Theme', 'Phase 1', 'Phase 2', 'Phase 3', 'Total']],
       body: tableData,
       theme: 'grid',
       headStyles: { fillColor: [71, 71, 71] },
@@ -124,7 +165,7 @@ function StudentMarks() {
   const filteredMarks = marks.filter(student =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.usn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.team.toLowerCase().includes(searchTerm.toLowerCase())
+    student.theme.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const displayedMarks = filteredMarks
@@ -158,7 +199,7 @@ function StudentMarks() {
         fullWidth
         variant="outlined"
         margin="normal"
-        placeholder="Search by name, USN, or team..."
+        placeholder="Search by name, USN, or theme..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         InputProps={{
@@ -177,7 +218,7 @@ function StudentMarks() {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>USN</TableCell>
-              <TableCell>Team</TableCell>
+              <TableCell>Theme</TableCell>
               <TableCell align="right">Phase 1</TableCell>
               <TableCell align="right">Phase 2</TableCell>
               <TableCell align="right">Phase 3</TableCell>
@@ -186,17 +227,16 @@ function StudentMarks() {
           </TableHead>
           <TableBody>
             {displayedMarks.map((student, index) => {
-              // Ensure no negative values in display
               const phase1 = Math.max(0, student.phaseWise.Phase1 || 0);
               const phase2 = Math.max(0, student.phaseWise.Phase2 || 0);
               const phase3 = Math.max(0, student.phaseWise.Phase3 || 0);
-              const total = Math.max(0, student.total || 0);
+              const total = phase1 + phase2 + phase3;
 
               return (
                 <TableRow key={index}>
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.usn}</TableCell>
-                  <TableCell>{student.team}</TableCell>
+                  <TableCell>{student.theme}</TableCell>
                   <TableCell align="right">{phase1}</TableCell>
                   <TableCell align="right">{phase2}</TableCell>
                   <TableCell align="right">{phase3}</TableCell>

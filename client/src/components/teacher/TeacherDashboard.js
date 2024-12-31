@@ -18,6 +18,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./TeacherDashboard.css";
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const MARKING_CRITERIA = {
   Phase1: {
@@ -29,7 +31,7 @@ const MARKING_CRITERIA = {
     ]
   },
   Phase2: {
-    totalMarks: 50,
+    totalMarks: 30,
     criteria: [
       { name: 'Project Execution', maxMarks: 15, description: 'Adherence, timeliness, quality' },
       { name: 'Tools/Techniques', maxMarks: 10, description: 'Selection, application, integration' },
@@ -37,7 +39,7 @@ const MARKING_CRITERIA = {
     ]
   },
   Phase3: {
-    totalMarks: 100,
+    totalMarks: 50,
     criteria: [
       { name: 'Prototype Demo', maxMarks: 20, description: 'Functionality, innovation, usability' },
       { name: 'Results/Discussion', maxMarks: 10, description: 'Clarity, analysis, interpretation' },
@@ -66,6 +68,7 @@ const TeacherDashboard = () => {
   const [submitting, setSubmitting] = useState(false);
   const [teamCriteria, setTeamCriteria] = useState({});
   const [existingMarks, setExistingMarks] = useState(null);
+  const [showIndividualMarks, setShowIndividualMarks] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -103,85 +106,48 @@ const TeacherDashboard = () => {
     navigate("/teacher/login");
   };
 
+  const initializeTeamCriteria = () => {
+    const criteria = MARKING_CRITERIA[phase]?.criteria || [];
+    return criteria.reduce((acc, c) => ({ ...acc, [c.name]: 0 }), {});
+  };
+
   const handleAssignMarks = (team) => {
     setSelectedTeam(team);
+    setTeamCriteria(initializeTeamCriteria());
     const students = [
       {
         email: team.TeamleaderEmailID,
         name: team.TeamLeaderName,
         usn: team.TeamLeaderUSN,
-        marks: "",
-        feedback: "",
+        marks: 0
       },
       {
         email: team.TeamMember1EmailID,
         name: team.TeamMember1Name,
         usn: team.TeamMember1USN,
-        marks: "",
-        feedback: "",
+        marks: 0
       },
       {
         email: team.TeamMember2EmailID,
         name: team.TeamMember2Name,
         usn: team.TeamMember2USN,
-        marks: "",
-        feedback: "",
+        marks: 0
       },
       {
         email: team.TeamMember3EmailID,
         name: team.TeamMember3Name,
         usn: team.TeamMember3USN,
-        marks: "",
-        feedback: "",
+        marks: 0
       },
       {
         email: team.TeamMember4EmailID,
         name: team.TeamMember4Name,
         usn: team.TeamMember4USN,
-        marks: "",
-        feedback: "",
-      },
-    ].filter((s) => s.email);
+        marks: 0
+      }
+    ].filter(s => s.email);
+    
     setStudentMarks(students);
-  };
-
-  const handleSubmitMarks = async () => {
-    if (!phase) {
-      toast.error("Please select a phase");
-      return;
-    }
-    setSubmitting(true);
-
-    try {
-      const token = localStorage.getItem("teacherToken");
-      await axios.post(
-        "http://localhost:5000/api/teachers/marks/submit-marks",
-        {
-          teamId: selectedTeam._id,
-          phase,
-          studentMarks,
-          generalFeedback,
-          isUpdate: !!existingMarks
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      
-      const message = existingMarks 
-        ? "Marks updated successfully" 
-        : "Marks submitted successfully";
-      toast.success(message);
-      
-      setSelectedTeam(null);
-      setPhase("");
-      setGeneralFeedback("");
-      setExistingMarks(null);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error submitting marks");
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const handlePhaseChange = async (event) => {
@@ -204,30 +170,109 @@ const TeacherDashboard = () => {
           );
           
           if (confirmEdit) {
-            // Transform the marks data to match the expected format
-            const transformedMarks = response.data.studentMarks.map(mark => ({
+            const existingStudentMarks = response.data.studentMarks.map(mark => ({
               email: mark.studentEmail,
               name: mark.studentName,
               usn: mark.studentUSN,
-              marks: mark.marks.toString(),
-              feedback: mark.individualFeedback || ""
+              marks: mark.marks,
+              feedback: mark.feedback || ""
             }));
-            setStudentMarks(transformedMarks);
+            setStudentMarks(existingStudentMarks);
             setGeneralFeedback(response.data.generalFeedback || "");
-            setExistingMarks(response.data);
           } else {
-            // Reset phase if user doesn't want to edit
-            setPhase("");
+            handleAssignMarks(selectedTeam);
           }
         } else {
-          setExistingMarks(null);
-          // Initialize empty marks for the team
           handleAssignMarks(selectedTeam);
         }
       } catch (error) {
         console.error("Error fetching existing marks:", error);
-        toast.error("Error checking existing marks");
+        handleAssignMarks(selectedTeam);
       }
+    }
+  };
+
+  const handleTeamCriteriaChange = (criteriaName, value) => {
+    const maxMarks = MARKING_CRITERIA[phase].criteria.find(c => c.name === criteriaName).maxMarks;
+    const newValue = Math.min(maxMarks, Math.max(0, Number(value)));
+    
+    setTeamCriteria(prev => ({
+      ...prev,
+      [criteriaName]: newValue
+    }));
+
+    // Update all students' marks with the team total
+    const newTotal = Object.values({
+      ...teamCriteria,
+      [criteriaName]: newValue
+    }).reduce((sum, mark) => sum + Number(mark), 0);
+
+    setStudentMarks(prev => 
+      prev.map(student => ({
+        ...student,
+        marks: newTotal
+      }))
+    );
+  };
+
+  const handleIndividualMarksChange = (studentIndex, value) => {
+    const maxMarks = MARKING_CRITERIA[phase].totalMarks;
+    const newValue = Math.min(maxMarks, Math.max(0, Number(value)));
+    
+    setStudentMarks(prev => {
+      const newMarks = [...prev];
+      newMarks[studentIndex] = {
+        ...newMarks[studentIndex],
+        marks: newValue
+      };
+      return newMarks;
+    });
+  };
+
+  const calculateTeamTotal = () => {
+    return Object.values(teamCriteria).reduce((sum, mark) => sum + Number(mark), 0);
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedTeam || !phase) {
+      toast.error("Please select a team and phase");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const token = localStorage.getItem("teacherToken");
+      const marksData = {
+        teamId: selectedTeam._id,
+        phase,
+        studentMarks: studentMarks.map(student => ({
+          email: student.email,
+          name: student.name,
+          usn: student.usn,
+          marks: student.marks,
+          feedback: student.feedback || ''
+        })),
+        generalFeedback: generalFeedback || ''
+      };
+
+      await axios.post(
+        "http://localhost:5000/api/teachers/marks/submit-marks",
+        marksData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast.success("Marks submitted successfully");
+      setSelectedTeam(null);
+      setPhase("");
+      setStudentMarks([]);
+      setGeneralFeedback("");
+    } catch (error) {
+      console.error("Error submitting marks:", error);
+      toast.error("Error submitting marks");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -243,7 +288,8 @@ const TeacherDashboard = () => {
               <Typography variant="subtitle2" color="textSecondary">
                 Theme: {team.Theme}
               </Typography>
-　　 　　　　　
+　
+ 　　　　　
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                   Team Lead:
@@ -328,27 +374,6 @@ const TeacherDashboard = () => {
   );
 
   const renderMarksManagement = () => {
-    const currentCriteria = phase ? MARKING_CRITERIA[phase] : null;
-
-    const handleCriteriaChange = (criteriaName, rating) => {
-      const criteria = MARKING_CRITERIA[phase].criteria.find(c => c.name === criteriaName);
-      const maxMarks = criteria.maxMarks;
-      const marks = maxMarks * rating;
-
-      setTeamCriteria(prev => ({
-        ...prev,
-        [criteriaName]: { rating, marks }
-      }));
-
-      // Calculate total marks and update all students
-      const totalMarks = Object.values(teamCriteria).reduce((sum, item) => sum + item.marks, 0) + marks;
-      const updatedMarks = studentMarks.map(student => ({
-        ...student,
-        marks: totalMarks
-      }));
-      setStudentMarks(updatedMarks);
-    };
-
     return (
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -388,125 +413,129 @@ const TeacherDashboard = () => {
                   </TextField>
                 </Grid>
 
-                {selectedTeam && currentCriteria && (
-                  <>
-                    <Grid item xs={12}>
-                      <Card variant="outlined" sx={{ mb: 3, backgroundColor: '#f5f5f5' }}>
-                        <CardContent>
-                          <Typography variant="h6" gutterBottom color="primary">
-                            {phase} Assessment (Total: {currentCriteria.totalMarks} marks)
-                          </Typography>
-                          
-                          {currentCriteria.criteria.map((criteria) => (
-                            <Box key={criteria.name} sx={{ mb: 3 }}>
-                              <Typography variant="subtitle1" gutterBottom>
-                                {criteria.name} (Max: {criteria.maxMarks} marks)
-                              </Typography>
-                              <Typography variant="caption" color="textSecondary" display="block" gutterBottom>
-                                {criteria.description}
-                              </Typography>
-                              <TextField
-                                select
-                                fullWidth
-                                label="Rating"
-                                value={teamCriteria[criteria.name]?.rating || ''}
-                                onChange={(e) => handleCriteriaChange(criteria.name, parseFloat(e.target.value))}
-                                sx={{ mt: 1 }}
-                              >
-                                {RATING_SCALE.map((rating) => (
-                                  <MenuItem key={rating.label} value={rating.value}>
-                                    {rating.label} ({(rating.value * criteria.maxMarks).toFixed(1)} marks)
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                            </Box>
-                          ))}
-
-                          <Box sx={{ mt: 3 }}>
-                            <Typography variant="subtitle1" gutterBottom>
-                              Total Marks: {studentMarks[0]?.marks || 0} / {currentCriteria.totalMarks}
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={4}
-                        label="Team Feedback"
-                        value={generalFeedback}
-                        onChange={(e) => setGeneralFeedback(e.target.value)}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography variant="h6" gutterBottom color="primary">
-                        Individual Assessments
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary" sx={{ mb: 2, display: 'block' }}>
-                        Modify individual marks if needed
-                      </Typography>
-                    </Grid>
-
-                    {studentMarks.map((student, index) => (
-                      <Grid item xs={12} key={index}>
-                        <Card variant="outlined" sx={{ mb: 2 }}>
+                {selectedTeam && phase && (
+                  <Grid item xs={12}>
+                    <Card variant="outlined" sx={{ mb: 3, backgroundColor: '#f5f5f5' }}>
+                      <CardContent>
+                        <Typography variant="h6" gutterBottom>
+                          Assign Marks for {selectedTeam.TeamName} - {phase}
+                        </Typography>
+                        <Card>
                           <CardContent>
-                            <Typography variant="subtitle1" gutterBottom>
-                              {student.name} ({student.usn})
+                            <Typography variant="h6" gutterBottom>
+                              Team Assessment for {selectedTeam.TeamName} - {phase}
                             </Typography>
-                            <Grid container spacing={2}>
-                              <Grid item xs={12} md={6}>
-                                <TextField
-                                  fullWidth
-                                  label="Individual Marks"
-                                  type="number"
-                                  value={student.marks}
-                                  onChange={(e) => {
-                                    const newMarks = [...studentMarks];
-                                    newMarks[index].marks = e.target.value;
-                                    setStudentMarks(newMarks);
-                                  }}
-                                />
-                              </Grid>
-                              <Grid item xs={12} md={6}>
-                                <TextField
-                                  fullWidth
-                                  label="Individual Feedback"
-                                  value={student.feedback}
-                                  onChange={(e) => {
-                                    const newMarks = [...studentMarks];
-                                    newMarks[index].feedback = e.target.value;
-                                    setStudentMarks(newMarks);
-                                  }}
-                                />
-                              </Grid>
-                            </Grid>
+                            
+                            {/* Team Criteria Section */}
+                            <Box mb={4}>
+                              <Typography variant="subtitle1" gutterBottom color="primary">
+                                Team Evaluation (Total Marks: {MARKING_CRITERIA[phase].totalMarks})
+                              </Typography>
+                              {MARKING_CRITERIA[phase].criteria.map((criterion) => (
+                                <Box key={criterion.name} mb={2}>
+                                  <Typography variant="subtitle2" gutterBottom>
+                                    {criterion.name} (Max: {criterion.maxMarks})
+                                  </Typography>
+                                  <Typography variant="body2" color="textSecondary" gutterBottom>
+                                    {criterion.description}
+                                  </Typography>
+                                  <TextField
+                                    type="number"
+                                    value={teamCriteria[criterion.name] || 0}
+                                    onChange={(e) => handleTeamCriteriaChange(criterion.name, e.target.value)}
+                                    fullWidth
+                                    InputProps={{
+                                      inputProps: {
+                                        min: 0,
+                                        max: criterion.maxMarks
+                                      }
+                                    }}
+                                  />
+                                </Box>
+                              ))}
+                              <Typography variant="h6" gutterBottom color="primary" mt={2}>
+                                Team Total: {calculateTeamTotal()} / {MARKING_CRITERIA[phase].totalMarks}
+                              </Typography>
+                            </Box>
+
+                            {/* Individual Marks Toggle */}
+                            <Box mb={3}>
+                              <Button
+                                variant="outlined"
+                                onClick={() => setShowIndividualMarks(!showIndividualMarks)}
+                                startIcon={showIndividualMarks ? <RemoveIcon /> : <AddIcon />}
+                              >
+                                {showIndividualMarks ? "Hide" : "Show"} Individual Marks
+                              </Button>
+                            </Box>
+
+                            {/* Individual Marks Section */}
+                            {showIndividualMarks && (
+                              <Box>
+                                <Typography variant="subtitle1" gutterBottom color="primary">
+                                  Individual Marks Adjustment
+                                </Typography>
+                                <Grid container spacing={2}>
+                                  {studentMarks.map((student, index) => (
+                                    <Grid item xs={12} key={student.email}>
+                                      <Paper elevation={3} sx={{ p: 2 }}>
+                                        <Typography variant="subtitle2" gutterBottom>
+                                          {student.name} ({student.usn})
+                                        </Typography>
+                                        <TextField
+                                          label="Marks"
+                                          type="number"
+                                          value={student.marks}
+                                          onChange={(e) => handleIndividualMarksChange(index, e.target.value)}
+                                          fullWidth
+                                          InputProps={{
+                                            inputProps: {
+                                              min: 0,
+                                              max: MARKING_CRITERIA[phase].totalMarks
+                                            }
+                                          }}
+                                        />
+                                      </Paper>
+                                    </Grid>
+                                  ))}
+                                </Grid>
+                              </Box>
+                            )}
+
+                            {/* Feedback Section */}
+                            <Box mt={4}>
+                              <TextField
+                                label="Team Feedback"
+                                multiline
+                                rows={4}
+                                value={generalFeedback}
+                                onChange={(e) => setGeneralFeedback(e.target.value)}
+                                fullWidth
+                              />
+                            </Box>
                           </CardContent>
                         </Card>
-                      </Grid>
-                    ))}
-
-                    <Grid item xs={12}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        onClick={handleSubmitMarks}
-                        disabled={submitting}
-                        sx={{ mt: 2 }}
-                      >
-                        {submitting ? <CircularProgress size={24} /> : "Submit Marks"}
-                      </Button>
-                    </Grid>
-                  </>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 )}
               </Grid>
             </CardContent>
           </Card>
         </Grid>
+        {selectedTeam && phase && (
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={submitting}
+              sx={{ mt: 2 }}
+            >
+              {submitting ? <CircularProgress size={24} /> : "Submit Marks"}
+            </Button>
+          </Grid>
+        )}
       </Grid>
     );
   };
