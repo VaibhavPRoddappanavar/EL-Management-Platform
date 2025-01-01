@@ -60,6 +60,15 @@ const TeacherHome = () => {
             </Button>
             <Button
               variant="contained"
+              color="primary"
+              onClick={() => navigate('/teacher/teams')}
+              className="nav-button"
+              sx={{ mx: 2 }}
+            >
+              All Teams
+            </Button>
+            <Button
+              variant="contained"
               color="secondary"
               onClick={() => navigate('/teacher/unassigned')}
               className="nav-button"

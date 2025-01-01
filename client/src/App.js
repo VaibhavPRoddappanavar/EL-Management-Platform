@@ -16,6 +16,7 @@ import CreateTeamPage from "./pages/Students/CreateTeamPage";
 import TeamManagement from "./pages/Students/TeamManagement";
 import TeacherHome from "./pages/Teachers/TeacherHome";
 import TeacherLogin from "./pages/Teachers/TeacherLogin";
+import TeacherTeams from "./pages/Teachers/TeacherTeams";
 
 /* Admin imports */
 
@@ -94,6 +95,16 @@ function App() {
             element={
               isTeacherAuthenticated ? (
                 <UnassignedStudents />
+              ) : (
+                <Navigate to="/teacher/login" />
+              )
+            }
+          />
+          <Route
+            path="/teacher/teams"
+            element={
+              isTeacherAuthenticated ? (
+                <TeacherTeams />
               ) : (
                 <Navigate to="/teacher/login" />
               )
