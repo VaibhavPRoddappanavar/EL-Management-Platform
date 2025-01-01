@@ -218,15 +218,31 @@ const TeacherManagement = () => {
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <DataGrid
-              rows={teachers}
-              columns={columns}
-              pageSize={10}
-              rowsPerPageOptions={[10]}
-              autoHeight
-              disableSelectionOnClick
-              sx={{ minHeight: 400 }}
-            />
+            <div style={{ height: 400, width: '100%', position: 'relative' }}>
+              <DataGrid
+                rows={teachers}
+                columns={columns}
+                pageSize={10}
+                rowsPerPageOptions={[10]}
+                disableSelectionOnClick
+                components={{
+                  Toolbar: null,
+                  NoRowsOverlay: () => (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                      <Typography>No teachers found</Typography>
+                    </Box>
+                  )
+                }}
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': { fontSize: '0.875rem' },
+                  '& .MuiDataGrid-columnHeaders': { 
+                    backgroundColor: '#f5f5f5',
+                    borderBottom: '1px solid #e0e0e0'
+                  }
+                }}
+              />
+            </div>
           </Grid>
         </Grid>
 
