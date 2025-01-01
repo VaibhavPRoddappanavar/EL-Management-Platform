@@ -445,9 +445,9 @@ function AdminDashboard() {
   );
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ width: '100%', typography: 'body1', mt: 6 }}>
-        <Paper elevation={3} sx={{ p: 3 }}>
+    <Container maxWidth="xl" sx={{ overflow: 'visible' }}>
+      <Box sx={{ width: '100%', typography: 'body1', mt: 6, overflow: 'visible' }}>
+        <Paper elevation={3} sx={{ p: 3, overflow: 'visible' }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
             <Tabs 
               value={activeTab} 
