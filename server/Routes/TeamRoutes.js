@@ -38,8 +38,6 @@ router.get('/:teamId/invites', authMiddleware, async (req, res) => {
     }
 });
 
-
-
 // Backend - Express route handler
 router.post('/check-team-status', authMiddleware, async (req, res) => {
     try {
@@ -99,8 +97,6 @@ router.post('/check-team-status', authMiddleware, async (req, res) => {
         });
     }
 });
-
-
 
 // Create a forming team
 router.post('/create', authMiddleware, async (req, res) => {
@@ -830,6 +826,108 @@ router.delete('/team/:teamId/application/:applicationId/cancel', authMiddleware,
     } catch (error) {
         console.error('Error canceling application:', error.message);
         res.status(500).json({ message: 'An error occurred while canceling the application' });
+    }
+});
+
+// Get all teams
+router.get('/teacher/teams', authMiddleware, async (req, res) => {
+    try {
+        console.log('Fetching teams...');
+        console.log('User from token:', req.user); // Log user info from token
+        
+        // Verify that the user is a teacher
+        if (!req.user || !req.user.email) {
+            return res.status(401).json({ message: 'Unauthorized access' });
+        }
+
+        const teams = await Team.find();
+        console.log('Found teams:', teams); // Log found teams
+        
+        res.json(teams);
+    } catch (error) {
+        console.error('Error fetching teams:', error);
+        res.status(500).json({ 
+            message: 'Error fetching teams',
+            error: error.message 
+        });
+    }
+});
+
+// Get team details for logged-in student
+router.get('/team-details', authMiddleware, async (req, res) => {
+    try {
+        const userEmail = req.user.email;
+        if (!userEmail) {
+            return res.status(400).json({ message: 'User email not found in token' });
+        }
+        
+        // First check in Team model
+        const team = await Team.findOne({
+            $or: [
+                { TeamleaderEmailID: userEmail },
+                { TeamMember1EmailID: userEmail },
+                { TeamMember2EmailID: userEmail },
+                { TeamMember3EmailID: userEmail },
+                { TeamMember4EmailID: userEmail }
+            ]
+        });
+
+        if (team) {
+            // Format team data
+            const teamData = {
+                teamId: team._id,
+                leader: {
+                    email: team.TeamleaderEmailID,
+                    name: team.TeamleaderName,
+                    usn: team.TeamleaderUSN
+                },
+                members: [],
+                theme: team.TeamTheme
+            };
+
+            // Add members if they exist
+            if (team.TeamMember1EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember1EmailID,
+                    name: team.TeamMember1Name,
+                    usn: team.TeamMember1USN,
+                    position: 'Member 1'
+                });
+            }
+            if (team.TeamMember2EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember2EmailID,
+                    name: team.TeamMember2Name,
+                    usn: team.TeamMember2USN,
+                    position: 'Member 2'
+                });
+            }
+            if (team.TeamMember3EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember3EmailID,
+                    name: team.TeamMember3Name,
+                    usn: team.TeamMember3USN,
+                    position: 'Member 3'
+                });
+            }
+            if (team.TeamMember4EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember4EmailID,
+                    name: team.TeamMember4Name,
+                    usn: team.TeamMember4USN,
+                    position: 'Member 4'
+                });
+            }
+
+            return res.json(teamData);
+        }
+
+        // If not found in Team, return 404
+        return res.status(404).json({ message: 'No team found for this user' });
+
+    } catch (error) {
+        console.error('Error fetching team details:', error);
+        res.status(500).json({ message: 'An error occurred while fetching team details' });
     }
 });
 

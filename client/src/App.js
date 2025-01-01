@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-    Navigate,
-    Route,
-    BrowserRouter as Router,
-    Routes,
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
 } from "react-router-dom";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
+import LandingPage from "./components/landingpage/Landingpage";
 import Navbar from "./components/Navbar";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import SignInSignUp from "./components/SignInSignUp"; // Import the new SignInSignUp component
@@ -16,7 +17,7 @@ import CreateTeamPage from "./pages/Students/CreateTeamPage";
 import TeamManagement from "./pages/Students/TeamManagement";
 import TeacherHome from "./pages/Teachers/TeacherHome";
 import TeacherLogin from "./pages/Teachers/TeacherLogin";
-import LandingPage from "./components/landingpage/Landingpage";
+import TeacherTeams from "./pages/Teachers/TeacherTeams";
 
 /* Admin imports */
 
@@ -95,6 +96,16 @@ function App() {
             element={
               isTeacherAuthenticated ? (
                 <UnassignedStudents />
+              ) : (
+                <Navigate to="/teacher/login" />
+              )
+            }
+          />
+          <Route
+            path="/teacher/teams"
+            element={
+              isTeacherAuthenticated ? (
+                <TeacherTeams />
               ) : (
                 <Navigate to="/teacher/login" />
               )
