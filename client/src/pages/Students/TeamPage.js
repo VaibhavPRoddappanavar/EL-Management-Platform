@@ -5,9 +5,8 @@ import "./TeamPageStyle.css";
 
 function TeamPage() {
   const [team, setTeam] = useState(null);
-
-  const [displayText, setDisplayText] = useState(""); // State for the animated text
-  const [finalText, setFinalText] = useState(""); // State for the final text without underscores
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Fetch team details
@@ -15,21 +14,37 @@ function TeamPage() {
     const fetchTeam = async () => {
       try {
         const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+
         const response = await axios.get(
-          "http://localhost:5000/teams/team-details",
+          "http://localhost:5000/team-details",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setTeam(response.data.teamDetails);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          navigate("/create-team");
-        } else {
-          console.error("Failed to fetch team details:", error);
+        
+        if (response.data) {
+          setTeam(response.data);
+          setError(null);
         }
+      } catch (error) {
+        console.error("Failed to fetch team details:", error);
+        if (error.response?.status === 404) {
+          navigate("/create-team");
+        } else if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        } else {
+          setError("Failed to fetch team details. Please try again later.");
+        }
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchTeam();
   }, [navigate]);
 
@@ -38,57 +53,62 @@ function TeamPage() {
     navigate("/login");
   };
 
+  if (loading) {
+    return <div className="loading">Loading team details...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
   return (
     <div className="TeamPage">
       <div className="content">
-        <h2>{displayText || finalText}</h2>{" "}
-        {/* Display the animated text or final text */}
+        <h2>My Team</h2>
         <div className="team-cards">
           {/* Team Leader Card */}
-          {team && (
+          {team?.leader && (
             <div className="leader-card">
               <h3>Team Leader</h3>
-              <p>
-                <strong>Name:</strong> {team.teamLeader.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {team.teamLeader.email}
-              </p>
-              <p>
-                <strong>Mobile:</strong> {team.teamLeader.mobile}
-              </p>
-              <p>
-                <strong>Program:</strong> {team.teamLeader.program}
-              </p>
-              <p>
-                <strong>USN:</strong> {team.teamLeader.usn}
-              </p>
+              <div className="member-card">
+                <p><strong>Name:</strong> {team.leader.name}</p>
+                <p><strong>Email:</strong> {team.leader.email}</p>
+                <p><strong>USN:</strong> {team.leader.usn}</p>
+              </div>
             </div>
           )}
 
-          {/* Team Members */}
-          {team &&
-            team.teamMembers.map((member, index) => (
-              <div key={index} className="member-card">
-                <h3>Team Member {index + 1}</h3>
-                <p>
-                  <strong>Name:</strong> {member.name}
-                </p>
-                <p>
-                  <strong>Email:</strong> {member.email}
-                </p>
-                <p>
-                  <strong>Mobile:</strong> {member.mobile}
-                </p>
-                <p>
-                  <strong>Program:</strong> {member.program}
-                </p>
-                <p>
-                  <strong>USN:</strong> {member.usn}
-                </p>
+          {/* Team Members Cards */}
+          {team?.members && team.members.length > 0 && (
+            <div className="members-section">
+              <h3>Team Members</h3>
+              <div className="members-grid">
+                {team.members.map((member, index) => (
+                  <div key={index} className="member-card">
+                    <p><strong>Name:</strong> {member.name}</p>
+                    <p><strong>Email:</strong> {member.email}</p>
+                    <p><strong>USN:</strong> {member.usn}</p>
+                    <p><strong>Position:</strong> {member.position}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          )}
+
+          {/* Team Theme */}
+          {team?.theme && (
+            <div className="theme-section">
+              <h3>Team Theme</h3>
+              <div className="theme-card">
+                <p>{team.theme}</p>
+              </div>
+            </div>
+          )}
         </div>
+
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </div>
   );
