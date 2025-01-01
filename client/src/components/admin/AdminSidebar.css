@@ -2,7 +2,7 @@
 .sidebar-container {
   display: flex; /* Flex to position sidebar and navbar side by side */
   height: 100vh; /* Full height */
-  transition: all 0.5s ease; /* Smooth transition for entire sidebar and navbar */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Faster, smoother transition */
   overflow: hidden; /* Ensure the sidebar doesn't break out */
   position: sticky;
   top: 0; 
@@ -16,7 +16,7 @@
   background-color: #457ee0;
   padding: 1rem;
   color: #ffffff;
-  transition: width 0.5s ease; /* Smooth expansion of sidebar */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Optimized easing */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -38,6 +38,7 @@
   padding: 0;
   margin-top: 20px;
   width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Individual nav-item */
@@ -51,42 +52,44 @@
   padding: 1rem;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Faster item transitions */
   width: 100%;
 }
 
 /* Hover effect for menu-item */
 .sidebar-container .sidebar-wrapper .sidebar-menu .menu-item:hover  {
-  
-  /* background-color: black; */
-  
-  
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-container .sidebar-wrapper .sidebar-menu .menu-item:hover span {
-  
   color: black;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-container .sidebar-wrapper .sidebar-menu .menu-item:hover svg {
-  
   color: black;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* FontAwesome icon size */
 .sidebar-container .sidebar-wrapper .sidebar-menu .menu-item svg {
   font-size: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Match icon transition */
 }
 
 /* Expand text only on hover */
 .sidebar-container .sidebar-wrapper:hover .sidebar-menu .menu-item span {
   display: inline;
   margin-left: 1rem;
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hide text by default */
 .sidebar-container .sidebar-wrapper .sidebar-menu .menu-item span {
-  display: none;
+  display: inline;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Links inside sidebar */
@@ -98,13 +101,12 @@
   gap: 1rem;
   text-decoration: none;
   width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-container .sidebar-wrapper .sidebar-menu .logout {
-  
   width: 100%;
   bottom: 0;
   position: absolute;
   margin-bottom: 2em;
 }
-
