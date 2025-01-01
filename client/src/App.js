@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-    Navigate,
-    Route,
-    BrowserRouter as Router,
-    Routes,
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
 } from "react-router-dom";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
+import LandingPage from "./components/landingpage/Landingpage";
 import Navbar from "./components/Navbar";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import SignInSignUp from "./components/SignInSignUp"; // Import the new SignInSignUp component
@@ -55,7 +56,7 @@ function App() {
       <Router>
         <Routes>
           {/* General Routes */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<SignInSignUp />} />
           <Route path="/signup" element={<SignInSignUp />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
