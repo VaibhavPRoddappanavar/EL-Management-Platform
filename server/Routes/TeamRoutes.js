@@ -861,7 +861,7 @@ router.get('/team-details', authMiddleware, async (req, res) => {
             return res.status(400).json({ message: 'User email not found in token' });
         }
         
-        // First check in Team model
+        // Find team where user is either leader or member
         const team = await Team.findOne({
             $or: [
                 { TeamleaderEmailID: userEmail },
@@ -873,53 +873,32 @@ router.get('/team-details', authMiddleware, async (req, res) => {
         });
 
         if (team) {
-            // Format team data
-            const teamData = {
-                teamId: team._id,
-                leader: {
+            // Format team data for frontend
+            const teamDetails = {
+                teamLeader: {
+                    name: team.TeamLeaderName,
                     email: team.TeamleaderEmailID,
-                    name: team.TeamleaderName,
-                    usn: team.TeamleaderUSN
+                    mobile: team.TeamleaderMobileNumber,
+                    program: team.TeamleaderProgram,
+                    usn: team.TeamLeaderUSN
                 },
-                members: [],
-                theme: team.TeamTheme
+                teamMembers: []
             };
 
             // Add members if they exist
-            if (team.TeamMember1EmailID) {
-                teamData.members.push({
-                    email: team.TeamMember1EmailID,
-                    name: team.TeamMember1Name,
-                    usn: team.TeamMember1USN,
-                    position: 'Member 1'
-                });
-            }
-            if (team.TeamMember2EmailID) {
-                teamData.members.push({
-                    email: team.TeamMember2EmailID,
-                    name: team.TeamMember2Name,
-                    usn: team.TeamMember2USN,
-                    position: 'Member 2'
-                });
-            }
-            if (team.TeamMember3EmailID) {
-                teamData.members.push({
-                    email: team.TeamMember3EmailID,
-                    name: team.TeamMember3Name,
-                    usn: team.TeamMember3USN,
-                    position: 'Member 3'
-                });
-            }
-            if (team.TeamMember4EmailID) {
-                teamData.members.push({
-                    email: team.TeamMember4EmailID,
-                    name: team.TeamMember4Name,
-                    usn: team.TeamMember4USN,
-                    position: 'Member 4'
-                });
+            for (let i = 1; i <= 4; i++) {
+                if (team[`TeamMember${i}EmailID`]) {
+                    teamDetails.teamMembers.push({
+                        name: team[`TeamMember${i}Name`],
+                        email: team[`TeamMember${i}EmailID`],
+                        mobile: team[`TeamMember${i}MobileNumber`],
+                        program: team[`TeamMember${i}Program`],
+                        usn: team[`TeamMember${i}USN`]
+                    });
+                }
             }
 
-            return res.json(teamData);
+            return res.json({ teamDetails });
         }
 
         // If not found in Team, return 404

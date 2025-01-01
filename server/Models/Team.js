@@ -67,23 +67,23 @@ const TeamSchema = new mongoose.Schema({
   },
   TeamMember3USN: {
     type: String,
-    required: true,
+    required: false,
   },
   TeamMember3Name: {
     type: String,
-    required: true,
+    required: false,
   },
   TeamMember3EmailID: {
     type: String,
-    required: true,
+    required: false,
   },
   TeamMember3MobileNumber: {
     type: String,
-    required: true,
+    required: false,
   },
   TeamMember3Program: {
     type: String,
-    required: true,
+    required: false,
   },
   TeamMember4USN: {
     type: String,

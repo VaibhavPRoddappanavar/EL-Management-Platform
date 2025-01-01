@@ -73,8 +73,6 @@ const formingTeamSchema = new mongoose.Schema({
     }
 });
 
-
-
 // Validation method
 formingTeamSchema.methods.validateTeamComposition = async function() {
     const allMembers = [
@@ -163,6 +161,7 @@ formingTeamSchema.methods.validateTeamComposition = async function() {
 
 // Convert to final team model
 formingTeamSchema.methods.convertToFinalTeam = function() {
+    // Create base team data with leader info
     const finalTeam = {
         TeamLeaderUSN: this.TeamLeaderUSN,
         TeamLeaderName: this.TeamLeaderName,
@@ -170,18 +169,36 @@ formingTeamSchema.methods.convertToFinalTeam = function() {
         TeamleaderMobileNumber: this.TeamleaderMobileNumber,
         TeamleaderProgram: this.TeamleaderProgram,
         Theme: this.Theme,
-        cluster: this.cluster,
-        status: 'COMPLETE'
+        TeamTheme: this.Theme,
+        cluster: this.cluster
     };
 
-    // Map members to their positions
-    this.members.forEach(member => {
-        const position = member.position;
-        finalTeam[`${position}USN`] = member.usn;
-        finalTeam[`${position}Name`] = member.name;
-        finalTeam[`${position}EmailID`] = member.email;
-        finalTeam[`${position}MobileNumber`] = member.mobileNumber;
-        finalTeam[`${position}Program`] = member.program;
+    // Initialize all member fields with empty strings
+    const memberPositions = ['TeamMember1', 'TeamMember2', 'TeamMember3', 'TeamMember4'];
+    memberPositions.forEach(position => {
+        finalTeam[`${position}USN`] = '';
+        finalTeam[`${position}Name`] = '';
+        finalTeam[`${position}EmailID`] = '';
+        finalTeam[`${position}MobileNumber`] = '';
+        finalTeam[`${position}Program`] = '';
+    });
+
+    // Sort members by position number
+    const sortedMembers = [...this.members].sort((a, b) => {
+        const posA = parseInt(a.position.replace('TeamMember', ''));
+        const posB = parseInt(b.position.replace('TeamMember', ''));
+        return posA - posB;
+    });
+
+    // Map each member's data to their correct position
+    sortedMembers.forEach(member => {
+        if (member.position && member.position.match(/^TeamMember[1-4]$/)) {
+            finalTeam[`${member.position}USN`] = member.usn;
+            finalTeam[`${member.position}Name`] = member.name;
+            finalTeam[`${member.position}EmailID`] = member.email;
+            finalTeam[`${member.position}MobileNumber`] = member.mobileNumber;
+            finalTeam[`${member.position}Program`] = member.program;
+        }
     });
 
     return finalTeam;
