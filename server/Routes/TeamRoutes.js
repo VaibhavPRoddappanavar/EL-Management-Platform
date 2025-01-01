@@ -853,4 +853,82 @@ router.get('/teacher/teams', authMiddleware, async (req, res) => {
     }
 });
 
+// Get team details for logged-in student
+router.get('/team-details', authMiddleware, async (req, res) => {
+    try {
+        const userEmail = req.user.email;
+        if (!userEmail) {
+            return res.status(400).json({ message: 'User email not found in token' });
+        }
+        
+        // First check in Team model
+        const team = await Team.findOne({
+            $or: [
+                { TeamleaderEmailID: userEmail },
+                { TeamMember1EmailID: userEmail },
+                { TeamMember2EmailID: userEmail },
+                { TeamMember3EmailID: userEmail },
+                { TeamMember4EmailID: userEmail }
+            ]
+        });
+
+        if (team) {
+            // Format team data
+            const teamData = {
+                teamId: team._id,
+                leader: {
+                    email: team.TeamleaderEmailID,
+                    name: team.TeamleaderName,
+                    usn: team.TeamleaderUSN
+                },
+                members: [],
+                theme: team.TeamTheme
+            };
+
+            // Add members if they exist
+            if (team.TeamMember1EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember1EmailID,
+                    name: team.TeamMember1Name,
+                    usn: team.TeamMember1USN,
+                    position: 'Member 1'
+                });
+            }
+            if (team.TeamMember2EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember2EmailID,
+                    name: team.TeamMember2Name,
+                    usn: team.TeamMember2USN,
+                    position: 'Member 2'
+                });
+            }
+            if (team.TeamMember3EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember3EmailID,
+                    name: team.TeamMember3Name,
+                    usn: team.TeamMember3USN,
+                    position: 'Member 3'
+                });
+            }
+            if (team.TeamMember4EmailID) {
+                teamData.members.push({
+                    email: team.TeamMember4EmailID,
+                    name: team.TeamMember4Name,
+                    usn: team.TeamMember4USN,
+                    position: 'Member 4'
+                });
+            }
+
+            return res.json(teamData);
+        }
+
+        // If not found in Team, return 404
+        return res.status(404).json({ message: 'No team found for this user' });
+
+    } catch (error) {
+        console.error('Error fetching team details:', error);
+        res.status(500).json({ message: 'An error occurred while fetching team details' });
+    }
+});
+
 module.exports = router;
