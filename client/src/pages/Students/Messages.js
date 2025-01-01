@@ -1,19 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import Chat from "../../components/Team/Chat";
 
-function TeamPage() {
+function Messages() {
   const [team, setTeam] = useState(null);
-
   const [studentDetails, setStudentDetails] = useState({
     name: "",
     email: "",
     branch: "",
   });
-  const [displayText, setDisplayText] = useState(""); // State for the animated text
-  const [finalText, setFinalText] = useState(""); // State for the final text without underscores
   const navigate = useNavigate();
 
   // Fetch student details
@@ -31,9 +27,9 @@ function TeamPage() {
           }
         );
         setStudentDetails({
-          name: response.data.name,
-          email: response.data.email,
-          branch: response.data.branch,
+          name: response.data.Name || "",
+          email: response.data.email || "",
+          branch: response.data.departmentCode || "",
         });
       } catch (error) {
         console.error("Error fetching student details:", error);
@@ -54,7 +50,15 @@ function TeamPage() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setTeam(response.data.teamDetails);
+        
+        if (response.data && response.data.teamDetails) {
+          // Ensure we have the correct team ID
+          const teamData = response.data.teamDetails;
+          setTeam({
+            ...teamData,
+            teamId: teamData._id || teamData.teamId // Use _id if available, fallback to teamId
+          });
+        }
       } catch (error) {
         if (error.response && error.response.status === 404) {
           navigate("/create-team");
@@ -66,19 +70,23 @@ function TeamPage() {
     fetchTeam();
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  // Only render Chat if we have both team ID and student name
+  const canRenderChat = team && team.teamId && studentDetails && studentDetails.name;
 
   return (
-    <div>
-      {/* Conditionally render Chat component only if team data is available */}
-
-      {team && <Chat teamId={team.teamId} userName={studentDetails.name} />}
-      {/* design this page further */}
+    <div className="messages-container">
+      {canRenderChat ? (
+        <Chat 
+          teamId={team.teamId} 
+          userName={studentDetails.name} 
+        />
+      ) : (
+        <div className="loading-message">
+          Loading chat... Please wait.
+        </div>
+      )}
     </div>
   );
 }
 
-export default TeamPage;
+export default Messages;
