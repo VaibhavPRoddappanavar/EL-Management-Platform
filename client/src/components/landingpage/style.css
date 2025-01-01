@@ -1,0 +1,344 @@
+/* Global Styles */
+:root {
+  --primary-color: #457ee0;
+  --primary-light: #6b9ae6;
+  --text-color: #333;
+  --background-color: #ffffff;
+}
+
+/* Landing Page */
+.landing-page {
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* Navigation */
+.navigation {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 0.5rem 2rem;
+  background: transparent;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.navigation.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.nav-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.rv-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-links a:hover {
+  color: var(--primary-color);
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 2rem;
+  background: linear-gradient(135deg, rgba(69, 126, 224, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.hero-section h1 {
+  font-size: 3.5rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+.hero-portal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Problems Section */
+.problems-section {
+  padding: 6rem 2rem;
+  background-color: #f8faff;
+  text-align: center;
+}
+
+.problems-section h2 {
+  color: var(--text-color);
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+}
+
+.problem-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.problem-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.problem-card h3 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.problem-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Portal Section */
+.portal-section {
+  padding: 6rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(69, 126, 224, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.portal-section h2 {
+  color: var(--text-color);
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+}
+
+.portal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.portal-button {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  width: 280px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(69, 126, 224, 0.12);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid transparent;
+}
+
+.portal-button:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary-color);
+  box-shadow: 0 12px 28px rgba(69, 126, 224, 0.2);
+}
+
+.portal-icon {
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.portal-button:hover .portal-icon {
+  transform: scale(1.1);
+}
+
+.portal-button h3 {
+  color: var(--text-color);
+  font-size: 1.4rem;
+  margin: 0;
+  position: relative;
+}
+
+.portal-button h3::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.portal-button:hover h3::after {
+  width: 80%;
+}
+
+.portal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(69, 126, 224, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.portal-button:hover .portal-overlay {
+  opacity: 1;
+}
+
+/* About Section */
+.about-section {
+  padding: 6rem 2rem;
+  background-color: #f8faff;
+  text-align: center;
+}
+
+.about-section h2 {
+  color: var(--text-color);
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+}
+
+.team-members {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.team-member {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.member-avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 1rem;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.team-member h3 {
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.team-member p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .problem-cards,
+  .portal-buttons,
+  .team-members {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .problem-card,
+  .portal-button,
+  .team-member {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .nav-links {
+    display: none;
+  }
+  
+  .problems-section,
+  .portal-section,
+  .about-section {
+    padding: 4rem 1rem;
+  }
+}

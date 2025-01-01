@@ -16,6 +16,7 @@ import CreateTeamPage from "./pages/Students/CreateTeamPage";
 import TeamManagement from "./pages/Students/TeamManagement";
 import TeacherHome from "./pages/Teachers/TeacherHome";
 import TeacherLogin from "./pages/Teachers/TeacherLogin";
+import LandingPage from "./components/landingpage/Landingpage";
 
 /* Admin imports */
 
@@ -54,7 +55,7 @@ function App() {
       <Router>
         <Routes>
           {/* General Routes */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<SignInSignUp />} />
           <Route path="/signup" element={<SignInSignUp />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
