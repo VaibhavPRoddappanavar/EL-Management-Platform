@@ -67,7 +67,7 @@ function StudentMarks() {
                 name: student.studentName,
                 usn: student.studentUSN,
                 email: student.studentEmail,
-                theme: mark.teamId.Theme,
+                theme: mark.teamId?.Theme || 'Deleted', // Add null check and default value
                 phaseWise: {
                   Phase1: 0,
                   Phase2: 0,
