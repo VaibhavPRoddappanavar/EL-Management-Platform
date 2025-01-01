@@ -7,8 +7,14 @@ import {
   Typography,
   Tooltip,
   IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -24,56 +30,8 @@ const TeacherManagement = () => {
   const [openAssignModal, setOpenAssignModal] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [openViewModal, setOpenViewModal] = useState(false);
-
-  const columns = [
-    { field: "name", headerName: "Name", flex: 1.5 },
-    { field: "email", headerName: "Email", flex: 1.5 },
-    { field: "designation", headerName: "Designation", flex: 1 },
-    {
-      field: "assignedTeams",
-      headerName: "Assigned Teams",
-      flex: 0.5,
-      renderCell: (params) => params.value?.length || 0,
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1.5,
-      renderCell: (params) => (
-        <Box display="flex" gap={1}>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => handleAssignTeams(params.row)}
-          >
-            Assign Teams
-          </Button>
-          <Tooltip title="View Teams">
-            <IconButton
-              color="primary"
-              size="small"
-              onClick={() => handleViewTeams(params.row)}
-            >
-              <VisibilityIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={params.row.assignedTeams?.length === 0 ? "No teams assigned" : ""}>
-            <span>
-              <Button
-                variant="outlined"
-                color="error"
-                size="small"
-                disabled={params.row.assignedTeams?.length === 0}
-                onClick={() => handleRemoveTeacherTeams(params.row._id)}
-              >
-                Remove Teams
-              </Button>
-            </span>
-          </Tooltip>
-        </Box>
-      ),
-    },
-  ];
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const fetchTeachers = async () => {
     try {
@@ -168,18 +126,14 @@ const TeacherManagement = () => {
     setOpenViewModal(true);
   };
 
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -218,31 +172,83 @@ const TeacherManagement = () => {
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <div style={{ height: 400, width: '100%', position: 'relative' }}>
-              <DataGrid
-                rows={teachers}
-                columns={columns}
-                pageSize={10}
-                rowsPerPageOptions={[10]}
-                disableSelectionOnClick
-                components={{
-                  Toolbar: null,
-                  NoRowsOverlay: () => (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                      <Typography>No teachers found</Typography>
-                    </Box>
-                  )
-                }}
-                sx={{
-                  border: 'none',
-                  '& .MuiDataGrid-cell': { fontSize: '0.875rem' },
-                  '& .MuiDataGrid-columnHeaders': { 
-                    backgroundColor: '#f5f5f5',
-                    borderBottom: '1px solid #e0e0e0'
-                  }
-                }}
-              />
-            </div>
+            {loading ? (
+              <Box display="flex" justifyContent="center" p={3}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <>
+                <TableContainer>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Designation</TableCell>
+                        <TableCell align="center">Assigned Teams</TableCell>
+                        <TableCell align="center">Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {teachers
+                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((teacher) => (
+                          <TableRow key={teacher._id || teacher.id}>
+                            <TableCell>{teacher.name}</TableCell>
+                            <TableCell>{teacher.email}</TableCell>
+                            <TableCell>{teacher.designation}</TableCell>
+                            <TableCell align="center">
+                              {teacher.assignedTeams?.length || 0}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Box display="flex" gap={1} justifyContent="center">
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  onClick={() => handleAssignTeams(teacher)}
+                                >
+                                  Assign Teams
+                                </Button>
+                                <Tooltip title="View Teams">
+                                  <IconButton
+                                    color="primary"
+                                    size="small"
+                                    onClick={() => handleViewTeams(teacher)}
+                                  >
+                                    <VisibilityIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title={teacher.assignedTeams?.length === 0 ? "No teams assigned" : ""}>
+                                  <span>
+                                    <Button
+                                      variant="outlined"
+                                      color="error"
+                                      size="small"
+                                      disabled={teacher.assignedTeams?.length === 0}
+                                      onClick={() => handleRemoveTeacherTeams(teacher._id)}
+                                    >
+                                      Remove Teams
+                                    </Button>
+                                  </span>
+                                </Tooltip>
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[10, 25, 50]}
+                  component="div"
+                  count={teachers.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </>
+            )}
           </Grid>
         </Grid>
 
