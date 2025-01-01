@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Department = require("../../Models/StudentInfo");
 const Team = require("../../Models/Team");
+const { FormingTeam } = require("../../Models/FormingTeam");
 
 router.get("/unassigned", async (req, res) => {
   try {
-    const includedDepartments = ["AI", "CS", "CD", "CY", "IS"];
+    // Using the same departments as statisticsRoutes.js
+    const includedDepartments = ["CS", "IS", "AI", "CD", "CY"];
 
     // Fetch students from departments
     const departments = await Department.find({
@@ -19,31 +21,52 @@ router.get("/unassigned", async (req, res) => {
       }))
     );
 
-    // Debug: Check if students are fetched correctly
-    console.log("All Students:", allStudents);
+    console.log("Total students before filtering:", allStudents.length);
+    console.log("Department counts:", departments.reduce((acc, dept) => {
+      acc[dept.departmentCode] = dept.students.length;
+      return acc;
+    }, {}));
 
-    // Fetch all emails of students already in teams
-    const teams = await Team.find({});
-    const teamEmails = new Set(
-      teams.flatMap((team) => [
-        team.TeamleaderEmailID,
-        team.TeamMember1EmailID,
-        team.TeamMember2EmailID,
-        team.TeamMember3EmailID,
-        team.TeamMember4EmailID,
-      ])
-    );
+    // Get all assigned emails from both Teams and FormingTeams
+    const [teams, formingTeams] = await Promise.all([
+      Team.find({}),
+      FormingTeam.find({})
+    ]);
 
-    // Debug: Check the set of emails
-    console.log("Team Emails:", Array.from(teamEmails));
+    // Create a set of all assigned emails
+    const assignedEmails = new Set();
 
-    // Filter out students whose email is already in a team
+    // Add emails from formed teams
+    teams.forEach(team => {
+      assignedEmails.add(team.TeamleaderEmailID);
+      if (team.TeamMember1EmailID) assignedEmails.add(team.TeamMember1EmailID);
+      if (team.TeamMember2EmailID) assignedEmails.add(team.TeamMember2EmailID);
+      if (team.TeamMember3EmailID) assignedEmails.add(team.TeamMember3EmailID);
+      if (team.TeamMember4EmailID) assignedEmails.add(team.TeamMember4EmailID);
+    });
+
+    // Add emails from forming teams
+    formingTeams.forEach(team => {
+      assignedEmails.add(team.TeamleaderEmailID);
+      if (team.members) {
+        team.members.forEach(member => {
+          assignedEmails.add(member.email);
+        });
+      }
+    });
+
+    console.log("Total assigned emails:", assignedEmails.size);
+
+    // Filter out students whose email is in either a team or forming team
     const unassignedStudents = allStudents.filter(
-      (student) => !teamEmails.has(student.email) // Matching student email with team emails
+      (student) => !assignedEmails.has(student.email)
     );
 
-    // Debug: Check the unassigned students
-    console.log("Unassigned Students:", unassignedStudents);
+    console.log("Total unassigned students:", unassignedStudents.length);
+    console.log("Unassigned by department:", unassignedStudents.reduce((acc, student) => {
+      acc[student.departmentCode] = (acc[student.departmentCode] || 0) + 1;
+      return acc;
+    }, {}));
 
     res.status(200).json(unassignedStudents);
   } catch (error) {
