@@ -112,7 +112,7 @@ router.post("/login", async (req, res) => {
     // Create a token for the user, including team ID if they are in a team
     const token = jwt.sign(
       { email, teamId: teamMember ? teamMember._id : null },
-      "your_jwt_secret_key",
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
