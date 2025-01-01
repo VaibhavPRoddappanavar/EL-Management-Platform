@@ -199,6 +199,11 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
 
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const rowsPerPageOptions = [25, 50, 100];
+
   const themes = [
     "All Teams",
     "AI for Social Good",
@@ -349,7 +354,7 @@ function AdminDashboard() {
 
       {selectedTheme && (
         <Typography variant="subtitle1" gutterBottom>
-          Showing {filteredTeams.length} teams
+          Showing {Math.min(rowsPerPage, filteredTeams.length)} of {filteredTeams.length} teams
           {selectedTheme !== "All Teams" && ` in ${selectedTheme}`}
           {searchTerm && ` matching "${searchTerm}"`}
         </Typography>
@@ -384,18 +389,58 @@ function AdminDashboard() {
                 <TableCell colSpan={3} align="center">No teams found</TableCell>
               </TableRow>
             ) : (
-              filteredTeams.map((team) => (
-                <TeamRow 
-                  key={team._id} 
-                  team={team} 
-                  formatMemberData={formatMemberData}
-                  onDelete={handleDeleteTeam}
-                />
-              ))
+              filteredTeams
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((team) => (
+                  <TeamRow 
+                    key={team._id} 
+                    team={team} 
+                    formatMemberData={formatMemberData}
+                    onDelete={handleDeleteTeam}
+                  />
+                ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
+      
+      {/* Pagination Controls */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2, alignItems: 'center' }}>
+        <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Rows per page</InputLabel>
+          <Select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(e.target.value);
+              setPage(0);
+            }}
+            label="Rows per page"
+          >
+            {rowsPerPageOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Typography variant="body2" color="text.secondary">
+          {page * rowsPerPage + 1}-{Math.min((page + 1) * rowsPerPage, filteredTeams.length)} of {filteredTeams.length}
+        </Typography>
+        <Box>
+          <IconButton 
+            onClick={() => setPage(prev => prev - 1)}
+            disabled={page === 0}
+          >
+            <KeyboardArrowUpIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => setPage(prev => prev + 1)}
+            disabled={(page + 1) * rowsPerPage >= filteredTeams.length}
+          >
+            <KeyboardArrowDownIcon />
+          </IconButton>
+        </Box>
+      </Box>
     </Box>
   );
 
