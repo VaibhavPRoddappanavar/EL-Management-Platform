@@ -1,22 +1,22 @@
-import { faBars, faBullhorn, faHome, faMessage, faSignOut, faUserFriends, faCommentAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBullhorn, faHome, faMessage, faSignOutAlt, faUserFriends, faCommentAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import profilePic from '../images/profile.png';
 import collegelogo from '../images/rvlogo.png';
-import Announcement from '../pages/Students/Announcement'; // Import Announcement component
-import Messages from '../pages/Students/Messages'; // Import Messages component
-import Team from '../pages/Students/TeamPage'; // Import the Team component
+import Announcement from '../pages/Students/Announcement';
+import Messages from '../pages/Students/Messages';
+import Team from '../pages/Students/TeamPage';
 import Home from './Home';
 import FeedbackSection from './student/FeedbackSection';
 import './NavbarStyle.css';
 
 const Navbar = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // State to toggle sidebar visibility
-  const [activePage, setActivePage] = useState('home'); // Track active page
-  const [loading, setLoading] = useState(false); // Loading state to clear the swapset
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activePage, setActivePage] = useState('home');
+  const [loading, setLoading] = useState(false);
   const [studentDetails, setStudentDetails] = useState({
     name: '',
     email: '',
@@ -50,20 +50,17 @@ const Navbar = () => {
 
   const handleMouseEnter = () => setDropdownVisible(true);
   const handleMouseLeave = () => setDropdownVisible(false);
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen); // Toggle sidebar state
+    setSidebarOpen(!sidebarOpen);
   };
 
   const setPage = (page) => {
-    setLoading(true); // Set loading to true to clear the content
+    setLoading(true);
     setTimeout(() => {
-      setActivePage(page); // Update the active page after a brief delay
-      setLoading(false); // Reset loading state
-    }, 300); // Wait for 300ms to simulate a page transition effect
+      setActivePage(page);
+      setLoading(false);
+    }, 300);
   };
 
   const handleLogout = () => {
@@ -71,12 +68,22 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
+        setSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <div className="navvv">
       <div className="dash">
         <div className="mainbox">
           <div className="top-container">
-            {/* 3-dot button to toggle sidebar */}
             <button className="dot3" onClick={toggleSidebar}>
               <FontAwesomeIcon icon={faBars} />
             </button>
@@ -103,7 +110,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Conditionally render the active page */}
           <div className='swapset'>
             {loading ? <div className="loading">Loading...</div> : null}
             {!loading && activePage === 'home' && <Home />}
@@ -114,7 +120,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Sidebar with conditional class */}
         <div className={`navbar ${sidebarOpen ? "open" : ""}`} ref={navbarRef}>
           <div className="sidebar">
             <div className="nav-item">
@@ -150,7 +155,7 @@ const Navbar = () => {
             <div className="nav-item">
               <div className="logout" onClick={handleLogout}>
                 <a href="#">
-                  <FontAwesomeIcon icon={faSignOut} />
+                  <FontAwesomeIcon icon={faSignOutAlt} />
                   <span>Logout</span>
                 </a>
               </div>
