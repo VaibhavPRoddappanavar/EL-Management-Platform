@@ -32,10 +32,10 @@ const Navbar = ({ isSidebarHovered }) => {
             {/* Dropdown */}
             {dropdownVisible && (
               <div className="dropdown">
-                <p className="user-info">Name: Vaibhav</p>
-                <p className="user-email">Email: johndoe@example.com</p>
-                <p className="user-email">USN: 1RV23CS278</p>
-                <p className="user-email">Branch: CS</p>
+                <p className="user-info">Name: admin1</p>
+                <p className="user-email">Email: admin1@gmail.com</p>
+                {/* <p className="user-email">USN: 1RV23CS278</p>
+                <p className="user-email">Branch: CS</p> */}
               </div>
             )}
           </div>
