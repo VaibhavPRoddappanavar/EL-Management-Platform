@@ -23,6 +23,13 @@ import {
   Chip,
   Collapse,
   Button,
+  TablePagination,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Drawer,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -32,9 +39,14 @@ import {
   Badge as BadgeIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
+  Groups as GroupsIcon,
+  People as PeopleIcon,
+  PersonAdd as PersonAddIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 // Configure axios defaults
 axios.defaults.baseURL = 'http://localhost:5000';
@@ -175,6 +187,9 @@ const TeamRow = ({ team, formatMemberData }) => {
   );
 };
 
+const sidebarWidth = 240;
+const collapsedSidebarWidth = 65;
+
 const TeacherTeams = () => {
   const navigate = useNavigate();
   const [teams, setTeams] = useState([]);
@@ -184,6 +199,11 @@ const TeacherTeams = () => {
   const [themes, setThemes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [themeStats, setThemeStats] = useState({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -260,88 +280,250 @@ const TeacherTeams = () => {
     return matchesTheme && matchesSearch;
   });
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedTeams = filteredTeams.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem('teacherToken');
+    navigate('/teacher/login');
+  };
+
+  const sidebarContent = (
+    <Box
+      sx={{
+        width: sidebarWidth,
+        bgcolor: '#457ee0',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'all 0.3s ease',
+        overflow: 'hidden',
+        boxShadow: isMobile ? 'none' : '4px 0 10px -3px rgba(0,0,0,0.1)'
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <List sx={{ flexGrow: 1, color: 'white' }}>
+        <ListItem
+          button
+          onClick={() => navigate('/teacher/dashboard')}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <GroupsIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="View Teams" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => navigate('/teacher/teams')}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="All Teams" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => navigate('/teacher/unassigned')}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <PersonAddIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Unassigned Students" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.5s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+      </List>
+      <List sx={{ color: 'white' }}>
+        <ListItem
+          button
+          onClick={handleLogout}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Logout" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+      </List>
+    </Box>
+  );
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <Container component="main" maxWidth="lg">
-      <Box sx={{ marginTop: 4, marginBottom: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          All Teams
-        </Typography>
+    <Box sx={{ display: 'flex' }}>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: isHovered ? sidebarWidth : collapsedSidebarWidth,
+          transition: 'width 0.3s ease',
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: isHovered ? sidebarWidth : collapsedSidebarWidth,
+            transition: 'width 0.3s ease',
+            boxSizing: 'border-box',
+            border: 'none',
+          },
+        }}
+      >
+        {sidebarContent}
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${isHovered ? sidebarWidth : collapsedSidebarWidth}px)` },
+          transition: 'width 0.3s ease',
+        }}
+      >
+        <Container component="main" maxWidth="lg">
+          <Box sx={{ marginTop: 4, marginBottom: 4 }}>
+            <Typography variant="h4" component="h1" gutterBottom>
+              All Teams
+            </Typography>
 
-        {/* Filters */}
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
-              <InputLabel>Filter by Theme</InputLabel>
-              <Select
-                value={selectedTheme}
-                onChange={(e) => setSelectedTheme(e.target.value)}
-                label="Filter by Theme"
-              >
-                <MenuItem value="">
-                  <em>All Themes</em>
-                </MenuItem>
-                {themes.map((theme) => (
-                  <MenuItem key={theme} value={theme}>
-                    {theme} ({themeStats[theme]} teams)
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Search by Name or USN"
-              variant="outlined"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter student name or USN..."
-            />
-          </Grid>
-        </Grid>
-
-        {/* Results Count */}
-        <Typography variant="subtitle1" gutterBottom>
-          Showing {filteredTeams.length} teams
-          {selectedTheme && ` in ${selectedTheme}`}
-          {searchQuery && ` matching "${searchQuery}"`}
-        </Typography>
-
-        <TableContainer 
-          component={Paper} 
-          elevation={3}
-          sx={{
-            '& .MuiTableCell-head': {
-              backgroundColor: 'primary.main',
-              color: 'primary.contrastText',
-              fontWeight: 'bold',
-            },
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell width="45%">Team Leader</TableCell>
-                <TableCell width="30%">Theme</TableCell>
-                <TableCell width="25%">Team Size</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredTeams.map((team) => (
-                <TeamRow 
-                  key={team._id} 
-                  team={team} 
-                  formatMemberData={formatMemberData}
+            {/* Filters */}
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Filter by Theme</InputLabel>
+                  <Select
+                    value={selectedTheme}
+                    onChange={(e) => setSelectedTheme(e.target.value)}
+                    label="Filter by Theme"
+                  >
+                    <MenuItem value="">
+                      <em>All Themes</em>
+                    </MenuItem>
+                    {themes.map((theme) => (
+                      <MenuItem key={theme} value={theme}>
+                        {theme} ({themeStats[theme]} teams)
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Search by Name or USN"
+                  variant="outlined"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Enter student name or USN..."
                 />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </Grid>
+            </Grid>
+
+            {/* Results Count */}
+            <Typography variant="subtitle1" gutterBottom>
+              Showing {filteredTeams.length} teams
+              {selectedTheme && ` in ${selectedTheme}`}
+              {searchQuery && ` matching "${searchQuery}"`}
+            </Typography>
+
+            <TableContainer 
+              component={Paper} 
+              elevation={3}
+              sx={{
+                '& .MuiTableCell-head': {
+                  backgroundColor: 'primary.main',
+                  color: 'primary.contrastText',
+                  fontWeight: 'bold',
+                },
+              }}
+            >
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="45%">Team Leader</TableCell>
+                    <TableCell width="30%">Theme</TableCell>
+                    <TableCell width="25%">Team Size</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedTeams.map((team) => (
+                    <TeamRow 
+                      key={team._id} 
+                      team={team} 
+                      formatMemberData={formatMemberData}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={filteredTeams.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableContainer>
+          </Box>
+        </Container>
       </Box>
-    </Container>
+    </Box>
   );
 };
 
