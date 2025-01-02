@@ -5,6 +5,7 @@ import './style.css';
 
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,15 +32,25 @@ const Navigation = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="nav-content">
-        <motion.div 
-          className="logo-container"
-          whileHover={{ scale: 1.05 }}
-          onClick={() => scrollToSection('home')}
-        >
-          <img src={RVCE} alt="RV Logo" className="rv-logo" />
-          <span className="logo-text">ELink</span>
-        </motion.div>
-        <div className="nav-links">
+        <div className="nav-header">
+          <motion.div 
+            className="logo-container"
+            whileHover={{ scale: 1.05 }}
+            onClick={() => scrollToSection('home')}
+          >
+            <img src={RVCE} alt="RV Logo" className="rv-logo" />
+            <span className="logo-text">ELink</span>
+          </motion.div>
+          <button 
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
           <motion.a 
             onClick={() => scrollToSection('home')}
             whileHover={{ scale: 1.1 }}
