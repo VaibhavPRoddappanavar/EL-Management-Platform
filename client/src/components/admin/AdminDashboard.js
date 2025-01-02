@@ -121,7 +121,7 @@ const TeamRow = ({ team, formatMemberData, onDelete }) => {
                 team.TeamMember2Name,
                 team.TeamMember3Name,
                 team.TeamMember4Name,
-              ].filter(Boolean).length} Members
+              ].filter(Boolean).length+1} Members
             </Typography>
             <Stack direction="row" spacing={1}>
               <IconButton
