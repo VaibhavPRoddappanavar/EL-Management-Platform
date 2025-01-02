@@ -11,7 +11,14 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -20,6 +27,10 @@ import { toast } from "react-toastify";
 import "./TeacherDashboard.css";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import GroupsIcon from '@mui/icons-material/Groups';
+import PeopleIcon from '@mui/icons-material/People';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const MARKING_CRITERIA = {
   Phase1: {
@@ -70,6 +81,11 @@ const TeacherDashboard = () => {
   const [existingMarks, setExistingMarks] = useState(null);
   const [showIndividualMarks, setShowIndividualMarks] = useState(false);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [open, setOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const sidebarWidth = isHovered || isMobile ? 240 : 65;
 
   useEffect(() => {
     const token = localStorage.getItem("teacherToken");
@@ -575,6 +591,112 @@ const TeacherDashboard = () => {
     );
   };
 
+  const sidebarContent = (
+    <Box
+      sx={{
+        width: sidebarWidth,
+        bgcolor: '#457ee0',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'all 0.3s ease',
+        overflow: 'hidden',
+        boxShadow: isMobile ? 'none' : '4px 0 10px -3px rgba(0,0,0,0.1)'
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <List sx={{ flexGrow: 1, color: 'white' }}>
+        <ListItem
+          button
+          onClick={() => navigate('/teacher/dashboard')}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <GroupsIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="View Teams" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => navigate('/teacher/teams')}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="All Teams" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => navigate('/teacher/unassigned')}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <PersonAddIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Unassigned Students" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.5s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+      </List>
+      <List sx={{ color: 'white' }}>
+        <ListItem
+          button
+          onClick={handleLogout}
+          sx={{ 
+            py: 2,
+            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ListItemIcon sx={{ color: 'white', minWidth: 45 }}>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Logout" 
+            sx={{ 
+              opacity: (isHovered || isMobile) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              width: 'auto'
+            }}
+          />
+        </ListItem>
+      </List>
+    </Box>
+  );
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -584,8 +706,32 @@ const TeacherDashboard = () => {
   }
 
   return (
-    <div className="teacher-dashboard">
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {!isMobile && (
+        <Box
+          component="nav"
+          sx={{
+            width: sidebarWidth,
+            flexShrink: 0,
+            height: '100vh',
+            position: 'fixed',
+            zIndex: 1200,
+            transition: 'all 0.3s ease'
+          }}
+        >
+          {sidebarContent}
+        </Box>
+      )}
+
+      <Container 
+        component="main" 
+        sx={{ 
+          flexGrow: 1,
+          p: 0,
+          marginLeft: !isMobile ? `${sidebarWidth}px` : 0,
+          transition: 'margin-left 0.3s ease'
+        }}
+      >
         <Paper elevation={3} sx={{ p: 3 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <div>
@@ -617,7 +763,17 @@ const TeacherDashboard = () => {
           </Box>
         </Paper>
       </Container>
-    </div>
+
+      {isMobile && (
+        <Drawer
+          anchor="left"
+          open={open}
+          onClose={() => setOpen(false)}
+        >
+          {sidebarContent}
+        </Drawer>
+      )}
+    </Box>
   );
 };
 

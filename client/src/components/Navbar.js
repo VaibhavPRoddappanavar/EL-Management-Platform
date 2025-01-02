@@ -1,4 +1,4 @@
-import { faBars, faBullhorn, faHome, faMessage, faSignOutAlt, faUserFriends, faCommentAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBullhorn, faHome, faMessage, faSignOutAlt, faUserFriends, faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
@@ -148,7 +148,7 @@ const Navbar = () => {
             </div>
             <div className="nav-item">
               <a href="#" onClick={() => setPage('feedback')}>
-                <FontAwesomeIcon icon={faCommentAlt} />
+                <FontAwesomeIcon icon={faClipboardCheck} />
                 <span>Feedback</span>
               </a>
             </div>
