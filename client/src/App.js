@@ -19,6 +19,7 @@ import TeacherHome from "./pages/Teachers/TeacherHome";
 import TeacherLogin from "./pages/Teachers/TeacherLogin";
 import TeacherTeams from "./pages/Teachers/TeacherTeams";
 
+
 /* Admin imports */
 
 import { ToastContainer } from 'react-toastify';
@@ -68,6 +69,7 @@ function App() {
           <Route path="/create-team" element={<CreateTeamPage />} />
           <Route path="/TeamManagement" element={<TeamManagement />} />
           <Route path="/team-management" element={<TeamManagementView />} />
+          <Route path="/signup" element={<SignInSignUp />} />
 
           {/* Teacher Routes */}
           <Route path="/teacher/login" element={<TeacherLogin />} />

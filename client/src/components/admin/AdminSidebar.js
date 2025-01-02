@@ -37,12 +37,12 @@ const Sidebar = ({ onMouseEnter, onMouseLeave }) => {
               <span>Announcements</span>
             </Link>
           </div>
-          <div className="menu-item">
+          {/* <div className="menu-item">
             <Link to="/messages">
               <FontAwesomeIcon icon={faMessage} />
               <span>Messages</span>
             </Link>
-          </div>
+          </div> */}
           <div className="menu-item">
             <div className="logout">
               <Link to="logout">

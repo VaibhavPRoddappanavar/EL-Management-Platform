@@ -51,10 +51,10 @@ export const MainView = ({ onCreateTeam, onJoinTeam }) => {
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
         {/* Statistics Section */}
         <div className="w-full max-w-6xl mb-8">
-          <div className="text-center mb-6">
+          {/* <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">Team Formation Statistics</h2>
             <p className="text-gray-600">Current status of team formation process</p>
-          </div>
+          </div> */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard
               icon={Users}

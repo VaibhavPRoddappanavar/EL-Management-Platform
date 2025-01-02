@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Check, Loader2, Send, X } from "lucide-react";
+import { Check, Loader2, Send, X, ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "../ui/Alert";
@@ -15,7 +15,7 @@ const clusterPrograms = {
   CV: ["CV", "BT", "CH"],
 };
 
-const JoinTeamView = () => {
+const JoinTeamView = ({ onBack, searchQuery, setSearchQuery, filter, setFilter }) => {
   const navigate = useNavigate();
   const [invitedTeams, setInvitedTeams] = useState([]);
   const [eligibleTeams, setEligibleTeams] = useState([]);
@@ -232,237 +232,253 @@ const JoinTeamView = () => {
     }
   };
 
+  const handleBackClick = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigate('/team');
+    }
+  };
+
   return (
     <div>
       <Nbar/>
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
-      <div className="max-w-5xl mx-auto space-y-6 mt-24">
-        <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">
-          Team Discovery & Invitations
-        </h1>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+        <div className="max-w-5xl mx-auto space-y-6 mt-24">
+          <button
+            type="button"
+            className="mb-4 inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none transition-colors duration-200"
+            onClick={handleBackClick}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </button>
 
-        {message && (
-          <Alert
-            className={`
-              ${
-                message.type === "success"
+          <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">
+            Team Discovery & Invitations
+          </h1>
+
+          {message && (
+            <Alert
+              className={`
+                ${message.type === "success"
                   ? "bg-green-50 border-green-200"
                   : "bg-red-50 border-red-200"
-              }
-              transition-all duration-300 ease-in-out
-            `}
-          >
-            <AlertDescription>{message.text}</AlertDescription>
-          </Alert>
-        )}
+                }
+                transition-all duration-300 ease-in-out
+              `}
+            >
+              <AlertDescription>{message.text}</AlertDescription>
+            </Alert>
+          )}
 
-        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
-          <CardHeader>
-            <CardTitle className="text-blue-800">Your Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Name
-                </label>
-                <Input
-                  value={applicationData.name}
-                  disabled
-                  className="bg-gray-50 border-blue-100"
-                />
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
+            <CardHeader>
+              <CardTitle className="text-blue-800">Your Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Name
+                  </label>
+                  <Input
+                    value={applicationData.name}
+                    disabled
+                    className="bg-gray-50 border-blue-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Program
+                  </label>
+                  <Input
+                    value={applicationData.program}
+                    disabled
+                    className="bg-gray-50 border-blue-100"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Program
-                </label>
-                <Input
-                  value={applicationData.program}
-                  disabled
-                  className="bg-gray-50 border-blue-100"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    USN <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    placeholder="Enter your USN"
+                    value={applicationData.usn}
+                    onChange={(e) => {
+                      setApplicationData((prev) => ({
+                        ...prev,
+                        usn: e.target.value,
+                      }));
+                      setErrors((prev) => ({ ...prev, usn: "" }));
+                    }}
+                    className={`border-blue-200 focus:border-blue-400 ${
+                      errors.usn ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.usn && (
+                    <p className="text-red-500 text-sm mt-1">{errors.usn}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    placeholder="Enter your phone number"
+                    value={applicationData.phoneNumber}
+                    onChange={(e) => {
+                      setApplicationData((prev) => ({
+                        ...prev,
+                        phoneNumber: e.target.value,
+                      }));
+                      setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+                    }}
+                    className={`border-blue-200 focus:border-blue-400 ${
+                      errors.phoneNumber ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.phoneNumber}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  USN <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder="Enter your USN"
-                  value={applicationData.usn}
-                  onChange={(e) => {
-                    setApplicationData((prev) => ({
-                      ...prev,
-                      usn: e.target.value,
-                    }));
-                    setErrors((prev) => ({ ...prev, usn: "" }));
-                  }}
-                  className={`border-blue-200 focus:border-blue-400 ${
-                    errors.usn ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.usn && (
-                  <p className="text-red-500 text-sm mt-1">{errors.usn}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder="Enter your phone number"
-                  value={applicationData.phoneNumber}
-                  onChange={(e) => {
-                    setApplicationData((prev) => ({
-                      ...prev,
-                      phoneNumber: e.target.value,
-                    }));
-                    setErrors((prev) => ({ ...prev, phoneNumber: "" }));
-                  }}
-                  className={`border-blue-200 focus:border-blue-400 ${
-                    errors.phoneNumber ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.phoneNumber}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
+            <CardHeader>
+              <CardTitle className="text-blue-800">
+                Teams That Have Invited You
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {invitedTeams.length === 0 ? (
+                <div className="text-gray-500 text-center py-8">
+                  <p className="text-lg">No pending invites at the moment</p>
+                  <p className="text-sm mt-2">
+                    When teams invite you, they'll appear here
                   </p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
-          <CardHeader>
-            <CardTitle className="text-blue-800">
-              Teams That Have Invited You
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {invitedTeams.length === 0 ? (
-              <div className="text-gray-500 text-center py-8">
-                <p className="text-lg">No pending invites at the moment</p>
-                <p className="text-sm mt-2">
-                  When teams invite you, they'll appear here
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {invitedTeams.map((team) => (
-                  <div
-                    key={team._id}
-                    className="border rounded-lg p-4 hover:border-blue-300 transition-colors bg-white/50"
-                  >
-                    <h3 className="font-semibold text-blue-900">
-                      {team.TeamLeaderName}
-                    </h3>
-                    <p className="text-gray-600 text-sm mt-1">{team.Theme}</p>
-                    <div className="mt-4 flex space-x-2">
-                      <Button
-                        onClick={() =>
-                          handleInviteResponse(team._id, "ACCEPTED", team)
-                        }
-                        disabled={loading}
-                        className="flex content-center items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 h-8"
-                        size="sm"
-                      >
-                        {loading ? (
-                          <Loader2 className="animate-spin w-4 h-4" />
-                        ) : (
-                          <>
-                            <Check className="w-3 h-3 mr-1" />
-                            Accept
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          handleInviteResponse(team._id, "REJECTED", team)
-                        }
-                        disabled={loading}
-                        variant="outline"
-                        className="flex content-center items-center border-blue-200 text-blue-700 hover:bg-blue-50 px-4 py-1 h-8"
-                        size="sm"
-                      >
-                        {loading ? (
-                          <Loader2 className="animate-spin w-4 h-4" />
-                        ) : (
-                          <>
-                            <X className="w-3 h-3 mr-1" />
-                            Decline
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
-          <CardHeader>
-            <CardTitle className="text-blue-800">
-              Teams in Your Cluster ({applicationData.program})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {eligibleTeams.length === 0 ? (
-              <div className="text-gray-500 text-center py-8">
-                <p className="text-lg">No eligible teams found</p>
-                <p className="text-sm mt-2">
-                  Teams for your program will appear here
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {eligibleTeams.map((team) => (
-                  <div
-                    key={team._id}
-                    className="border rounded-lg p-4 hover:shadow-md transition-all bg-white/70 space-y-3"
-                  >
-                    <div>
-                      <h3 className="font-semibold text-blue-900 text-lg">
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {invitedTeams.map((team) => (
+                    <div
+                      key={team._id}
+                      className="border rounded-lg p-4 hover:border-blue-300 transition-colors bg-white/50"
+                    >
+                      <h3 className="font-semibold text-blue-900">
                         {team.TeamLeaderName}
                       </h3>
                       <p className="text-gray-600 text-sm mt-1">{team.Theme}</p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Cluster: {team.cluster} | Expires:{" "}
-                        {new Date(team.expiresAt).toLocaleDateString()}
-                      </p>
+                      <div className="mt-4 flex space-x-2">
+                        <Button
+                          onClick={() =>
+                            handleInviteResponse(team._id, "ACCEPTED", team)
+                          }
+                          disabled={loading}
+                          className="flex content-center items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 h-8"
+                          size="sm"
+                        >
+                          {loading ? (
+                            <Loader2 className="animate-spin w-4 h-4" />
+                          ) : (
+                            <>
+                              <Check className="w-3 h-3 mr-1" />
+                              Accept
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            handleInviteResponse(team._id, "REJECTED", team)
+                          }
+                          disabled={loading}
+                          variant="outline"
+                          className="flex content-center items-center border-blue-200 text-blue-700 hover:bg-blue-50 px-4 py-1 h-8"
+                          size="sm"
+                        >
+                          {loading ? (
+                            <Loader2 className="animate-spin w-4 h-4" />
+                          ) : (
+                            <>
+                              <X className="w-3 h-3 mr-1" />
+                              Decline
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
-                    <Button
-                      onClick={() => handleApplyToTeam(team._id)}
-                      disabled={appliedTeams.includes(team._id)}
-                      className={`w-full ${
-                        appliedTeams.includes(team._id)
-                          ? "bg-green-500 hover:bg-green-600"
-                          : "bg-blue-500 hover:bg-blue-600"
-                      } text-white flex items-center justify-center`}
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-blue-100">
+            <CardHeader>
+              <CardTitle className="text-blue-800">
+                Teams in Your Cluster ({applicationData.program})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {eligibleTeams.length === 0 ? (
+                <div className="text-gray-500 text-center py-8">
+                  <p className="text-lg">No eligible teams found</p>
+                  <p className="text-sm mt-2">
+                    Teams for your program will appear here
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {eligibleTeams.map((team) => (
+                    <div
+                      key={team._id}
+                      className="border rounded-lg p-4 hover:shadow-md transition-all bg-white/70 space-y-3"
                     >
-                      {appliedTeams.includes(team._id) ? (
-                        <>
-                          <Check className="w-4 h-4 mr-2" />
-                          Applied
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Apply to Team
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      <div>
+                        <h3 className="font-semibold text-blue-900 text-lg">
+                          {team.TeamLeaderName}
+                        </h3>
+                        <p className="text-gray-600 text-sm mt-1">{team.Theme}</p>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Cluster: {team.cluster} | Expires:{" "}
+                          {new Date(team.expiresAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => handleApplyToTeam(team._id)}
+                        disabled={appliedTeams.includes(team._id)}
+                        className={`w-full ${
+                          appliedTeams.includes(team._id)
+                            ? "bg-green-500 hover:bg-green-600"
+                            : "bg-blue-500 hover:bg-blue-600"
+                        } text-white flex items-center justify-center`}
+                      >
+                        {appliedTeams.includes(team._id) ? (
+                          <>
+                            <Check className="w-4 h-4 mr-2" />
+                            Applied
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 mr-2" />
+                            Apply to Team
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

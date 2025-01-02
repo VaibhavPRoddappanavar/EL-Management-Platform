@@ -1,6 +1,7 @@
 import { ArrowLeft, BookOpen, Medal, Smartphone, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Nbar from "../ui/Nbar";
+import { useNavigate } from 'react-router-dom';
 
 const themes = {
   CS: [
@@ -110,7 +111,8 @@ const SelectField = ({ label, icon: Icon, options, ...props }) => (
   </div>
 );
 
-export const CreateTeamView = () => {
+export const CreateTeamView = ({ onBack }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     usn: "",
@@ -218,6 +220,14 @@ export const CreateTeamView = () => {
     }
   };
 
+  const handleBackClick = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigate('/team');
+    }
+  };
+
   return (
     <div>
       <Nbar/>
@@ -227,7 +237,7 @@ export const CreateTeamView = () => {
           <button
             type="button"
             className="mb-4 inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none transition-colors duration-200"
-            onClick={() => window.history.back()}
+            onClick={handleBackClick}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
