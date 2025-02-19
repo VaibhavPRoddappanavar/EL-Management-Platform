@@ -42,7 +42,7 @@ const Teammanagement = require("./Routes/Admin/Teammanagement");
 // Example usage
 const emailList = loadEmailList();
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Middleware to parse JSON requests
 app.use(express.json());
